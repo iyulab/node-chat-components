@@ -1,15 +1,16 @@
-import { LitElement, html, css, nothing, PropertyValues } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { LitElement, html, css, PropertyValues, nothing } from 'lit';
+import { customElement, property, query } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
-import type { Message } from '../../types';
+
+import { Message } from '../../types';
 
 @customElement('message-box')
 export class MessageBox extends LitElement {
   private observer: ResizeObserver = new ResizeObserver(this.updateFillHeight.bind(this));
   private lastCount: number = 0;
 
-  @property({ type: Array })
-  messages: Message[] = [];
+  @query('.messages') messagesEl!: HTMLElement;
+  @property({ type: Array }) messages: Message[] = [];
 
   protected firstUpdated(changedProperties: PropertyValues) {
     super.firstUpdated(changedProperties);
@@ -37,28 +38,36 @@ export class MessageBox extends LitElement {
 
   render() {
     return html`
-      <div class="container">
+      <div class="scroller top" @click=${this.scrollToTop}>
+        <lc-icon name="chevron-up"></lc-icon>
+      </div>
+      <div class="messages">
         ${repeat(this.messages, (msg) => msg.timestamp, (msg) => msg.role === 'user'
           ? html`
-              <user-message class="message user"
+              <sent-message
                 .timestamp=${msg.timestamp}>
                 ${msg.content?.map(content => content.type === 'text' 
                   ? html`<text-block .value=${content.value}></text-block>` 
                   : nothing)}
-              </user-message>
-            `
+              </sent-message>`
           : html`
-              <bot-message class="message bot"
+              <received-message
                 .name=${msg.name}
-                .avatar=${'/assets/images/user-avatar.png'}
+                .avatar=${msg.avatar}
                 .timestamp=${msg.timestamp}>
-                ${msg.content?.map(content => content.type === 'text'
-                  ? html`<marked-block .value=${content.value}></marked-block>`
-                  : content.type === 'tool'
-                  ? html`<tool-block .value=${content}></tool-block>`
-                  : nothing)}
-              </bot-message>
-          `)}
+                ${msg.content && msg.content.length > 0
+                    ? html`${repeat(msg.content, (c) => c.index, content => content.type === 'thinking'
+                      ? html`<thinking-block .value=${content.value} ?loading=${msg.content?.length === 1}></thinking-block>`
+                      : content.type === 'text'
+                      ? html`<marked-block .value=${content.value}></marked-block>`
+                      : content.type === 'tool'
+                      ? html`<tool-block .value=${content}></tool-block>`
+                      : nothing)}`
+                    : html`<speech-loader></speech-loader>`}
+              </received-message>`)}
+      </div>
+      <div class="scroller bottom" @click=${this.scrollToBottom}>
+        <lc-icon name="chevron-down"></lc-icon>
       </div>
     `;
   }
@@ -67,64 +76,90 @@ export class MessageBox extends LitElement {
    * 현재 엘리먼트의 스크롤을 최상단으로 이동합니다.
    */
   public scrollToTop = () => {
-    this.scrollTo({ top: 0, behavior: 'smooth' });
+    if (!this.messagesEl) return;
+    this.messagesEl.scrollTo({ top: 0, behavior: 'smooth' });
   }
   
   /**
    * 현재 엘리먼트의 스크롤을 최하단으로 이동합니다.
    */
   public scrollToBottom = () => {
-    this.scrollTo({ top: this.scrollHeight, behavior: 'smooth' });
+    if (!this.messagesEl || this.messagesEl.scrollHeight === 0) return;
+    this.messagesEl.scrollTo({ top: this.messagesEl.scrollHeight, behavior: 'smooth' });
   }
 
   // 현재 엘리먼트의 높이를 계산하여 --host-height CSS 변수를 업데이트합니다.
   private updateFillHeight() {
     const hostHeight = this.getBoundingClientRect().height;
+    const messagesStyle = getComputedStyle(this.messagesEl);
     const hostStyle = getComputedStyle(this);
-    const containerStyle = getComputedStyle(this.shadowRoot?.querySelector('.container')!);
-    const paddingBottom = hostStyle.getPropertyValue('padding-bottom');
-    const paddingTop = hostStyle.getPropertyValue('padding-top');
-    const messageGap = containerStyle.getPropertyValue('gap');
-
+    
+    const paddingBottom = messagesStyle.getPropertyValue('padding-bottom');
+    const paddingTop = messagesStyle.getPropertyValue('padding-top');
+    const messageGap = hostStyle.getPropertyValue('--messages-gap');
+    
     // 전체 높이 - 상단패딩 - 메시지 간격 - 하단패딩 = 채워야 할 높이
-    const fillHeight = hostHeight 
-      - parseFloat(paddingTop)  
-      - parseFloat(messageGap)
-      - parseFloat(paddingBottom);
+    const fillHeight = hostHeight
+      - (parseFloat(paddingTop) ?? 0)
+      - (parseFloat(messageGap) ?? 0)
+      - (parseFloat(paddingBottom) ?? 0);
     this.style.setProperty('--fill-height', `${fillHeight}px`);
   }
 
   static styles = css`
     :host {
+      position: relative;
       display: block;
       width: 100%;
       height: 100%;
-      overflow-y: auto;
-      box-sizing: border-box;
-      padding: 64px;
+      overflow: hidden;
 
-      --message-gap: 24px;
+      --messages-padding: 10px 20% 10px 20%;
+      --messages-gap: 24px;
       --fill-height: 100%;
     }
 
-    .container {
-      width: 100%;
-      height: auto;
+    .scroller {
+      position: absolute;
       display: flex;
-      flex-direction: column;
-      gap: var(--message-gap);
+      justify-content: center;
+      align-items: center;
+      width: 32px;
+      height: 32px;
+      right: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 1px solid var(--hs-border-color);
     }
-    .container > :last-child {
+    .scroller.top {
+      top: 16px;
+    }
+    .scroller.bottom {
+      bottom: 16px;
+    }
+
+    .messages {
+      display: block;
+      width: 100%;
+      height: 100%;
+      padding: var(--messages-padding);
+      box-sizing: border-box;
+      overflow-y: auto;
+    }
+    .messages > *:not(:last-child) {
+      margin-bottom: var(--messages-gap);
+    }
+    .messages > :last-child {
       min-height: var(--fill-height);
     }
 
-    user-message {
+    sent-message {
       width: auto;
       height: auto;
       align-self: flex-end;
     }
     
-    bot-message {
+    received-message {
       width: 100%;
       height: auto;
       align-self: flex-start;

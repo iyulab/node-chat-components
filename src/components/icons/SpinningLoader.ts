@@ -1,8 +1,8 @@
 import { LitElement, css, html } from "lit";
 import { customElement } from "lit/decorators.js";
 
-@customElement('lc-spinner')
-export class LcSpinner extends LitElement {
+@customElement('spinning-loader')
+export class SpinningLoader extends LitElement {
   
   render() {
     return html`

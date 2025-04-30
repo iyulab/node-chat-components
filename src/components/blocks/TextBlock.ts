@@ -9,6 +9,7 @@ export class TextBlock extends LitElement {
 
   render() {
     if (!this.value) return nothing;
+    
     return html`${this.value}`;
   }
 
@@ -16,12 +17,10 @@ export class TextBlock extends LitElement {
     :host {
       display: block;
       width: 100%;
-
-      white-space: pre-wrap;
-      word-wrap: break-word;
-
       font-size: 14px;
       line-height: 1.5;
+      white-space: pre-wrap;
+      word-wrap: break-word;
     }
   `;
 }

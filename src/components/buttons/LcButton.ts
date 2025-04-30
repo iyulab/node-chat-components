@@ -15,7 +15,7 @@ export class LcButton extends LitElement {
         ${this.tooltip}
       </div>
       <div class="overlay">
-        <lc-spinner></lc-spinner>
+        <spinning-loader></spinning-loader>
       </div>
     `;
   }

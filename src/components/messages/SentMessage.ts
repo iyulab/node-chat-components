@@ -1,9 +1,10 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
+
 import { format } from '../../internal';
 
-@customElement('user-message')
-export class UserMessage extends LitElement {
+@customElement('sent-message')
+export class SentMessage extends LitElement {
 
   @property({ type: String }) timestamp?: string;
 
@@ -14,42 +15,41 @@ export class UserMessage extends LitElement {
           <slot></slot>
         </div>
         <div class="footer">
-          <div class="flex"></div>
-          <div class="timestamp">
-            ${format(this.timestamp)}
-          </div>
+          ${format(this.timestamp)}
         </div>
       </div>
     `;
   }
 
   static styles = css`
+    :host {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
     .container {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      align-items: flex-end;
+      justify-content: flex-start;
     }
 
     .body {
-      background-color: var(--hs-panel-background-color);
+      display: inline-flex;
       padding: 8px;
-      box-sizing: border-box;
+      border: none;
       border-radius: 8px;
+      box-sizing: border-box;
+      background-color: var(--hs-panel-background-color);
     }
 
     .footer {
-      display: flex;
-      flex-direction: row;
-      gap: 8px;
-
-      .flex {
-        flex: 1;
-      }
-
-      .timestamp {
-        font-size: 0.7em;
-        opacity: 0.7;
-      }
+      align-self: flex-end;
+      font-size: 12px;
+      line-height: 1.5;
+      opacity: 0.7;
+      margin-top: 12px;
     }
   `;
 }

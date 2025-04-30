@@ -5,6 +5,7 @@
     "module": "ESNext",
     "lib": ["ESNext","ES2020","DOM","DOM.Iterable"],
     "moduleResolution": "Bundler",
+    "types": ["vite/client"],
 
     // 엄격한 타입 체킹
     "strict": true,
@@ -41,6 +42,11 @@
   },
   "include": [
     "src/**/*",
-    "rollup.config.ts",
+    "vite.config.ts",
+    "vite-env.d.ts",
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
   ]
 }

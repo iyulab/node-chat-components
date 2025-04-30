@@ -1,2 +1,3 @@
-export * from './Messages';
+export * from './Message';
+export * from './MessageContent';
 export * from './MessageEvents';

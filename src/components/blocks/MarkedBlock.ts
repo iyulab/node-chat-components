@@ -15,9 +15,7 @@ export class MarkedBlock extends LitElement {
   render() {
     if (!this.value) return nothing;
 
-    return until(
-      this.parse(this.value),
-      html`<div>...</div>`);
+    return until(this.parse(this.value), nothing);
   }
 
   private parse = async (value: string) => {
@@ -38,6 +36,7 @@ export class MarkedBlock extends LitElement {
     :host {
       display: block;
       width: 100%;
+      height: auto;
     }
 
     .markdown-body {

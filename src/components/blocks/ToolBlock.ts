@@ -41,6 +41,12 @@ export class ToolBlock extends LitElement {
   }
 
   static styles = css`
+    :host {
+      display: block;
+      width: 100%;
+      margin: 50px 0px;
+    }
+
     .container {
       border: 1px solid var(--hs-border-color);
       border-radius: 4px;

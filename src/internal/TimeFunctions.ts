@@ -31,17 +31,36 @@ export const since = (value?: string): string => {
  */
 export const format = (value?: string, options?: Intl.DateTimeFormatOptions): string => {
   if (!value) return '';
-  let date = new Date(value);
-  const offset = value.endsWith('Z') ? 0 : date.getTimezoneOffset() * 60 * 1000;
-  date = new Date(date.getTime() - offset);
+  // 기본 설정
+  const today = new Date();
   const locale = navigator.language;
-  options = options || {
+  const defaultOptions: Intl.DateTimeFormatOptions = {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
     hour: '2-digit',
     minute: '2-digit',
   };
-  const formatter = new Intl.DateTimeFormat(locale, options);
-  return formatter.format(date);
+
+  // 문자열을 Date 객체로 변환
+  let date = new Date(value);
+  const offset = value.endsWith('Z') ? 0 : date.getTimezoneOffset() * 60 * 1000;
+  date = new Date(date.getTime() - offset);
+
+  if (
+    date.getFullYear() === today.getFullYear() &&
+    date.getMonth() === today.getMonth() &&
+    date.getDate() === today.getDate()
+  ) {
+    // 오늘 날짜인 경우 시간만 반환
+    const timeFormatter = new Intl.DateTimeFormat(locale, { 
+      hour: options?.hour ?? '2-digit', 
+      minute: options?.minute ?? '2-digit' 
+    });
+    return timeFormatter.format(date);
+  } else {
+    // 오늘 날짜가 아닐 경우 전체 날짜 반환
+    const formatter = new Intl.DateTimeFormat(locale, { ...defaultOptions, ...options });
+    return formatter.format(date);
+  }
 }
