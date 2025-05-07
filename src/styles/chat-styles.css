@@ -20,6 +20,10 @@
   --uc-warning-color: #ff9800;
   --uc-danger-color: #e53935;
   --uc-info-color: #0288d1;
+
+  /* 추가 색상 */
+  --uc-shadow-color-weak: rgba(200, 200, 200, 0.3);
+  --uc-shadow-color-strong: rgba(50, 50, 50, 0.5);
 }
 
 :root[theme="dark"] {
@@ -44,4 +48,8 @@
   --uc-warning-color: #ffb74d;
   --uc-danger-color: #ef5350;
   --uc-info-color: #4fc3f7;
+
+  /* 추가 색상 */
+  --uc-shadow-color-weak: rgba(50, 50, 50, 0.3);
+  --uc-shadow-color-strong: rgba(200, 200, 200, 0.5);
 }

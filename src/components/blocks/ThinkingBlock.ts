@@ -55,11 +55,15 @@ export class ThinkingBlock extends LitElement {
       --line-height: 21px;
       --max-height: 260px;
     }
+    :host([loading]) .header {
+      cursor: wait;
+    }
     :host([loading]) .body {
       height: calc(var(--line-height) * 3 + 14px);
       max-height: calc(var(--line-height) * 3 + 14px);
       overflow: hidden !important;
       animation: pulse 1.5s infinite;
+      cursor: wait;
     }
     :host(:not([loading])[collapsed]) .body {
       max-height: 0;
@@ -116,13 +120,13 @@ export class ThinkingBlock extends LitElement {
 
     @keyframes pulse {
       0% {
-        box-shadow: inset 0 0 20px 3px rgba(200, 200, 200, 0.3);
+        box-shadow: inset 0px -20px 20px -15px var(--uc-shadow-color-weak);
       }
       50% {
-        box-shadow: inset 0 0 20px 3px rgba(200, 200, 200, 0.5);
+        box-shadow: inset 0px -20px 20px -15px var(--uc-shadow-color-strong);
       }
       100% {
-        box-shadow: inset 0 0 20px 3px rgba(200, 200, 200, 0.3);
+        box-shadow: inset 0px -20px 20px -15px var(--uc-shadow-color-weak);
       }
     }
   `;

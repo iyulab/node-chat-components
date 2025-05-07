@@ -43,6 +43,10 @@ export class MarkedBlock extends LitElement {
       height: auto;
     }
 
+    * {
+      overflow-wrap: anywhere;
+    }
+
     /* github-markdown styles */
     .markdown-body {
       -ms-text-size-adjust: 100%;
