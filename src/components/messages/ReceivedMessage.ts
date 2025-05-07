@@ -50,7 +50,7 @@ export class ReceivedMessage extends LitElement {
     .avatar {
       width: 34px;
       height: 34px;
-      border: 1px solid var(--hs-border-color, #e0e0e0);
+      border: 1px solid var(--uc-border-color-500);
       border-radius: 50%;
       margin-right: 16px;
       box-sizing: border-box;
@@ -60,7 +60,7 @@ export class ReceivedMessage extends LitElement {
       display: flex;
       align-items: center;
       justify-content: center;
-      background-color: #f0f0f0;
+      background-color: var(--uc-background-color-100);
       overflow: hidden;
     }
     .avatar.holder::after {
@@ -68,7 +68,7 @@ export class ReceivedMessage extends LitElement {
       position: absolute;
       width: 70%;
       height: 70%;
-      background-color: #e0e0e0;
+      background-color: var(--uc-background-color-200);
       border-radius: 50%;
     }
 

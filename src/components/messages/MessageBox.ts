@@ -39,16 +39,18 @@ export class MessageBox extends LitElement {
   render() {
     return html`
       <div class="scroller top" @click=${this.scrollToTop}>
-        <lc-icon name="chevron-up"></lc-icon>
+        <uc-icon name="chevron-up"></uc-icon>
       </div>
       <div class="messages">
         ${repeat(this.messages, (msg) => msg.timestamp, (msg) => msg.role === 'user'
           ? html`
               <sent-message
                 .timestamp=${msg.timestamp}>
-                ${msg.content?.map(content => content.type === 'text' 
-                  ? html`<text-block .value=${content.value}></text-block>` 
-                  : nothing)}
+                ${msg.content && msg.content.length > 0
+                  ? repeat(msg.content, (c) => c.index, c => c.type === 'text'
+                    ? html`<text-block .value=${c.value}></text-block>`
+                    : nothing)
+                  : nothing}
               </sent-message>`
           : html`
               <received-message
@@ -56,18 +58,18 @@ export class MessageBox extends LitElement {
                 .avatar=${msg.avatar}
                 .timestamp=${msg.timestamp}>
                 ${msg.content && msg.content.length > 0
-                    ? html`${repeat(msg.content, (c) => c.index, content => content.type === 'thinking'
-                      ? html`<thinking-block .value=${content.value} ?loading=${msg.content?.length === 1}></thinking-block>`
-                      : content.type === 'text'
-                      ? html`<marked-block .value=${content.value}></marked-block>`
-                      : content.type === 'tool'
-                      ? html`<tool-block .value=${content}></tool-block>`
-                      : nothing)}`
-                    : html`<speech-loader></speech-loader>`}
+                  ? repeat(msg.content, (c) => c.index, c => c.type === 'thinking'
+                    ? html`<thinking-block .value=${c.value} ?loading=${msg.content?.length === 1}></thinking-block>`
+                    : c.type === 'text'
+                    ? html`<marked-block .value=${c.value}></marked-block>`
+                    : c.type === 'tool'
+                    ? html`<tool-block .value=${c}></tool-block>`
+                    : nothing)
+                  : nothing}
               </received-message>`)}
       </div>
       <div class="scroller bottom" @click=${this.scrollToBottom}>
-        <lc-icon name="chevron-down"></lc-icon>
+        <uc-icon name="chevron-down"></uc-icon>
       </div>
     `;
   }
@@ -129,7 +131,7 @@ export class MessageBox extends LitElement {
       right: 32px;
       border-radius: 50%;
       cursor: pointer;
-      border: 1px solid var(--hs-border-color);
+      border: 1px solid var(--uc-border-color-100);
     }
     .scroller.top {
       top: 16px;

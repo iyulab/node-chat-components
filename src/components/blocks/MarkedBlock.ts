@@ -19,12 +19,16 @@ export class MarkedBlock extends LitElement {
   }
 
   private parse = async (value: string) => {
+    // 시작부분에서 제어특수문자 제거
     value = value.replace(/^[\u200B\u200C\u200D\u200E\u200F\uFEFF]/,"");
     value = await marked.parse(value, {
       async: true,
       gfm: true,
     });
+
+    // DOMPurify를 사용하여 HTML 코드에 대한 XSS 공격을 방지
     // value = DOMPurify.sanitize(value);
+
     return html`
       <div class="markdown-body">
         ${unsafeHTML(value)}
@@ -39,6 +43,7 @@ export class MarkedBlock extends LitElement {
       height: auto;
     }
 
+    /* github-markdown styles */
     .markdown-body {
       -ms-text-size-adjust: 100%;
       -webkit-text-size-adjust: 100%;

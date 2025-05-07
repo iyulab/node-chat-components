@@ -2,20 +2,19 @@ import { LitElement, css, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 
-import { icons } from "./LcIconLibrary";
+import { svg } from "./SvgData";
 
-@customElement('lc-icon')
-export class LcIcon extends LitElement {
+@customElement('uc-icon')
+export class UcIcon extends LitElement {
   
   @state() data?: string;
   @property({ type: String }) name?: string;
 
-  protected async updated(_changedProperties: any) {
+  protected updated(_changedProperties: any) {
     super.updated(_changedProperties);
-    await this.updateComplete;
 
     if (_changedProperties.has('name') && this.name) {
-      this.data = icons.get(this.name);
+      this.data = svg.get(this.name) || '';
     }
   }
 

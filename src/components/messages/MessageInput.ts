@@ -42,16 +42,14 @@ export class MessageInput extends LitElement {
         <!-- Button Control -->
         <div class="control-area">
           <slot></slot>
-
-          <div class="flex"></div>
           
-          <lc-button class="send-btn"
+          <uc-button class="send-btn"
             ?disabled=${this.loading ? false : this.disabled}
             @click=${this.loading ? this.dispatchStopEvent : this.dispatchSendEvent}>
-            <lc-icon
+            <uc-icon
               name=${this.loading ? 'square-fill' : 'arrow-up'}
-            ></lc-icon>
-          </lc-button>
+            ></uc-icon>
+          </uc-button>
         </div>
       </div>
     `;
@@ -73,7 +71,6 @@ export class MessageInput extends LitElement {
   }
 
   private dispatchSendEvent = () => {
-    console.log('dispatchSendEvent', this.loading);
     if (this.loading) return;
 
     const value = this.value.trim();
@@ -113,9 +110,9 @@ export class MessageInput extends LitElement {
       gap: 4px;
       padding: 16px 16px;
       box-sizing: border-box;
-      border: 1px solid var(--hs-border-color);
+      border: 1px solid var(--uc-border-color-100);
       border-radius: 16px;
-      background-color: var(--hs-background-color);
+      background-color: var(--uc-background-color-0);
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
@@ -159,17 +156,13 @@ export class MessageInput extends LitElement {
       display: flex;
       flex-direction: row;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-end;
       gap: 8px;
-
-      .flex {
-        flex: 1;
-      }
 
       .send-btn {
         font-size: 12px;
-        color: white;
-        background-color: black;
+        color: var(--uc-background-color-0);
+        background-color: var(--uc-background-color-1000);
       }
     }
   `;

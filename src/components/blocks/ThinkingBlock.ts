@@ -29,8 +29,8 @@ export class ThinkingBlock extends LitElement {
             ? html`<div class="title">🤔 Thinking <span class="dots"></span></div>`
             : html`<div class="title">💡 Thought</div>
               ${this.collapsed 
-              ? html`<lc-icon name="plus"></lc-icon>`
-              : html`<lc-icon name="minus"></lc-icon>`}`}
+              ? html`<uc-icon name="plus"></uc-icon>`
+              : html`<uc-icon name="minus"></uc-icon>`}`}
         </div>
         <div class="body">
           <p>${this.value}</p>
@@ -70,7 +70,7 @@ export class ThinkingBlock extends LitElement {
     .container {
       display: block;
       border-radius: 8px;
-      border: 1px solid #ccc;
+      border: 1px solid var(--uc-border-color-500);
       box-sizing: border-box;
     }
 
