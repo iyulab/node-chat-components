@@ -16,20 +16,13 @@ export class ToolBlock extends LitElement {
     return html`
       <div class="container">
         <div class="header" @click=${() => this.collapsed = !this.collapsed}>
-          <hive-icon
-            ?rotate=${this.value.status === 'running' || this.value.status === 'pending'}
-            name=${this.value.status === 'pending' ? 'sandglass'
-              : this.value.status === 'running' ? 'spinner'
-              : this.value.status === 'completed' ? 'check'
-              : this.value.status === 'failed' ? 'error'
-              : 'question'}
-          ></hive-icon>
+          <uc-icon></uc-icon>
           <div class="name">
             ${this.value.name}
           </div>
-          <hive-icon
-            name=${this.collapsed ? 'expand' : 'collapse'}
-          ></hive-icon>
+          <uc-icon 
+            name=${this.collapsed ? 'chevron-down' : 'chevron-up'}
+          ></uc-icon>
         </div>
         <div class="body ${this.collapsed ? 'collapsed' : ''}">
           <marked-block
@@ -48,7 +41,7 @@ export class ToolBlock extends LitElement {
     }
 
     .container {
-      border: 1px solid var(--uc-border-color-500);
+      border: 1px solid var(--uc-border-color-mid);
       border-radius: 4px;
       margin: 8px 0px;
       box-sizing: border-box;
@@ -64,15 +57,8 @@ export class ToolBlock extends LitElement {
       justify-content: space-between;
       cursor: pointer;
 
-      hive-icon {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 24px;
-        height: 24px;
-      }
-      hive-icon[rotate] {
-        animation: rotate 1.5s linear infinite;
+      uc-icon {
+        font-size: 24px;
       }
 
       .name {
@@ -91,18 +77,6 @@ export class ToolBlock extends LitElement {
     .body.collapsed {
       max-height: 0;
       overflow: hidden;
-    }
-    
-    @keyframes rotate {
-      0% {
-        transform: rotate(0deg);
-      }
-      66.67% { /* 약 1초 동안 360도 회전 */
-        transform: rotate(180deg);
-      }
-      100% { /* 0.5초 동안 정지 */
-        transform: rotate(180deg);
-      }
     }
   `;
 }

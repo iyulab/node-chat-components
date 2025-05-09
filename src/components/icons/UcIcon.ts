@@ -2,7 +2,7 @@ import { LitElement, css, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 
-import { svg } from "./SvgData";
+import { svg } from "../../internal";
 
 @customElement('uc-icon')
 export class UcIcon extends LitElement {

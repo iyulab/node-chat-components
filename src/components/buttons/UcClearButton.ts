@@ -21,8 +21,12 @@ export class UcClearButton extends LitElement {
       padding: 0;
     }
 
+    uc-button {
+      padding: 6px;
+    }
+
     uc-icon {
-      font-size: 21px;
+      font-size: 20px;
     }
   `;
 }

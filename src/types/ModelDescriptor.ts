@@ -1,6 +1,7 @@
 export interface ModelDescriptor {
   provider: string;
-  model: string;
-  display: string;
+  modelId: string;
+  displayName: string;
   description: string;
+  contextWindow: number;
 }

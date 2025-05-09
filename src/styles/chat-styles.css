@@ -2,54 +2,174 @@
   color-scheme: light;
 
   /* 텍스트 색상 */
-  --uc-text-color: #1a1a1a;
+  --uc-txt-color: #1a1a1a;
 
   /* 배경 색상 */
   --uc-background-color-0: #ffffff;
   --uc-background-color-100: #f9f9f9;
-  --uc-background-color-500: #e0e0e0;
+  --uc-background-color-200: #f0f0f0;
+  --uc-background-color-300: #e8e8e8;
+  --uc-background-color-400: #e0e0e0;
+  --uc-background-color-500: #d8d8d8;
+  --uc-background-color-600: #d0d0d0;
+  --uc-background-color-700: #c8c8c8;
+  --uc-background-color-800: #c0c0c0;
+  --uc-background-color-900: #b8b8b8;
   --uc-background-color-1000: #121212;
 
+ /* 빨강 색상 */
+ --uc-red-color-0: #ffebee;
+ --uc-red-color-100: #ffcdd2;
+ --uc-red-color-200: #ef9a9a;
+ --uc-red-color-300: #e57373;
+ --uc-red-color-400: #ef5350;
+ --uc-red-color-500: #f44336;
+ --uc-red-color-600: #e53935;
+ --uc-red-color-700: #d32f2f;
+ --uc-red-color-800: #c62828;
+ --uc-red-color-900: #b71c1c;
+ --uc-red-color-1000: #8c1414;
+
+ /* 파랑 색상 */
+ --uc-blue-color-0: #e7f0fe;
+ --uc-blue-color-100: #b3d4fc;
+ --uc-blue-color-200: #90caf9;
+ --uc-blue-color-300: #64b5f6;
+ --uc-blue-color-400: #42a5f5;
+ --uc-blue-color-500: #2196f3;
+ --uc-blue-color-600: #1e88e5;
+ --uc-blue-color-700: #1976d2;
+ --uc-blue-color-800: #1565c0;
+ --uc-blue-color-900: #0d47a1;
+ --uc-blue-color-1000: #0a2e51;
+
+ /* 초록 색상 */
+ --uc-green-color-0: #e8f5e9;
+ --uc-green-color-100: #c8e6c9;
+ --uc-green-color-200: #a5d6a7;
+ --uc-green-color-300: #81c784;
+ --uc-green-color-400: #66bb6a;
+ --uc-green-color-500: #4caf50;
+ --uc-green-color-600: #43a047;
+ --uc-green-color-700: #388e3c;
+ --uc-green-color-800: #2e7d32;
+ --uc-green-color-900: #1b5e20;
+ --uc-green-color-1000: #103910;
+
+ /* 노랑 색상 */
+ --uc-yellow-color-0: #fffde7;
+ --uc-yellow-color-100: #fff9c4;
+ --uc-yellow-color-200: #fff59d;
+ --uc-yellow-color-300: #fff176;
+ --uc-yellow-color-400: #ffee58;
+ --uc-yellow-color-500: #ffeb3b;
+ --uc-yellow-color-600: #fdd835;
+ --uc-yellow-color-700: #fbc02d;
+ --uc-yellow-color-800: #f9a825;
+ --uc-yellow-color-900: #f57f17;
+ --uc-yellow-color-1000: #e65100;
+
   /* 테두리 색상 */
-  --uc-border-color-100: #e6e6e6;
-  --uc-border-color-500: #cccccc;
-  --uc-border-color-1000: #999999;
+  --uc-border-color-low: #e6e6e6;
+  --uc-border-color-mid: #cccccc;
+  --uc-border-color-high: #999999;
+
+  /* 그림자 색상 */
+  --uc-shadow-color-low: rgba(200, 200, 200, 0.3);
+  --uc-shadow-color-mid: rgba(200, 200, 200, 0.4);
+  --uc-shadow-color-high: rgba(50, 50, 50, 0.5);
 
   /* 상태 색상 */
-  --uc-success-color: #28a745;
-  --uc-warning-color: #ff9800;
-  --uc-danger-color: #e53935;
-  --uc-info-color: #0288d1;
-
-  /* 추가 색상 */
-  --uc-shadow-color-weak: rgba(200, 200, 200, 0.3);
-  --uc-shadow-color-strong: rgba(50, 50, 50, 0.5);
+  --uc-info-color: var(--uc-blue-color-500);
+  --uc-danger-color: var(--uc-red-color-500);
+  --uc-warning-color: var(--uc-yellow-color-500);
+  --uc-success-color: var(--uc-green-color-500);
 }
 
 :root[theme="dark"] {
   color-scheme: dark;
   
   /* 텍스트 색상 */
-  --uc-text-color: #f5f5f5;
+  --uc-txt-color: #f5f5f5;
 
   /* 배경 색상 */
   --uc-background-color-0: #121212;
   --uc-background-color-100: #1e1e1e;
-  --uc-background-color-500: #2c2c2c;
-  --uc-background-color-1000: #444444;
+  --uc-background-color-200: #2a2a2a;
+  --uc-background-color-300: #363636;
+  --uc-background-color-400: #424242;
+  --uc-background-color-500: #4e4e4e;
+  --uc-background-color-600: #5a5a5a;
+  --uc-background-color-700: #666666;
+  --uc-background-color-800: #727272;
+  --uc-background-color-900: #7e7e7e;
+  --uc-background-color-1000: #f9f9f9;
+
+ /* 빨강 색상 */
+ --uc-red-color-0: #442727;
+ --uc-red-color-100: #5f3532;
+ --uc-red-color-200: #7a4240;
+ --uc-red-color-300: #96324e;
+ --uc-red-color-400: #b5225b;
+ --uc-red-color-500: #d32f2f;
+ --uc-red-color-600: #c62828;
+ --uc-red-color-700: #b71c1c;
+ --uc-red-color-800: #8c1414;
+ --uc-red-color-900: #6d0a0a;
+ --uc-red-color-1000: #4d0000;
+
+ /* 파랑 색상 */
+ --uc-blue-color-0: #152238;
+ --uc-blue-color-100: #1e2f4f;
+ --uc-blue-color-200: #283a66;
+ --uc-blue-color-300: #32467d;
+ --uc-blue-color-400: #3c5294;
+ --uc-blue-color-500: #1565c0;
+ --uc-blue-color-600: #0d47a1;
+ --uc-blue-color-700: #0a2e51;
+ --uc-blue-color-800: #071f36;
+ --uc-blue-color-900: #05101c;
+ --uc-blue-color-1000: #030a11;
+
+ /* 초록 색상 */
+ --uc-green-color-0: #1c301d;
+ --uc-green-color-100: #2a422c;
+ --uc-green-color-200: #38543b;
+ --uc-green-color-300: #46664a;
+ --uc-green-color-400: #547859;
+ --uc-green-color-500: #388e3c;
+ --uc-green-color-600: #2e7d32;
+ --uc-green-color-700: #1b5e20;
+ --uc-green-color-800: #103910;
+ --uc-green-color-900: #092208;
+ --uc-green-color-1000: #061503;
+
+ /* 노랑 색상 */
+ --uc-yellow-color-0: #332e1b;
+ --uc-yellow-color-100: #4c4226;
+ --uc-yellow-color-200: #655631;
+ --uc-yellow-color-300: #7e6a3c;
+ --uc-yellow-color-400: #977e47;
+ --uc-yellow-color-500: #fbc02d;
+ --uc-yellow-color-600: #f9a825;
+ --uc-yellow-color-700: #f57f17;
+ --uc-yellow-color-800: #e65100;
+ --uc-yellow-color-900: #b33b00;
+ --uc-yellow-color-1000: #802b00;
 
   /* 테두리 색상 */
-  --uc-border-color-100: #333333;
-  --uc-border-color-500: #555555;
-  --uc-border-color-1000: #888888;
+  --uc-border-color-low: #333333;
+  --uc-border-color-mid: #555555;
+  --uc-border-color-high: #888888;
+
+  /* 그림자 색상 */
+  --uc-shadow-color-low: rgba(50, 50, 50, 0.3);
+  --uc-shadow-color-mid: rgba(50, 50, 50, 0.4);
+  --uc-shadow-color-high: rgba(200, 200, 200, 0.5);
 
   /* 상태 색상 */
-  --uc-success-color: #66bb6a;
-  --uc-warning-color: #ffb74d;
-  --uc-danger-color: #ef5350;
-  --uc-info-color: #4fc3f7;
-
-  /* 추가 색상 */
-  --uc-shadow-color-weak: rgba(50, 50, 50, 0.3);
-  --uc-shadow-color-strong: rgba(200, 200, 200, 0.5);
+  --uc-info-color: var(--uc-blue-color-500);
+  --uc-danger-color: var(--uc-red-color-500);
+  --uc-warning-color: var(--uc-yellow-color-500);
+  --uc-success-color: var(--uc-green-color-500);
 }

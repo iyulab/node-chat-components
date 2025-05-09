@@ -12,28 +12,29 @@ export class MessageBox extends LitElement {
   @query('.messages') messagesEl!: HTMLElement;
   @property({ type: Array }) messages: Message[] = [];
 
+  // 엘리먼트의 크기가 변경될 때마다 --fill-height를 업데이트합니다.
   protected firstUpdated(changedProperties: PropertyValues) {
     super.firstUpdated(changedProperties);
 
-    // 엘리먼트의 크기가 변경될 때마다 fillHeight를 업데이트합니다.
     this.observer.observe(this);
     this.updateFillHeight();
   }
 
+  // 새로운 메시지가 추가되었을 때 스크롤을 하단으로 이동합니다.
   protected updated(changedProperties: PropertyValues) {
     super.updated(changedProperties);
 
-    // 새로운 메시지가 추가되었을 때 스크롤을 하단으로 이동합니다.
-    if (changedProperties.has('messages')) {
+    if (changedProperties.has('messages') && this.messages) {
       if(this.lastCount === this.messages.length) return;
       this.lastCount = this.messages.length;
       this.scrollToBottom();
     }
   }
 
+  // Resource를 해제합니다.
   disconnectedCallback() {
-    super.disconnectedCallback();
     this.observer.disconnect();
+    super.disconnectedCallback();
   }
 
   render() {
@@ -77,17 +78,23 @@ export class MessageBox extends LitElement {
   /**
    * 현재 엘리먼트의 스크롤을 최상단으로 이동합니다.
    */
-  public scrollToTop = () => {
+  public scrollToTop = async () => {
+    await this.updateComplete;
     if (!this.messagesEl) return;
-    this.messagesEl.scrollTo({ top: 0, behavior: 'smooth' });
+    requestAnimationFrame(() => {
+      this.messagesEl.scrollTo({ top: 0, behavior: 'smooth' });
+    });
   }
   
   /**
    * 현재 엘리먼트의 스크롤을 최하단으로 이동합니다.
    */
-  public scrollToBottom = () => {
+  public scrollToBottom = async () => {
+    await this.updateComplete;
     if (!this.messagesEl || this.messagesEl.scrollHeight === 0) return;
-    this.messagesEl.scrollTo({ top: this.messagesEl.scrollHeight, behavior: 'smooth' });
+    requestAnimationFrame(() => {
+      this.messagesEl.scrollTo({ top: this.messagesEl.scrollHeight, behavior: 'smooth' });
+    });
   }
 
   // 현재 엘리먼트의 높이를 계산하여 --host-height CSS 변수를 업데이트합니다.
@@ -131,7 +138,7 @@ export class MessageBox extends LitElement {
       right: 32px;
       border-radius: 50%;
       cursor: pointer;
-      border: 1px solid var(--uc-border-color-100);
+      border: 1px solid var(--uc-border-color-mid);
     }
     .scroller.top {
       top: 16px;

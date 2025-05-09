@@ -62,7 +62,7 @@ export class UcButton extends LitElement {
       align-items: center;
       justify-content: center;
 
-      border: 1px solid var(--uc-border-color-500);
+      border: 1px solid var(--uc-border-color-mid);
       border-radius: 8px;
       padding: 8px;
       font-size: 16px;
@@ -120,9 +120,10 @@ export class UcButton extends LitElement {
       border-radius: 4px;
       font-size: 14px;
 
-      background-color: rgba(0, 0, 0, 0.5);
-      color: white;
+      background-color: var(--uc-background-color-900);
+      
       backdrop-filter: blur(5px);
+      color: white;
       
       transition: opacity 0.3s ease;
       pointer-events: none;

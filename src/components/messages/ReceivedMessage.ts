@@ -1,7 +1,7 @@
 import { LitElement, css, html, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
-import { format } from '../../internal';
+import { format, base64 } from '../../internal';
 
 @customElement('received-message')
 export class ReceivedMessage extends LitElement {
@@ -14,9 +14,9 @@ export class ReceivedMessage extends LitElement {
     return html`
       <div class="container">
         <!-- Avatar -->
-        ${this.avatar 
-          ? html`<img class="avatar" src="${this.avatar}" alt="Avatar"/>` 
-          : html`<div class="avatar holder" aria-hidden="true"></div>`}
+        <img class="avatar" 
+          src=${this.avatar || base64.get('blank-avatar') || ''}
+          alt="Avatar" />
 
         <!-- Main -->
         <div class="main">
@@ -50,26 +50,10 @@ export class ReceivedMessage extends LitElement {
     .avatar {
       width: 34px;
       height: 34px;
-      border: 1px solid var(--uc-border-color-500);
+      border: 1px solid var(--uc-border-color-mid);
       border-radius: 50%;
       margin-right: 16px;
       box-sizing: border-box;
-    }
-    .avatar.holder {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background-color: var(--uc-background-color-100);
-      overflow: hidden;
-    }
-    .avatar.holder::after {
-      content: '';
-      position: absolute;
-      width: 70%;
-      height: 70%;
-      background-color: var(--uc-background-color-200);
-      border-radius: 50%;
     }
 
     .main {

@@ -41,7 +41,7 @@ export class SentMessage extends LitElement {
       border: none;
       border-radius: 8px;
       box-sizing: border-box;
-      background-color: var(--uc-background-color-500);
+      background-color: var(--uc-background-color-200);
     }
 
     .footer {

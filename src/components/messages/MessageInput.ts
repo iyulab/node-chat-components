@@ -110,7 +110,7 @@ export class MessageInput extends LitElement {
       gap: 4px;
       padding: 16px 16px;
       box-sizing: border-box;
-      border: 1px solid var(--uc-border-color-100);
+      border: 1px solid var(--uc-border-color-low);
       border-radius: 16px;
       background-color: var(--uc-background-color-0);
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);

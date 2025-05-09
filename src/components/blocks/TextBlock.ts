@@ -26,7 +26,7 @@ export class TextBlock extends LitElement {
       font-variant: normal;
 
       /* Color styles */
-      color: var(--hs-text-color, #000);
+      color: var(--uc-txt-color);
       background-color: transparent;
       text-shadow: none;
 

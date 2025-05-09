@@ -1,4 +1,4 @@
-import { LitElement, html, css } from 'lit';
+import { LitElement, html, css, nothing, PropertyValues } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
 
 import { 
@@ -17,84 +17,93 @@ export class UcModelSelect extends LitElement {
   @query('.list') listEl!: HTMLElement;
 
   @property({ type: Boolean, reflect: true }) open: boolean = false;
-
+  @property({ type: String }) placeholder: string = "Choose a model";
   @property({ type: Array }) models: ModelDescriptor[] = [];
-  @property({ type: Object }) defaultModel?: ModelDescriptor;
   @property({ type: Object }) selectedModel?: ModelDescriptor;
 
   connectedCallback(): void {
     super.connectedCallback();
-    this.addEventListener('focusin', this.handleClickInside);
-    this.addEventListener('focusout', this.handleClickOutside);
+    this.addEventListener('focusout', () => this.open = false);
   }
 
   disconnectedCallback(): void {
+    this.removeEventListener('focusout', () => this.open = false);
     super.disconnectedCallback();
-    this.removeEventListener('focusin', this.handleClickInside);
-    this.removeEventListener('focusout', this.handleClickOutside);
+  }
+
+  protected updated(changedProperties: PropertyValues) {
+    super.updated(changedProperties);
+
+    if (changedProperties.has('open')) {
+      this.open ? this.show() : this.hide();
+    }
   }
 
   render() {
     return html`
-      <div class="selecter"
-        tabindex="0"
-        @click=${async () => {
-          this.listEl.classList.toggle('show');
-          if (this.listEl.classList.contains('show')) {
-            await this.compute();
-            this.listEl.style.display = 'block';
-          } else {
-            this.listEl.style.display = 'none';
-            this.listEl.style.left = '0px';
-            this.listEl.style.top = '0px';
-          }
-        }}>
-
-        ${this.selectedModel
-          ? html`<span class="selected-model">${this.selectedModel.display}</span>`
-          : html`<span class="placeholder">Select a model</span>`}
-
+      <div class="selecter" tabindex="0" @click=${() => this.toggle()}>
+        <div class="value">
+          ${this.selectedModel?.displayName || this.placeholder}
+        </div>
+        <uc-icon class="icon"
+          name=${this.open ? 'chevron-up' : 'chevron-down'}
+        ></uc-icon>
       </div>
-      <div class="list">
-        ${repeat(this.models, (i) => i.model, (i) => html`
-          <div class="item" ?selected=${this.selectedModel?.model === i.model}
-            @click=${() => {
-              this.selectedModel = i;
-              this.dispatchSelectEvent(i);
-              this.listEl.classList.remove('show');
-              this.listEl.style.display = 'none';
-            }}>
-            <div class="display">${i.display}</div>
-            <div class="description">${i.description}</div>
-          </div>
-        `)}
+      <div class="list" tabindex="0">
+        ${repeat(this.models, (i) => i.modelId, (i) => {
+          const selected = this.selectedModel?.modelId === i.modelId;
+          return html`
+            <div class="item" ?selected=${selected} @click=${() => this.select(i)}>
+              <div class="display">
+                ${i.displayName}
+                ${selected ? html`<uc-icon name="check"></uc-icon>` : nothing}
+              </div>
+              <div class="description">
+                ${i.description}
+              </div>
+            </div>
+          `})}
       </div>
     `;
   }
 
-  private handleClickOutside = async (e: FocusEvent) => {
-    console.log("clicked outside", e);
-    if (!this.open) return;
+  private toggle = () => {
+    this.open = !this.open;
+  }
+
+  private select = (model: ModelDescriptor) => {
+    this.selectedModel = model;
+    this.dispatchEvent(new CustomEvent('select', { 
+      detail: this.selectedModel, 
+      bubbles: true, composed: true 
+    }));
     this.open = false;
   }
 
-  private handleClickInside = async (e: FocusEvent) => {
-    console.log("clicked inside", e);
-    if (this.open) return;
-
+  private show = async () => {
+    if (!this.open) return;
     await this.compute();
-    this.open = true;
+    this.listEl.classList.add('open');
+  }
+
+  private hide = async () => {
+    if (this.open) return;
+    this.listEl.classList.remove('open');
+
+    this.dispatchEvent(new CustomEvent('popup', {
+      bubbles: true,
+      composed: true,
+    }));
   }
 
   private compute = async () => {
-    const { x, y } = await computePosition(this.selecterEl, this.listEl, {
+    const { x, y } = await computePosition(this, this.listEl, {
       middleware: [
         flip(),
         shift(),
-        offset(4),
+        offset(),
         autoPlacement({
           allowedPlacements: ['top-start', 'bottom-start'],
-          boundary: this.selecterEl,
         }),
       ],
     });
@@ -105,110 +114,90 @@ export class UcModelSelect extends LitElement {
     });
   }
 
-  private dispatchSelectEvent = (model: ModelDescriptor) => {
-    this.selectedModel = model;
-    this.dispatchEvent(
-      new CustomEvent('select', {
-        detail: this.selectedModel,
-        bubbles: true,
-        composed: true,
-      })
-    );
-  }
-
-  private dispatchPopupEvent = () => {
-    this.dispatchEvent(
-      new CustomEvent('popup', {
-        bubbles: true,
-        composed: true,
-      })
-    );
-  }
-
   static styles = css`
     :host {
+      position: relative;
       display: block;
-    }
-    :host([open]) .list {
-      display: block;
+      background-color: var(--uc-background-color-0);
+      border: 1px solid var(--uc-border-color-low);
+      border-radius: 8px;
+      padding: 8px 12px;
+      box-sizing: border-box;
     }
 
-     /* 선택자 전체 컨테이너 */
     .selecter {
+      position: relative;
       display: flex;
+      flex-direction: row;
       align-items: center;
       justify-content: space-between;
-      padding: 0.75rem 1rem;
-      min-width: 200px;
-      background-color: var(--uc-bg-color, #fff);
-      border: 1px solid #ccc;
-      border-radius: 8px;
       cursor: pointer;
-      font-size: 1rem;
-      transition: border-color 0.3s, box-shadow 0.3s;
-    }
-
-    /* 선택자에 포커스 또는 활성 상태 */
-    .selecter:focus,
-    .selecter:hover {
-      border-color: #66afe9;
-      box-shadow: 0 0 5px rgba(102, 175, 233, 0.6);
-      outline: none;
-    }
-
-    /* 선택된 모델 또는 플레이스 홀더 */
-    .selected-model {
-      color: #333;
-      font-weight: 600;
-    }
-    .placeholder {
-      color: #999;
+      font-size: 14px;
+      line-height: 16px;
+      gap: 8px;
     }
 
     /* 리스트 스타일 */
     .list {
-      display: none; /* 자바스크립트 로직으로 표시/숨김 처리 */
       position: absolute;
-      margin-top: 4px;
-      min-width: 100%;
-      max-height: 250px;
-      overflow-y: auto;
-      background-color: var(--uc-bg-color, #fff);
+      width: max-content;
+      top: 0;
+      left: 0;
+
+      display: flex;
+      flex-direction: column;
+      visibility: hidden;
+      opacity: 0;
+
       border-radius: 8px;
+      border: 1px solid var(--uc-border-color-low);
+      background-color: var(--uc-background-color-0);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       z-index: 1000;
-      padding: 0.5rem 0;
+
+      max-height: 260px;
+      overflow: auto;
+      box-sizing: border-box;
+
+      scrollbar-color: var(--uc-background-color-800) transparent;
+      scrollbar-width: thin;
+    }
+    .list.open {
+      visibility: visible;
+      opacity: 1;
     }
 
-    /* 리스트 항목 */
     .item {
-      padding: 0.75rem 1.2rem;
-      cursor: pointer;
+      position: relative;
+      padding: 6px 12px;
       display: flex;
       flex-direction: column;
       transition: background-color 0.2s, color 0.2s;
-    }
+      box-sizing: border-box;
+      cursor: pointer;
+      
+      .display {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 12px;
+        line-height: 20px;
+        font-weight: 600;
+      }
 
-    /* 선택된 항목 하이라이트 */
+      .description {
+        font-size: 12px;
+        line-height: 20px;
+        font-weight: 300;
+        opacity: 0.6;
+      }
+    }
     .item[selected] {
-      background-color: #f0f8ff;
-      font-weight: bold;
+      color: var(--uc-blue-color-500);
     }
-
-    /* 항목 hover 효과 */
     .item:hover {
-      background-color: #e6f7ff;
-    }
-
-    /* 항목 내부 텍스트 */
-    .display {
-      font-size: 1rem;
-      color: #222;
-    }
-    .description {
-      font-size: 0.85rem;
-      color: #666;
-      margin-top: 0.2rem;
+      background-color: var(--uc-background-color-300);
     }
   `;
 }

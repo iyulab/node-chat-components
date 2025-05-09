@@ -74,7 +74,7 @@ export class ThinkingBlock extends LitElement {
     .container {
       display: block;
       border-radius: 8px;
-      border: 1px solid var(--uc-border-color-500);
+      border: 1px solid var(--uc-border-color-mid);
       box-sizing: border-box;
     }
 
@@ -120,13 +120,13 @@ export class ThinkingBlock extends LitElement {
 
     @keyframes pulse {
       0% {
-        box-shadow: inset 0px -20px 20px -15px var(--uc-shadow-color-weak);
+        box-shadow: inset 0px -20px 20px -15px var(--uc-shadow-color-low);
       }
       50% {
-        box-shadow: inset 0px -20px 20px -15px var(--uc-shadow-color-strong);
+        box-shadow: inset 0px -20px 20px -15px var(--uc-shadow-color-high);
       }
       100% {
-        box-shadow: inset 0px -20px 20px -15px var(--uc-shadow-color-weak);
+        box-shadow: inset 0px -20px 20px -15px var(--uc-shadow-color-low);
       }
     }
   `;
