@@ -15,7 +15,9 @@ export class ThinkingBlock extends LitElement {
     super.updated(changedProperties);
 
     if (changedProperties.has('value') && this.value && this.loading && this.bodyEl) {
-      this.bodyEl.scrollTo({ top: this.bodyEl.scrollHeight, behavior: 'smooth' });
+      requestAnimationFrame(() => {
+        this.bodyEl.scrollTo({ top: this.bodyEl.scrollHeight, behavior: 'smooth' });
+      });
     }
   }
 
@@ -33,7 +35,7 @@ export class ThinkingBlock extends LitElement {
               : html`<uc-icon name="minus"></uc-icon>`}`}
         </div>
         <div class="body">
-          <p>${this.value}</p>
+          ${this.value}
         </div>
       </div>
     `;
@@ -49,7 +51,6 @@ export class ThinkingBlock extends LitElement {
       display: block;
       width: 100%;
       height: auto;
-      margin-bottom: 24px;
 
       --font-size: 14px;
       --line-height: 21px;
@@ -84,6 +85,7 @@ export class ThinkingBlock extends LitElement {
       align-items: center;
       justify-content: space-between;
       padding: 5px 10px;
+      box-sizing: border-box;
       cursor: pointer;
     }
     .header .title {
@@ -99,16 +101,14 @@ export class ThinkingBlock extends LitElement {
     .body {
       height: auto;
       max-height: var(--max-height);
-      overflow: auto;
-      transition: max-height 0.3s ease, padding 0.3s ease;
-    }
-    .body p {
-      margin: 0;
       font-weight: 300;
       font-size: var(--font-size);
       line-height: var(--line-height);
       padding: 14px;
       box-sizing: border-box;
+      overflow: auto;
+      overflow-wrap: anywhere;
+      transition: max-height 0.3s ease, padding 0.3s ease;
     }
 
     @keyframes dots {

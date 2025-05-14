@@ -58,6 +58,7 @@ export class ReceivedMessage extends LitElement {
 
     .main {
       flex: 1;
+      max-width: calc(100% - 50px);
       display: flex;
       flex-direction: column;
 
@@ -73,6 +74,7 @@ export class ReceivedMessage extends LitElement {
       .body {
         display: flex;
         flex-direction: column;
+        gap: 12px;
         background-color: transparent;
       }
 

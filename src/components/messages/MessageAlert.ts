@@ -29,7 +29,7 @@ export class MessageAlert extends LitElement {
       this.startTimer();
     }
     if (changedProperties.has('value') && this.value) {
-      
+      this.startTimer();
     }
   }
 

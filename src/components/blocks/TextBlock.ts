@@ -21,12 +21,12 @@ export class TextBlock extends LitElement {
       /* Font styles */
       font-family: auto;
       font-size: 14px;
-      font-weight: 300;
+      font-weight: 400;
       font-style: normal;
       font-variant: normal;
 
       /* Color styles */
-      color: var(--uc-txt-color);
+      color: var(--uc-text-color-high);
       background-color: transparent;
       text-shadow: none;
 

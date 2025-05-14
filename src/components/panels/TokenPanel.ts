@@ -111,7 +111,7 @@ export class TokenPanel extends LitElement {
       height: 8px;
       border-radius: 4px;
       border: 1px solid var(--uc-border-color-low);
-      background-color: var(--uc-background-color-600);
+      background-color: var(--uc-background-color-300);
       box-sizing: border-box;
       overflow: hidden;
 

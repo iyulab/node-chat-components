@@ -59,13 +59,16 @@ export class MessageBox extends LitElement {
                 .avatar=${msg.avatar}
                 .timestamp=${msg.timestamp}>
                 ${msg.content && msg.content.length > 0
-                  ? repeat(msg.content, (c) => c.index, c => c.type === 'thinking'
-                    ? html`<thinking-block .value=${c.value} ?loading=${msg.content?.length === 1}></thinking-block>`
+                  ? repeat(msg.content, (c) => c.index, c => {
+                    const isLast = msg.content?.length === (c.index || 0) + 1;
+                    return c.type === 'thinking'
+                    ? html`<thinking-block .value=${c.value} ?loading=${isLast}></thinking-block>`
                     : c.type === 'text'
                     ? html`<marked-block .value=${c.value}></marked-block>`
                     : c.type === 'tool'
                     ? html`<tool-block .value=${c}></tool-block>`
-                    : nothing)
+                    : nothing;
+                  })
                   : nothing}
               </received-message>`)}
       </div>
