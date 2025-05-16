@@ -1,3 +1,4 @@
 export * from './UcIcon';
 export * from './UcSpinner';
-export * from './UcBarSpinner';
+export * from './UcBarLoader';
+export * from './UcCirclePulser';

@@ -13,15 +13,17 @@ export interface ImageContent extends MessageContentBase {
   data?: string;
 }
 
-export type ToolStatus = "pending" | "ready" | "processing" | "success" | "failed";
+export type ToolExecutionStatus = "pending" | "running" | "completed";
+
+export type ToolApprovalStatus = "notRequired" | "requires" | "approved" | "rejected";
 
 export interface ToolContent extends MessageContentBase {
   type: "tool";
-  status?: ToolStatus;
+  executionStatus: ToolExecutionStatus;
+  approvalStatus: ToolApprovalStatus;
   name?: string;
   arguments?: any;
-  result?: any;
-  userConfirmed?: boolean;
+  result?: { isSuccess: boolean; data: string };
 }
 
 export interface ThinkingContent extends MessageContentBase {

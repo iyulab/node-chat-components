@@ -1,22 +1,13 @@
-import { LitElement, PropertyValues, css, html, nothing } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
+import { LitElement, css, html, nothing } from "lit";
+import { customElement, property } from "lit/decorators.js";
 
 import type { ToolContent } from "../../types";
-import { unsafeHTML } from "lit/directives/unsafe-html.js";
 
 @customElement('tool-block')
 export class ToolBlock extends LitElement {
 
   @property({ type: Object }) value?: ToolContent;
-  @property({ type: String, reflect: true }) status: string = this.value?.status || 'pending';
   @property({ type: Boolean, reflect: true }) collapsed: boolean = true;
-
-  protected updated(changedProperties: PropertyValues) {
-    super.updated(changedProperties);
-    if (changedProperties.has('value')) {
-      this.status = this.value?.status || 'pending';
-    }
-  }
 
   render() {
     if (!this.value) return nothing;
@@ -24,19 +15,17 @@ export class ToolBlock extends LitElement {
     return html`
       <div class="container">
         <div class="header" @click=${this.toggle}>
-          ${this.status === 'pending'
+          ${this.value.executionStatus === 'pending'
             ? html`<div class="title">⏳ Tool Waiting</div>`
-            : this.status === 'ready'
-            ? html`<div class="title">🛠 Tool Ready</div>`
-            : this.status === 'processing'
+            : this.value.executionStatus === 'running'
             ? html`<div class="title">🔄 Tool Used</div>`
-            : this.status === 'success'
+            : this.value.executionStatus === 'completed' && this.value.result?.isSuccess
             ? html`<div class="title">✅ Tool Result</div>`
-            : this.status === 'failed'
+            : this.value.executionStatus === 'completed' && !this.value.result?.isSuccess
             ? html`<div class="title">❌ Tool Failed</div>`
             : nothing}
           
-          ${this.status === 'success' || this.status === 'failed'
+          ${this.value.executionStatus === 'completed'
             ? this.collapsed
               ? html`<uc-icon name="plus"></uc-icon>`
               : html`<uc-icon name="minus"></uc-icon>`
@@ -47,23 +36,26 @@ export class ToolBlock extends LitElement {
             <div class="label">Argument</div>
             <pre class="value">${this.value.arguments}</pre>
             <div class="label">Result</div>
-            <pre class="value">${this.value.result}</pre>
+            <pre class="value">${this.value.result?.data}</pre>
           </div>
         </div>
-        <div class="footer">
-          <uc-button @click=${this.denied}>
-            Deny
-          </uc-button>
-          <uc-button @click=${this.confirmed}>
-            Confirm
-          </uc-button>
-        </div>
+        ${this.value.approvalStatus === 'requires'
+          ? html`
+            <div class="footer">
+              <uc-button @click=${this.denied}>
+                Deny
+              </uc-button>
+              <uc-button @click=${this.confirmed}>
+                Confirm
+              </uc-button>
+            </div>`
+          : nothing}
       </div>
     `;
   }
 
   private toggle = () => {
-    if (this.value && !(this.status === 'success' || this.status === 'failed')) return;
+    if (this.value && this.value.executionStatus !== 'completed') return;
     this.collapsed = !this.collapsed;
   }
 

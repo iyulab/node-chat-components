@@ -1,17 +1,17 @@
 import { LitElement, css, html } from "lit";
 import { customElement } from "lit/decorators.js";
 
-@customElement('uc-bar-spinner')
-export class UcBarSpinner extends LitElement {
+@customElement('uc-bar-loader')
+export class UcBarLoader extends LitElement {
   
   render() {
     return html`
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-        <rect class="spinner-bar" x="1" y="6" width="2.8" height="12" />
-        <rect class="spinner-bar delay-1" x="5.8" y="6" width="2.8" height="12" />
-        <rect class="spinner-bar delay-2" x="10.6" y="6" width="2.8" height="12" />
-        <rect class="spinner-bar delay-3" x="15.4" y="6" width="2.8" height="12" />
-        <rect class="spinner-bar delay-4" x="20.2" y="6" width="2.8" height="12" />
+        <rect class="bounce-bar" x="1" y="6" width="2.8" height="12" />
+        <rect class="bounce-bar delay-1" x="5.8" y="6" width="2.8" height="12" />
+        <rect class="bounce-bar delay-2" x="10.6" y="6" width="2.8" height="12" />
+        <rect class="bounce-bar delay-3" x="15.4" y="6" width="2.8" height="12" />
+        <rect class="bounce-bar delay-4" x="20.2" y="6" width="2.8" height="12" />
       </svg>
     `;
   }
@@ -29,8 +29,8 @@ export class UcBarSpinner extends LitElement {
       fill: currentColor;
     }
 
-    .spinner-bar {
-      animation: spinner-bar-animation 0.9s linear infinite;
+    .bounce-bar {
+      animation: bounce 0.9s linear infinite;
       animation-delay: -0.9s;
     }
     .delay-1 {
@@ -46,7 +46,7 @@ export class UcBarSpinner extends LitElement {
       animation-delay: -0.5s;
     }
 
-    @keyframes spinner-bar-animation {
+    @keyframes bounce {
       0%, 66.66% {
         animation-timing-function: cubic-bezier(0.36, 0.61, 0.3, 0.98);
         y: 6px;

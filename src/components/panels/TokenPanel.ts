@@ -23,7 +23,7 @@ export class TokenPanel extends LitElement {
     return html`
       <div class="container">
         <div class="title">
-          Token Usage
+          TOKEN USAGE
         </div>
         <div class="counters">
           <div class="usage-count">
@@ -64,7 +64,8 @@ export class TokenPanel extends LitElement {
   static styles = css`
     :host {
       display: block;
-      width: 100%;
+      width: 160px;
+      height: 80px;
 
       padding: 8px;
       border-radius: 8px;
@@ -82,7 +83,7 @@ export class TokenPanel extends LitElement {
     }
 
     .title {
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 600;
       line-height: 1.5;
     }
@@ -97,12 +98,12 @@ export class TokenPanel extends LitElement {
 
       .usage-count {
         font-weight: 600;
-        color: #3b82f6;
+        color: var(--uc-blue-color-600);
       }
 
       .max-count {
         font-weight: 300;
-        color: #64748b;
+        color: var(--uc-text-color-mid);
       }
     }
 
