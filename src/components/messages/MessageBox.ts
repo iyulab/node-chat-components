@@ -3,6 +3,7 @@ import { customElement, property, query } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
 
 import { Message } from '../../types';
+import { ToolBlock } from '../blocks';
 
 @customElement('message-box')
 export class MessageBox extends LitElement {
@@ -66,7 +67,7 @@ export class MessageBox extends LitElement {
                     : c.type === 'text'
                     ? html`<marked-block .value=${c.value}></marked-block>`
                     : c.type === 'tool'
-                    ? html`<tool-block .value=${c}></tool-block>`
+                    ? html`<tool-block .value=${c} @tool-change=${this.contentChanged}></tool-block>`
                     : nothing;
                   })
                   : nothing}
@@ -116,6 +117,22 @@ export class MessageBox extends LitElement {
       - (parseFloat(messageGap) ?? 0)
       - (parseFloat(paddingBottom) ?? 0);
     this.style.setProperty('--fill-height', `${fillHeight}px`);
+  }
+
+  private contentChanged = (e: CustomEvent) => {
+    const target = e.target as any;
+    if (target instanceof ToolBlock) {
+      const last = this.messages[this.messages.length - 1];
+      if (last.role === 'assistant') {
+        const index = target.value?.index || 0;
+        if (last.content && last.content[index]) {
+          last.content[index] = target.value!;
+          this.dispatchEvent(new CustomEvent('tool-change', {
+            detail: this.messages,
+          }));
+        }
+      }
+    }
   }
 
   static styles = css`

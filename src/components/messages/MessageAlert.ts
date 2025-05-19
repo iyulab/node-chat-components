@@ -9,7 +9,7 @@ export class MessageAlert extends LitElement {
 
   @state() expanded: boolean = false;
 
-  @property({ type: String }) theme: "warning" | "danger" | "info" | "success" = "warning";
+  @property({ type: String }) status: "warning" | "danger" | "info" | "success" = "warning";
   @property({ type: Boolean, reflect: true }) open: boolean = false;
   @property({ type: Number }) maxRows: number = 3;
   @property({ type: Number }) timeout: number = 0;
@@ -19,8 +19,8 @@ export class MessageAlert extends LitElement {
   protected updated(changedProperties: PropertyValues) {
     super.updated(changedProperties);
     
-    if (changedProperties.has('theme') && this.theme) {
-      this.style.setProperty('--primary-color', `var(--uc-${this.theme}-color)`);
+    if (changedProperties.has('status') && this.status) {
+      this.style.setProperty('--primary-color', `var(--uc-${this.status}-color)`);
     }
     if (changedProperties.has('maxRows') && this.open) {
       this.style.setProperty('--max-rows', `${this.maxRows}`);
@@ -40,8 +40,8 @@ export class MessageAlert extends LitElement {
           <div class="progress-bar"></div>
         </div>
         <div class="header">
-          <uc-icon class="icon" name=${this.theme}></uc-icon>
-          <div class="title">${this.headline || this.theme.toUpperCase()}</div>
+          <uc-icon class="icon" name=${this.status}></uc-icon>
+          <div class="title">${this.headline || this.status.toUpperCase()}</div>
           <div class="flex"></div>
           <uc-icon class="close-btn" name="x" @click=${() => this.open = false}></uc-icon>
         </div>

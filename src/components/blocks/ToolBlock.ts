@@ -16,13 +16,13 @@ export class ToolBlock extends LitElement {
       <div class="container">
         <div class="header" @click=${this.toggle}>
           ${this.value.executionStatus === 'pending'
-            ? html`<div class="title">⏳ Tool Waiting</div>`
+            ? html`<div class="title">⏳ Tool Waiting: ${this.value.name}</div>`
             : this.value.executionStatus === 'running'
-            ? html`<div class="title">🔄 Tool Used</div>`
+            ? html`<div class="title">🔄 Tool Used: ${this.value.name}</div>`
             : this.value.executionStatus === 'completed' && this.value.result?.isSuccess
-            ? html`<div class="title">✅ Tool Result</div>`
+            ? html`<div class="title">✅ Tool Result: ${this.value.name}</div>`
             : this.value.executionStatus === 'completed' && !this.value.result?.isSuccess
-            ? html`<div class="title">❌ Tool Failed</div>`
+            ? html`<div class="title">❌ Tool Failed: ${this.value.name}</div>`
             : nothing}
           
           ${this.value.executionStatus === 'completed'
@@ -60,15 +60,23 @@ export class ToolBlock extends LitElement {
   }
 
   private denied = () => {
-    this.dispatchEvent(new CustomEvent('tool-denied', { 
-      detail: this.value, bubbles: true, composed: true 
+    if (!this.value) return;
+    this.value.approvalStatus = 'rejected';
+    
+    this.dispatchEvent(new CustomEvent('tool-change', { 
+      detail: this.value
     }));
+    this.requestUpdate();
   }
 
   private confirmed = () => {
-    this.dispatchEvent(new CustomEvent('tool-confirmed', { 
-      detail: this.value, bubbles: true, composed: true 
+    if (!this.value) return;
+    this.value.approvalStatus = 'approved';
+
+    this.dispatchEvent(new CustomEvent('tool-change', { 
+      detail: this.value 
     }));
+    this.requestUpdate();
   }
 
   static styles = css`

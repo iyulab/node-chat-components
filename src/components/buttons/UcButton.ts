@@ -16,14 +16,23 @@ export class UcButton extends LitElement {
 
   connectedCallback(): void {
     super.connectedCallback();
-    this.addEventListener('mouseenter', this.compute);
-    this.addEventListener('focus', this.compute);
+    this.tabIndex = 0;
+    if (this.tooltip) {
+      this.addEventListener('mouseenter', this.showTooltip);
+      this.addEventListener('mouseleave', this.hideTooltip);
+      this.addEventListener('focusin', this.showTooltip);
+      this.addEventListener('focusout', this.hideTooltip);
+    }
   }
 
   disconnectedCallback(): void {
+    if (this.tooltip) {
+      this.removeEventListener('mouseenter', this.showTooltip);
+      this.removeEventListener('mouseleave', this.hideTooltip);
+      this.removeEventListener('focusin', this.showTooltip);
+      this.removeEventListener('focusout', this.hideTooltip);
+    }
     super.disconnectedCallback();
-    this.removeEventListener('mouseenter', this.compute);
-    this.removeEventListener('focus', this.compute);
   }
 
   render() {
@@ -38,8 +47,7 @@ export class UcButton extends LitElement {
     `;
   }
 
-  private compute = async () => {
-    console.log("entered!!!!!!!!!!!!!!!!!");
+  private showTooltip = async () => {
     const { x, y } = await computePosition(this, this.tooltipEl, {
       placement: this.tooltipPosition || 'top',
       middleware: [
@@ -48,11 +56,18 @@ export class UcButton extends LitElement {
         offset(4),
       ],
     });
-
     Object.assign(this.tooltipEl.style, {
       left: `${x}px`,
       top: `${y}px`,
     });
+
+    this.tooltipEl.classList.add('visible');
+  }
+
+  private hideTooltip = () => {
+    this.tooltipEl.classList.remove('visible');
+    // this.tooltipEl.style.top = '0';
+    // this.tooltipEl.style.left = '0';
   }
 
   static styles = css`
@@ -67,7 +82,7 @@ export class UcButton extends LitElement {
       padding: 8px;
       font-size: 16px;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: transparent;
+      background-color: var(--uc-background-color-0);
       
       transition: opacity 0.3s ease;
       box-sizing: border-box;
@@ -77,17 +92,13 @@ export class UcButton extends LitElement {
     :host([disabled]) {
       opacity: 0.5;
       pointer-events: none;
-      cursor: not-allowed;
     }
     :host([loading]) .overlay {
       display: flex;
       pointer-events: none;
     }
     :host(:hover) {
-      opacity: 0.8;
-    }
-    :host(:hover) .tooltip {
-      opacity: 1;
+      background-color: var(--uc-background-color-100);
     }
 
     .overlay {
@@ -109,7 +120,6 @@ export class UcButton extends LitElement {
 
     .tooltip {
       display: block;
-      opacity: 0;
       z-index: 1000;
       position: absolute;
       width: max-content;
@@ -120,13 +130,19 @@ export class UcButton extends LitElement {
       border-radius: 4px;
       font-size: 14px;
 
-      background-color: var(--uc-background-color-900);
+      background-color: var(--uc-background-color-1000);
       
       backdrop-filter: blur(5px);
       color: white;
-      
-      transition: opacity 0.3s ease;
+
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      opacity: 0;
       pointer-events: none;
+    }
+    .tooltip.visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(-4px);
     }
   `;
 }
