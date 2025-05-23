@@ -1,14 +1,13 @@
 import { LitElement, css, html, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
-import { format, base64 } from '../../internal';
+import { base64 } from '../../internal';
 
 @customElement('received-message')
 export class ReceivedMessage extends LitElement {
 
   @property({ type: String }) avatar?: string;
   @property({ type: String }) name?: string;
-  @property({ type: String }) timestamp?: string;
 
   render() {
     return html`
@@ -26,9 +25,9 @@ export class ReceivedMessage extends LitElement {
           <div class="body">
             <slot></slot>
           </div>
-          ${this.timestamp 
-            ? html`<div class="footer">${format(this.timestamp)}</div>` 
-            : nothing}
+          <div class="footer">
+            <slot name="footer"></slot>
+          </div>
         </div>
       </div>
     `;
@@ -38,6 +37,7 @@ export class ReceivedMessage extends LitElement {
     :host {
       display: block;
       width: 100%;
+      height: auto;
     }
 
     .container {
@@ -57,8 +57,7 @@ export class ReceivedMessage extends LitElement {
     }
 
     .main {
-      flex: 1;
-      max-width: calc(100% - 50px);
+      width: calc(100% - 50px);
       display: flex;
       flex-direction: column;
 
@@ -72,17 +71,14 @@ export class ReceivedMessage extends LitElement {
       }
 
       .body {
+        width: 100%;
         display: flex;
         flex-direction: column;
         gap: 12px;
-        background-color: transparent;
       }
 
       .footer {
-        align-self: flex-end;
-        font-size: 12px;
-        line-height: 1.5;
-        opacity: 0.7;
+        width: 100%;
         margin-top: 12px;
       }
     }

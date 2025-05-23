@@ -1,8 +1,6 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
-import { format } from '../../internal';
-
 @customElement('sent-message')
 export class SentMessage extends LitElement {
 
@@ -15,7 +13,7 @@ export class SentMessage extends LitElement {
           <slot></slot>
         </div>
         <div class="footer">
-          ${format(this.timestamp)}
+          <slot name="footer"></slot>
         </div>
       </div>
     `;
@@ -24,15 +22,15 @@ export class SentMessage extends LitElement {
   static styles = css`
     :host {
       display: block;
-      width: 100%;
+      width: auto;
       height: auto;
     }
 
     .container {
       display: flex;
       flex-direction: column;
-      align-items: flex-end;
       justify-content: flex-start;
+      align-items: flex-end;
     }
 
     .body {
@@ -45,10 +43,7 @@ export class SentMessage extends LitElement {
     }
 
     .footer {
-      align-self: flex-end;
-      font-size: 12px;
-      line-height: 1.5;
-      opacity: 0.7;
+      width: 100%;
       margin-top: 12px;
     }
   `;

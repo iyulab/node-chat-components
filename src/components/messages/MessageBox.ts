@@ -2,7 +2,8 @@ import { LitElement, html, css, PropertyValues, nothing } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
 
-import { Message } from '../../types';
+import { format } from '../../internal/TimeFunctions';
+import { AssistantMessageContent, Message, UserMessageContent } from '../../types';
 import { ToolBlock } from '../blocks';
 
 @customElement('message-box')
@@ -10,7 +11,7 @@ export class MessageBox extends LitElement {
   private observer: ResizeObserver = new ResizeObserver(this.updateFillHeight.bind(this));
   private lastCount: number = 0;
 
-  @query('.messages') messagesEl!: HTMLElement;
+  @query('.container') containerEl!: HTMLDivElement;
   @property({ type: Array }) messages: Message[] = [];
 
   // 엘리먼트의 크기가 변경될 때마다 --fill-height를 업데이트합니다.
@@ -43,35 +44,43 @@ export class MessageBox extends LitElement {
       <div class="scroller top" @click=${this.scrollToTop}>
         <uc-icon name="chevron-up"></uc-icon>
       </div>
-      <div class="messages">
-        ${repeat(this.messages, (msg) => msg.timestamp, (msg) => msg.role === 'user'
-          ? html`
-              <sent-message
-                .timestamp=${msg.timestamp}>
-                ${msg.content && msg.content.length > 0
-                  ? repeat(msg.content, (c) => c.index, c => c.type === 'text'
-                    ? html`<text-block .value=${c.value}></text-block>`
-                    : nothing)
-                  : nothing}
-              </sent-message>`
-          : html`
-              <received-message
-                .name=${msg.name}
-                .avatar=${msg.avatar}
-                .timestamp=${msg.timestamp}>
-                ${msg.content && msg.content.length > 0
-                  ? repeat(msg.content, (c) => c.index, c => {
-                    const isLast = msg.content?.length === (c.index || 0) + 1;
-                    return c.type === 'thinking'
-                    ? html`<thinking-block .value=${c.value} ?loading=${isLast}></thinking-block>`
-                    : c.type === 'text'
-                    ? html`<marked-block .value=${c.value}></marked-block>`
-                    : c.type === 'tool'
-                    ? html`<tool-block .value=${c} @tool-change=${this.contentChanged}></tool-block>`
-                    : nothing;
-                  })
-                  : nothing}
-              </received-message>`)}
+      <div class="container">
+        <div class="messages">
+          ${repeat(this.messages, (msg) => msg.timestamp, (msg) => msg.role === 'user'
+            ? html`
+                <sent-message>
+                  ${msg.content && msg.content.length > 0
+                    ? repeat(msg.content, (c) => c.index, c => c.type === 'text'
+                      ? html`<text-block .value=${c.value}></text-block>`
+                      : nothing)
+                    : nothing}
+                  <div class="message-footer" slot="footer">
+                    <uc-copy-button value=${this.getTextContent(msg.content)}></uc-copy-button>
+                    <div class="timestamp">${format(msg.timestamp)}</div>
+                  </div>
+                </sent-message>`
+            : html`
+                <received-message
+                  .name=${msg.name}
+                  .avatar=${msg.avatar}>
+                  ${msg.content && msg.content.length > 0
+                    ? repeat(msg.content, (c) => c.index, c => {
+                      const isLast = msg.content?.length === (c.index || 0) + 1;
+                      return c.type === 'thinking'
+                      ? html`<thinking-block .value=${c.value} ?loading=${isLast}></thinking-block>`
+                      : c.type === 'text'
+                      ? html`<marked-block .value=${c.value}></marked-block>`
+                      : c.type === 'tool'
+                      ? html`<tool-block .value=${c} @tool-change=${this.contentChanged}></tool-block>`
+                      : nothing;
+                    })
+                    : nothing}
+                  <div class="message-footer" slot="footer">
+                    <uc-copy-button value=${this.getTextContent(msg.content)}></uc-copy-button>
+                    <div class="timestamp">${format(msg.timestamp)}</div>
+                  </div>
+                </received-message>`)}
+        </div>
       </div>
       <div class="scroller bottom" @click=${this.scrollToBottom}>
         <uc-icon name="chevron-down"></uc-icon>
@@ -84,9 +93,9 @@ export class MessageBox extends LitElement {
    */
   public scrollToTop = async () => {
     await this.updateComplete;
-    if (!this.messagesEl) return;
+    if (!this.containerEl) return;
     requestAnimationFrame(() => {
-      this.messagesEl.scrollTo({ top: 0, behavior: 'smooth' });
+      this.containerEl.scrollTo({ top: 0, behavior: 'smooth' });
     });
   }
   
@@ -95,20 +104,20 @@ export class MessageBox extends LitElement {
    */
   public scrollToBottom = async () => {
     await this.updateComplete;
-    if (!this.messagesEl || this.messagesEl.scrollHeight === 0) return;
+    if (!this.containerEl || this.containerEl.scrollHeight === 0) return;
     requestAnimationFrame(() => {
-      this.messagesEl.scrollTo({ top: this.messagesEl.scrollHeight, behavior: 'smooth' });
+      this.containerEl.scrollTo({ top: this.containerEl.scrollHeight, behavior: 'smooth' });
     });
   }
 
   // 현재 엘리먼트의 높이를 계산하여 --host-height CSS 변수를 업데이트합니다.
   private updateFillHeight() {
     const hostHeight = this.getBoundingClientRect().height;
-    const messagesStyle = getComputedStyle(this.messagesEl);
+    const containerStyle = getComputedStyle(this.containerEl);
     const hostStyle = getComputedStyle(this);
     
-    const paddingBottom = messagesStyle.getPropertyValue('padding-bottom');
-    const paddingTop = messagesStyle.getPropertyValue('padding-top');
+    const paddingBottom = containerStyle.getPropertyValue('padding-bottom');
+    const paddingTop = containerStyle.getPropertyValue('padding-top');
     const messageGap = hostStyle.getPropertyValue('--messages-gap');
     
     // 전체 높이 - 상단패딩 - 메시지 간격 - 하단패딩 = 채워야 할 높이
@@ -117,6 +126,18 @@ export class MessageBox extends LitElement {
       - (parseFloat(messageGap) ?? 0)
       - (parseFloat(paddingBottom) ?? 0);
     this.style.setProperty('--fill-height', `${fillHeight}px`);
+  }
+
+  // 텍스트 블록의 내용만 반환합니다.
+  private getTextContent = (content: AssistantMessageContent[] | UserMessageContent[] | undefined) => {
+    if (!content) return '';
+    var text = '';
+    for (const c of content) {
+      if (c.type === 'text') {
+        text += c.value;
+      }
+    }
+    return text;
   }
 
   private contentChanged = (e: CustomEvent) => {
@@ -167,13 +188,19 @@ export class MessageBox extends LitElement {
       bottom: 16px;
     }
 
-    .messages {
+    .container {
       display: block;
       width: 100%;
       height: 100%;
       padding: var(--messages-padding);
       box-sizing: border-box;
       overflow-y: auto;
+    }
+
+    .messages {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
     }
     .messages > *:not(:last-child) {
       margin-bottom: var(--messages-gap);
@@ -191,7 +218,20 @@ export class MessageBox extends LitElement {
     received-message {
       width: 100%;
       height: auto;
-      align-self: flex-start;
+    }
+
+    .message-footer {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      box-sizing: border-box;
+    }
+    .timestamp {
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--uc-text-color-low);
     }
   `;
 }
