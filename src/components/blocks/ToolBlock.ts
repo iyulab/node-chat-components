@@ -15,17 +15,15 @@ export class ToolBlock extends LitElement {
     return html`
       <div class="container">
         <div class="header" @click=${this.toggle}>
-          ${this.value.executionStatus === 'pending'
+          ${!this.value.isCompleted
             ? html`<div class="title">⏳ Tool Waiting: ${this.value.name}</div>`
-            : this.value.executionStatus === 'running'
-            ? html`<div class="title">🔄 Tool Used: ${this.value.name}</div>`
-            : this.value.executionStatus === 'completed' && this.value.result?.isSuccess
+            : this.value.isCompleted && this.value.result?.isSuccess
             ? html`<div class="title">✅ Tool Result: ${this.value.name}</div>`
-            : this.value.executionStatus === 'completed' && !this.value.result?.isSuccess
+            : this.value.isCompleted && !this.value.result?.isSuccess
             ? html`<div class="title">❌ Tool Failed: ${this.value.name}</div>`
             : nothing}
           
-          ${this.value.executionStatus === 'completed'
+          ${this.value.isCompleted
             ? this.collapsed
               ? html`<uc-icon name="plus"></uc-icon>`
               : html`<uc-icon name="minus"></uc-icon>`
@@ -55,7 +53,7 @@ export class ToolBlock extends LitElement {
   }
 
   private toggle = () => {
-    if (this.value && this.value.executionStatus !== 'completed') return;
+    if (this.value && !this.value.isCompleted) return;
     this.collapsed = !this.collapsed;
   }
 

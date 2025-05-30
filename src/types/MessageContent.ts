@@ -9,7 +9,7 @@ export interface TextContent extends MessageContentBase {
 }
 
 export interface ImageContent extends MessageContentBase {
-  type: "image";
+  type: "file";
   data?: string;
 }
 
@@ -19,7 +19,7 @@ export type ToolApprovalStatus = "notRequired" | "requires" | "approved" | "reje
 
 export interface ToolContent extends MessageContentBase {
   type: "tool";
-  executionStatus: ToolExecutionStatus;
+  isCompleted?: boolean;
   approvalStatus: ToolApprovalStatus;
   name?: string;
   arguments?: any;
@@ -30,7 +30,7 @@ export interface ThinkingContent extends MessageContentBase {
   type: "thinking";
   value?: string;
 }
-  
+
 export type UserMessageContent = TextContent | ImageContent;
 
 export type AssistantMessageContent = TextContent | ToolContent | ThinkingContent;

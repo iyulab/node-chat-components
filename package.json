@@ -28,11 +28,11 @@
   "dependencies": {
     "lit": "^3.3.0",
     "@floating-ui/dom": "^1.7.0",
-    "marked": "^15.0.11",
-    "dompurify": "^3.2.5"
+    "marked": "^15.0.12",
+    "dompurify": "^3.2.6"
   },
   "devDependencies": {
-    "@types/node": "^22.15.19",
+    "@types/node": "^22.15.27",
     "fast-glob": "^3.3.3",
     "vite": "^6.3.5",
     "vite-plugin-dts": "^4.5.4",

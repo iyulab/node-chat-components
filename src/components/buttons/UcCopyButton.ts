@@ -22,20 +22,34 @@ export class UcCopyButton extends LitElement {
   }
 
   public copy = async () => {
-    
     if (!this.value) return;
     if (this.status === 'copied') return;
 
-    // Copy the text to clipboard
-    await navigator.clipboard.writeText(this.value);
+    if (navigator.clipboard) {
+      // If the Clipboard API is available, use it
+      await navigator.clipboard.writeText(this.value);
+    } else {
+      // Fallback for older browsers
+      const area = document.createElement('textarea');
+      area.style.position = 'fixed';
+      area.style.opacity = '0';
+      area.style.pointerEvents = 'none';
+      area.value = this.value;
+      document.body.appendChild(area);
+      area.focus();
+      area.select();
 
-    // Change the status to 'copied'
+      try {
+        document.execCommand('copy');
+      } catch (err) {
+        console.error('Failed to copy: ', err);
+      } finally {
+        document.body.removeChild(area);
+      }
+    }
+
     this.status = 'copied';
-
-    // Wait for the specified delay
     await new Promise((resolve) => setTimeout(resolve, this.delay));
-
-    // Reset the status to 'idle'
     this.status = 'idle';
   }
 
@@ -49,7 +63,7 @@ export class UcCopyButton extends LitElement {
     }
 
     uc-icon {
-      font-size: 12px;
+      font-size: 14px;
       color: var(--uc-text-color-medium);
     }
   `;

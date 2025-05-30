@@ -65,9 +65,7 @@ export class UcButton extends LitElement {
   }
 
   private hideTooltip = () => {
-    this.tooltipEl.classList.remove('visible');
-    // this.tooltipEl.style.top = '0';
-    // this.tooltipEl.style.left = '0';
+    this.tooltipEl.classList.remove('visible');    
   }
 
   static styles = css`
@@ -135,14 +133,15 @@ export class UcButton extends LitElement {
       backdrop-filter: blur(5px);
       color: white;
 
-      transition: opacity 0.3s ease, transform 0.3s ease;
-      opacity: 0;
       pointer-events: none;
+      opacity: 0;
+      transform: scale(0.9);
+      transition: opacity 0.2s ease, transform 0.2s ease;
     }
     .tooltip.visible {
-      opacity: 1;
       pointer-events: auto;
-      transform: translateY(-4px);
+      opacity: 1;
+      transform: scale(1);
     }
   `;
 }
