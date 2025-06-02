@@ -1,5 +1,6 @@
 import { LitElement, html, css, nothing, PropertyValues } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
+import { repeat } from 'lit/directives/repeat.js';
 
 import { 
   computePosition, 
@@ -7,8 +8,7 @@ import {
   flip, 
   offset, 
   shift } from '@floating-ui/dom';
-import type { ModelDescriptor } from '../../types';
-import { repeat } from 'lit/directives/repeat.js';
+import type { ModelSummary } from '../../types';
 
 @customElement('uc-model-select')
 export class UcModelSelect extends LitElement {
@@ -18,8 +18,8 @@ export class UcModelSelect extends LitElement {
 
   @property({ type: Boolean, reflect: true }) open: boolean = false;
   @property({ type: String }) placeholder: string = "Choose a model";
-  @property({ type: Array }) models: ModelDescriptor[] = [];
-  @property({ type: Object }) selectedModel?: ModelDescriptor;
+  @property({ type: Array }) models: ModelSummary[] = [];
+  @property({ type: Object }) selectedModel?: ModelSummary;
 
   connectedCallback(): void {
     super.connectedCallback();
@@ -71,10 +71,10 @@ export class UcModelSelect extends LitElement {
     this.open = !this.open;
   }
 
-  private select = (model: ModelDescriptor) => {
+  private select = (model: ModelSummary) => {
     this.selectedModel = model;
     this.dispatchEvent(new CustomEvent('select', { 
-      detail: this.selectedModel, 
+      detail: this.selectedModel,
       bubbles: true, composed: true 
     }));
     this.open = false;

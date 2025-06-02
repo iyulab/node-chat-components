@@ -1,12 +1,12 @@
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 
-import type { ToolContent } from "../../types";
+import type { ToolMessageContent } from "../../types";
 
 @customElement('tool-block')
 export class ToolBlock extends LitElement {
 
-  @property({ type: Object }) value?: ToolContent;
+  @property({ type: Object }) value?: ToolMessageContent;
   @property({ type: Boolean, reflect: true }) collapsed: boolean = true;
 
   render() {
@@ -17,9 +17,9 @@ export class ToolBlock extends LitElement {
         <div class="header" @click=${this.toggle}>
           ${!this.value.isCompleted
             ? html`<div class="title">⏳ Tool Waiting: ${this.value.name}</div>`
-            : this.value.isCompleted && this.value.result?.isSuccess
+            : this.value.isCompleted && this.value.output?.isSuccess
             ? html`<div class="title">✅ Tool Result: ${this.value.name}</div>`
-            : this.value.isCompleted && !this.value.result?.isSuccess
+            : this.value.isCompleted && !this.value.output?.isSuccess
             ? html`<div class="title">❌ Tool Failed: ${this.value.name}</div>`
             : nothing}
           
@@ -32,18 +32,18 @@ export class ToolBlock extends LitElement {
         <div class="body">
           <div class="content">
             <div class="label">Argument</div>
-            <pre class="value">${this.value.arguments}</pre>
+            <pre class="value">${this.value.input}</pre>
             <div class="label">Result</div>
-            <pre class="value">${this.value.result?.data}</pre>
+            <pre class="value">${this.value.output?.data}</pre>
           </div>
         </div>
-        ${this.value.approvalStatus === 'requires'
+        ${this.value.isApproved === false
           ? html`
             <div class="footer">
-              <uc-button @click=${this.denied}>
+              <uc-button @click=${() => this.denied()}>
                 Deny
               </uc-button>
-              <uc-button @click=${this.confirmed}>
+              <uc-button @click=${() => this.confirmed()}>
                 Confirm
               </uc-button>
             </div>`
@@ -59,7 +59,12 @@ export class ToolBlock extends LitElement {
 
   private denied = () => {
     if (!this.value) return;
-    this.value.approvalStatus = 'rejected';
+    this.value.isCompleted = true;
+    this.value.isApproved = false;
+    this.value.output = {
+      isSuccess: false,
+      data: 'Tool execution was denied by the user.'
+    }
     
     this.dispatchEvent(new CustomEvent('tool-change', { 
       detail: this.value
@@ -69,7 +74,7 @@ export class ToolBlock extends LitElement {
 
   private confirmed = () => {
     if (!this.value) return;
-    this.value.approvalStatus = 'approved';
+    this.value.isApproved = true;
 
     this.dispatchEvent(new CustomEvent('tool-change', { 
       detail: this.value 

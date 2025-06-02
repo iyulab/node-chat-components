@@ -16,7 +16,6 @@ export class TextBlock extends LitElement {
   static styles = css`
     :host {
       display: block;
-      width: 100%;
       
       /* Font styles */
       font-family: auto;

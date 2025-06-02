@@ -1,4 +1,4 @@
-import { LitElement, html, css, PropertyValues, nothing } from 'lit';
+import { LitElement, html, css, PropertyValues } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
 
 @customElement('token-panel')
@@ -33,9 +33,9 @@ export class TokenPanel extends LitElement {
             ${this.maxValue > 0 ? this.formatValue(this.maxValue) : 'unknown'}
           </div>
         </div>
-        ${this.maxValue > 0 
-          ? html`<div class="gauge"><div class="gauge-bar"></div></div>`
-          : nothing}
+        <div class="gauge">
+          <div class="gauge-bar"></div>
+        </div>
       </div>
     `;
   }
@@ -58,6 +58,7 @@ export class TokenPanel extends LitElement {
   }
 
   private formatValue = (value: number) => {
+    if (!value || value < 0) return '0';
     return value.toLocaleString();
   }
 

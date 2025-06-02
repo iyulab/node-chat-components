@@ -3,7 +3,7 @@ import { customElement, property, query } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
 
 import { format } from '../../internal/TimeFunctions';
-import { AssistantMessageContent, Message, UserMessageContent } from '../../types';
+import { Message, MessageContent } from '../../types';
 import { ToolBlock } from '../blocks';
 
 @customElement('message-box')
@@ -50,7 +50,7 @@ export class MessageBox extends LitElement {
             ? html`
                 <sent-message>
                   ${msg.content && msg.content.length > 0
-                    ? repeat(msg.content, (c) => c.index, c => c.type === 'text'
+                    ? repeat(msg.content, (_, i) => i, c => c.type === 'text'
                       ? html`<text-block .value=${c.value}></text-block>`
                       : nothing)
                     : nothing}
@@ -64,14 +64,14 @@ export class MessageBox extends LitElement {
                   .name=${msg.name}
                   .avatar=${msg.avatar}>
                   ${msg.content && msg.content.length > 0
-                    ? repeat(msg.content, (c) => c.index, c => {
-                      const isLast = msg.content?.length === (c.index || 0) + 1;
+                    ? repeat(msg.content, (_, i) => i, (c, i) => {
+                      const isLast = msg.content?.length === (i || 0) + 1;
                       return c.type === 'thinking'
                       ? html`<thinking-block .value=${c.value} ?loading=${isLast}></thinking-block>`
                       : c.type === 'text'
                       ? html`<marked-block .value=${c.value}></marked-block>`
                       : c.type === 'tool'
-                      ? html`<tool-block .value=${c} @tool-change=${this.contentChanged}></tool-block>`
+                      ? html`<tool-block .value=${c} @tool-change=${(e: any) => this.contentChanged(i, e)}></tool-block>`
                       : nothing;
                     })
                     : nothing}
@@ -129,7 +129,7 @@ export class MessageBox extends LitElement {
   }
 
   // 텍스트 블록의 내용만 반환합니다.
-  private getTextContent = (content: AssistantMessageContent[] | UserMessageContent[] | undefined) => {
+  private getTextContent = (content: MessageContent[] | undefined) => {
     if (!content) return '';
     var text = '';
     for (const c of content) {
@@ -140,19 +140,15 @@ export class MessageBox extends LitElement {
     return text;
   }
 
-  private contentChanged = (e: CustomEvent) => {
+  private contentChanged = (idx: number, e: CustomEvent) => {
     const target = e.target as any;
     if (target instanceof ToolBlock) {
-      const last = this.messages[this.messages.length - 1];
-      if (last.role === 'assistant') {
-        const index = target.value?.index || 0;
-        if (last.content && last.content[index]) {
-          last.content[index] = target.value!;
-          this.dispatchEvent(new CustomEvent('tool-change', {
-            detail: this.messages,
-          }));
-        }
-      }
+      const content = this.messages[this.messages.length - 1].content;
+      if (!content || idx < 0 || idx >= content.length) return;
+      content[idx] = target.value as any;
+      this.dispatchEvent(new CustomEvent('tool-change', {
+        detail: this.messages,
+      }));
     }
   }
 

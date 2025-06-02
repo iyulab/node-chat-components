@@ -1,7 +1,7 @@
-export interface ModelDescriptor {
+export interface ModelSummary {
   provider: string;
   modelId: string;
   displayName: string;
   description: string;
-  contextWindow: number;
+  contextLength: number;
 }

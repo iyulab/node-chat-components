@@ -1,4 +1,4 @@
 export * from './Message';
 export * from './MessageContent';
 export * from './MessageEvents';
-export * from './ModelDescriptor';
+export * from './ModelSummary';

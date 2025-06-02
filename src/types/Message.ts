@@ -1,24 +1,22 @@
-import type { 
-  UserMessageContent,
-  AssistantMessageContent
+import type {
+  MessageContent
 } from "./MessageContent";
 
 interface MessageBase {
-  avatar?: string;
-  name?: string;
+  id?: string;
   timestamp?: string;
 }
 
 export interface UserMessage extends MessageBase {
   role: "user";
-
-  content?: UserMessageContent[];
+  content?: MessageContent[];
 }
 
 export interface AssistantMessage extends MessageBase {
   role: "assistant";
-
-  content?: AssistantMessageContent[];
+  name?: string;
+  avatar?: string;
+  content: MessageContent[];
 }
 
 export type Message = UserMessage | AssistantMessage;

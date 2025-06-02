@@ -1,36 +1,34 @@
-export interface MessageContentBase {
-  id?: string;
-  index?: number;
-}
-
-export interface TextContent extends MessageContentBase {
+export interface TextMessageContent {
   type: "text";
   value?: string;
 }
 
-export interface ImageContent extends MessageContentBase {
+export interface FileMessageContent {
   type: "file";
+  contentType?: string;
+  dataFormat?: "text" | "base64" | "url";
   data?: string;
 }
 
-export type ToolExecutionStatus = "pending" | "running" | "completed";
-
-export type ToolApprovalStatus = "notRequired" | "requires" | "approved" | "rejected";
-
-export interface ToolContent extends MessageContentBase {
+export interface ToolMessageContent {
   type: "tool";
   isCompleted?: boolean;
-  approvalStatus: ToolApprovalStatus;
+  isApproved?: boolean;
+  id?: string;
   name?: string;
-  arguments?: any;
-  result?: { isSuccess: boolean; data: string };
+  input?: string;
+  output?: { isSuccess: boolean; data: string };
 }
 
-export interface ThinkingContent extends MessageContentBase {
+export interface ThinkingMessageContent {
   type: "thinking";
+  id?: string;
+  format?: "detailed" | "secure" | "summary";
   value?: string;
 }
 
-export type UserMessageContent = TextContent | ImageContent;
-
-export type AssistantMessageContent = TextContent | ToolContent | ThinkingContent;
+export type MessageContent = (
+  TextMessageContent |
+  FileMessageContent |
+  ToolMessageContent |
+  ThinkingMessageContent);
