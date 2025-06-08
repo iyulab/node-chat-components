@@ -1,21 +1,28 @@
-import { LitElement, html, PropertyValues, nothing } from 'lit';
+import { html, PropertyValues, nothing } from 'lit';
 import { property, query } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
 
-import { format } from '../../internal/TimeFunctions';
-import { UcToolBlock } from '../tool-block/ToolBlock';
-import type { Message, MessageContent } from './MessageBox.types';
-import { styles } from './MessageBox.styles';
+import { BaseElement } from '../../internal/BaseElement.js';
+import { CopyButton } from '../buttons/CopyButton.js';
+import { Icon } from '../icon/Icon.js';
+import { TextBlock } from '../blocks/TextBlock.js';
+import { MarkdownBlock } from '../blocks/MarkdownBlock.js';
+import { ThinkingBlock } from '../blocks/ThinkingBlock.js';
+import { ToolBlock } from '../blocks/ToolBlock.js';
+import { format } from '../../internal/time-functions.js';
 import blank from '../../assets/images/blank-avatar.png?inline';
+import { styles } from './MessageBox.styles.js';
+import type { Message, MessageContent } from './MessageBox.types.js';
 
-import '../../components/copy-button/CopyButton';
-import '../../components/icon/Icon';
-import '../../components/text-block/TextBlock';
-import '../../components/markdown-block/MarkdownBlock';
-import '../../components/thinking-block/ThinkingBlock';
-import '../../components/tool-block/ToolBlock';
-
-export class UcMessageBox extends LitElement {
+export class MessageBox extends BaseElement {
+  static dependencies: Record<string, typeof BaseElement> = {
+    'uc-copy-button': CopyButton,
+    'uc-icon': Icon,
+    'uc-text-block': TextBlock,
+    'uc-markdown-block': MarkdownBlock,
+    'uc-thinking-block': ThinkingBlock,
+    'uc-tool-block': ToolBlock,
+  };
   static styles = [ styles ];
   
   private observer: ResizeObserver = new ResizeObserver(this.updateFillHeight.bind(this));
@@ -160,7 +167,7 @@ export class UcMessageBox extends LitElement {
 
   private contentChanged = (idx: number, e: CustomEvent) => {
     const target = e.target;
-    if (target instanceof UcToolBlock) {
+    if (target instanceof ToolBlock) {
       const content = this.messages[this.messages.length - 1].content;
       if (!content || idx < 0 || idx >= content.length) return;
       content[idx] = target.value as MessageContent;

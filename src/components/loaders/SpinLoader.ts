@@ -1,7 +1,9 @@
-import { LitElement, html } from "lit";
-import { styles } from "./Spinner.styles";
+import { html } from "lit";
+import { styles } from "./SpinLoader.styles.js";
 
-export class UcSpinner extends LitElement {
+import { BaseElement } from "../../internal/BaseElement.js";
+
+export class SpinLoader extends BaseElement {
   static styles = [ styles ];
   
   render() {

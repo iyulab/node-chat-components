@@ -13,24 +13,24 @@ export const styles = css`
     fill: currentColor;
   }
 
-  .bounce-bar {
-    animation: bounce 0.9s linear infinite;
+  .bar {
+    animation: bounce_action 0.9s linear infinite;
     animation-delay: -0.9s;
   }
-  .delay-1 {
+  .d1 {
     animation-delay: -0.8s;
   }
-  .delay-2 {
+  .d2 {
     animation-delay: -0.7s;
   }
-  .delay-3 {
+  .d3 {
     animation-delay: -0.6s;
   }
-  .delay-4 {
+  .d4 {
     animation-delay: -0.5s;
   }
 
-  @keyframes bounce {
+  @keyframes bounce_action {
     0%, 66.66% {
       animation-timing-function: cubic-bezier(0.36, 0.61, 0.3, 0.98);
       y: 6px;

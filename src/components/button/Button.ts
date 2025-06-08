@@ -1,12 +1,17 @@
-import { LitElement, html } from "lit";
+import { html } from "lit";
 import { property, query } from "lit/decorators.js";
 
 import { computePosition, flip, shift, offset } from "@floating-ui/dom";
 import type { Placement } from "@floating-ui/dom";
 
-import { styles } from "./Button.styles";
+import { BaseElement } from "../../internal/BaseElement.js";
+import { SpinLoader } from "../loaders/SpinLoader.js";
+import { styles } from "./Button.styles.js";
 
-export class UcButton extends LitElement {
+export class Button extends BaseElement {
+  static dependencies: Record<string, typeof BaseElement> = {
+    'uc-spin-loader': SpinLoader
+  };
   static styles = [ styles ]
 
   @query('.tooltip') tooltipEl!: HTMLElement;
@@ -41,7 +46,7 @@ export class UcButton extends LitElement {
     return html`
       <slot></slot>
       <div class="overlay">
-        <uc-spinner></uc-spinner>
+        <uc-spin-loader></uc-spin-loader>
       </div>
       <div class="tooltip">
         ${this.tooltip}

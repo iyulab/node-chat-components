@@ -1,9 +1,15 @@
-import { LitElement, PropertyValues, html } from "lit";
+import { PropertyValues, html } from "lit";
 import { property, query } from "lit/decorators.js";
 import { nothing } from "lit/html.js";
-import { styles } from "./ThinkingBlock.styles";
 
-export class UcThinkingBlock extends LitElement {
+import { BaseElement } from "../../internal/BaseElement.js";
+import { Icon } from "../icon/Icon.js";
+import { styles } from "./ThinkingBlock.styles.js";
+
+export class ThinkingBlock extends BaseElement {
+  static dependencies = {
+    "uc-icon": Icon
+  };
   static styles = [ styles ];
 
   @query('.body') bodyEl!: HTMLElement;

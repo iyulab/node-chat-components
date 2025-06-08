@@ -1,11 +1,11 @@
-import { UcIcon } from "./Icon";
+import { Icon } from "./Icon";
 
-export { UcIcon };
+export { Icon };
 
-customElements.define("uc-icon", UcIcon);
+Icon.define("uc-icon");
 
 declare global {
   interface HTMLElementTagNameMap {
-    "uc-icon": UcIcon;
+    "uc-icon": Icon;
   }
 }

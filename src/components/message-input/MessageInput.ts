@@ -1,9 +1,17 @@
-import { LitElement, PropertyValues, html } from "lit";
+import { PropertyValues, html } from "lit";
 import { property } from "lit/decorators.js";
 import { ifDefined } from 'lit/directives/if-defined.js';
-import { styles } from "./MessageInput.styles";
 
-export class UcMessageInput extends LitElement {
+import { BaseElement } from "../../internal/BaseElement.js";
+import { Button } from "../button/Button.js";
+import { Icon } from "../icon/Icon.js";
+import { styles } from "./MessageInput.styles.js";
+
+export class MessageInput extends BaseElement {
+  static dependencies: Record<string, typeof BaseElement> = {
+    'uc-button': Button,
+    'uc-icon': Icon,
+  };
   static styles = [ styles ];
 
   @property({ type: String, reflect: true }) placeholder?: string;

@@ -1,11 +1,11 @@
-import { UcAlert } from "./Alert";
+import { Alert } from "./Alert";
 
-export { UcAlert };
+export { Alert };
 
-customElements.define("uc-alert", UcAlert);
+Alert.define("uc-alert");
 
 declare global {
   interface HTMLElementTagNameMap {
-    "uc-alert": UcAlert;
+    "uc-alert": Alert;
   }
 }

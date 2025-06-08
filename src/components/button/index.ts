@@ -1,11 +1,11 @@
-import { UcButton } from "./Button";
+import { Button } from "./Button";
 
-export { UcButton };
+export { Button };
 
-customElements.define("uc-button", UcButton);
+Button.define("uc-button");
 
 declare global {
   interface HTMLElementTagNameMap {
-    "uc-button": UcButton;
+    "uc-button": Button;
   }
 }

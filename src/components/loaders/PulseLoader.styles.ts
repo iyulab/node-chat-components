@@ -13,18 +13,12 @@ export const styles = css`
     fill: currentColor;
   }
 
-  .pulser {
-    animation: pulse 2s cubic-bezier(0.52,.6,.25,.99) infinite;
+  .circle {
+    animation: pulse_action 2s cubic-bezier(0.52,.6,.25,.99) infinite;
   }
-    
-  @keyframes pulse {
-    0% {
-      r: 0;
-      opacity: 1;
-    }
-    100% {
-      r: 12px;
-      opacity: 0;
-    }
+
+  @keyframes pulse_action {
+    0% {r: 0; opacity: 1;}
+    100% {r: 12px; opacity: 0;}
   }
 `;

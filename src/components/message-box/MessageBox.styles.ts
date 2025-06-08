@@ -58,51 +58,49 @@ export const styles = css`
     width: auto;
     height: auto;
     align-self: flex-end;
+    margin-left: 50px;
   }
-
   .user-msg .msg-body {
     background-color: var(--uc-background-color-200);
     padding: 8px 12px;
     border-radius: 8px;
-    max-width: 80%;
   }
 
   .assistant-msg {
     display: flex;
-    width: 100%;
-    height: auto;
     flex-direction: row;
     align-items: flex-start;
-    gap: 12px;
+    width: 100%;
+    height: auto;
+    box-sizing: border-box;
   }
-
   .assistant-msg .avatar {
+    flex-shrink: 0;
     width: 34px;
     height: 34px;
-    border-radius: 50%;
     border: 1px solid var(--uc-border-color-mid);
-    flex-shrink: 0;
+    border-radius: 50%;
+    margin-right: 16px;
+    box-sizing: border-box;
   }
-
   .assistant-msg .msg-main {
     display: flex;
-    width: calc(100% - 46px);
     flex-direction: column;
+    width: calc(100% - 50px);
   }
-
   .assistant-msg .msg-header {
+    align-self: flex-start;
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
     font-weight: 600;
-    font-size: 14px;
-    margin-bottom: 8px;
+    line-height: 1.5;
+    margin-bottom: 12px;
   }
-
   .assistant-msg .msg-body {
     display: flex;
     flex-direction: column;
+    width: 100%;
     gap: 12px;
-    background-color: var(--uc-background-color-100);
-    padding: 8px 12px;
-    border-radius: 8px;
   }
 
   .msg-footer {

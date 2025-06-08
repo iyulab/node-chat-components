@@ -1,12 +1,12 @@
-import { UcMessageBox } from "./MessageBox";
+import { MessageBox } from "./MessageBox";
 
-export { UcMessageBox };
+export { MessageBox };
 export type * from "./MessageBox.types";
 
-customElements.define("uc-message-box", UcMessageBox);
+MessageBox.define("uc-message-box");
 
 declare global {
   interface HTMLElementTagNameMap {
-    "uc-message-box": UcMessageBox;
+    "uc-message-box": MessageBox;
   }
 }

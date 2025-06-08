@@ -1,12 +1,12 @@
-import { UcModelSelect } from "./ModelSelect";
+import { ModelSelect } from "./ModelSelect";
 
-export { UcModelSelect };
+export { ModelSelect };
 export type { ModelSummary } from "./ModelSelect.types";
 
-customElements.define("uc-model-select", UcModelSelect);
+ModelSelect.define("uc-model-select");
 
 declare global {
   interface HTMLElementTagNameMap {
-    "uc-model-select": UcModelSelect;
+    "uc-model-select": ModelSelect;
   }
 }

@@ -1,18 +1,18 @@
-import { LitElement, html, nothing, PropertyValues } from 'lit';
+import { html, nothing, PropertyValues } from 'lit';
 import { property, query } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
 
-import type { ModelSummary } from './ModelSelect.types.js';
+import { computePosition, autoPlacement, flip, offset, shift } from '@floating-ui/dom';
+
+import { BaseElement } from '../../internal/BaseElement.js';
+import { Icon } from '../icon/Icon.js';
 import { styles } from './ModelSelect.styles.js';
+import type { ModelSummary } from './ModelSelect.types.js';
 
-import {
-  computePosition, 
-  autoPlacement, 
-  flip, 
-  offset, 
-  shift } from '@floating-ui/dom';
-
-export class UcModelSelect extends LitElement {
+export class ModelSelect extends BaseElement {
+  static dependencies: Record<string, typeof BaseElement> = {
+    'uc-icon': Icon
+  };
   static styles = [ styles ];
 
   @query('.selecter') selecterEl!: HTMLElement;

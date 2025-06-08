@@ -1,11 +1,11 @@
-import { UcMessageInput } from "./MessageInput";
+import { MessageInput } from "./MessageInput";
 
-export { UcMessageInput };
+export { MessageInput };
 
-customElements.define("uc-message-input", UcMessageInput);
+MessageInput.define("uc-message-input");
 
 declare global {
   interface HTMLElementTagNameMap {
-    "uc-message-input": UcMessageInput;
+    "uc-message-input": MessageInput;
   }
 }

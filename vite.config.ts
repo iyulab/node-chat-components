@@ -1,15 +1,18 @@
 import path from 'node:path';
-import { defineConfig } from 'vite';
-import { normalizePath } from 'vite'
+import { defineConfig, normalizePath } from 'vite';
 import dts from 'vite-plugin-dts';
-import { viteStaticCopy } from 'vite-plugin-static-copy'
+import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 export default defineConfig({
   build: {
     target: 'esnext',
     outDir: 'dist',
     lib: {
-      entry: 'src/index.ts',
+      entry: [
+        'src/index.ts',
+        'src/components/index.ts',
+        'src/internal/index.ts',
+      ],
       formats: ['es'],
     },
     rollupOptions: {
@@ -29,7 +32,6 @@ export default defineConfig({
       treeshake: true,
     },
     emptyOutDir: true,
-    assetsInlineLimit: 0,
   },
   plugins: [
     dts({
@@ -41,7 +43,7 @@ export default defineConfig({
       targets: [
         {
           src: normalizePath(path.resolve(__dirname,'./src/assets/styles')),
-          dest: normalizePath(path.resolve(__dirname,'./dist/assets')),
+          dest: 'assets'
         }
       ]
     })

@@ -1,8 +1,10 @@
-import { LitElement, html, PropertyValues } from 'lit';
+import { html, PropertyValues } from 'lit';
 import { property, query } from 'lit/decorators.js';
-import { styles } from './TokenPanel.styles';
 
-export class UcTokenPanel extends LitElement {
+import { BaseElement } from '../../internal/BaseElement.js';
+import { styles } from './TokenPanel.styles.js';
+
+export class TokenPanel extends BaseElement {
   static styles = [ styles ];
 
   @query('.gauge-bar') gaugeBarEl!: HTMLElement;

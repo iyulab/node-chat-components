@@ -1,10 +1,15 @@
-import { LitElement, html, nothing } from "lit";
+import { html, nothing } from "lit";
 import { property } from "lit/decorators.js";
 
-import { styles } from "./ToolBlock.styles";
-import type { ToolMessageContent } from "../message-box/MessageBox.types";
+import { BaseElement } from "../../internal/BaseElement.js";
+import { Button } from "../button/Button.js";
+import { styles } from "./ToolBlock.styles.js";
+import type { ToolMessageContent } from "../message-box/MessageBox.types.js";
 
-export class UcToolBlock extends LitElement {
+export class ToolBlock extends BaseElement {
+  static dependencies: Record<string, typeof BaseElement> = {
+    'uc-button': Button
+  }
   static styles = [ styles ];
 
   @property({ type: Object }) value?: ToolMessageContent;
@@ -82,6 +87,4 @@ export class UcToolBlock extends LitElement {
     }));
     this.requestUpdate();
   }
-
-  
 }

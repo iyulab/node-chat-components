@@ -1,9 +1,15 @@
-import { LitElement, html, PropertyValues, nothing } from 'lit';
+import { html, PropertyValues, nothing } from 'lit';
 import { property, query, state } from 'lit/decorators.js';
-import { styles } from './Alert.styles';
 
-export class UcAlert extends LitElement {
+import { BaseElement } from '../../internal/BaseElement.js';
+import { Icon } from '../icon/Icon.js';
+import { styles } from './Alert.styles.js';
+
+export class Alert extends BaseElement {
   static styles = [ styles ]
+  static dependencies: Record<string, typeof BaseElement> = {
+    'uc-icon': Icon,
+  }
   private timeoutId?: number;
 
   @query('.progress-bar') progressBarEl!: HTMLElement;

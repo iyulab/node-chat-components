@@ -1,4 +1,4 @@
-import { LitElement, html, nothing } from "lit";
+import { html, nothing } from "lit";
 import { property } from "lit/decorators.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import { until } from 'lit/directives/until.js';
@@ -6,9 +6,11 @@ import { until } from 'lit/directives/until.js';
 import { Marked } from "marked";
 import { markedHighlight } from "marked-highlight";
 import hljs from "highlight.js";
-import { styles } from "./MarkdownBlock.styles";
 
-export class UcMarkdownblock extends LitElement {
+import { BaseElement } from "../../internal/BaseElement.js";
+import { styles } from "./MarkdownBlock.styles.js";
+
+export class MarkdownBlock extends BaseElement {
   static styles = [ styles ]
 
   private marked = new Marked(

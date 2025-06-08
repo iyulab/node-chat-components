@@ -1,8 +1,10 @@
-import { LitElement, html, nothing } from "lit";
+import { html, nothing } from "lit";
 import { property } from "lit/decorators.js";
-import { styles } from "./TextBlock.styles";
 
-export class UcTextBlock extends LitElement {
+import { BaseElement } from "../../internal/BaseElement.js";
+import { styles } from "./TextBlock.styles.js";
+
+export class TextBlock extends BaseElement {
   static styles = [ styles ];
 
   @property({ type: String })

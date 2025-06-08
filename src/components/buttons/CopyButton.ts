@@ -1,8 +1,16 @@
-import { LitElement, html } from 'lit';
+import { html } from 'lit';
 import { property, state } from 'lit/decorators.js';
-import { styles } from './CopyButton.styles';
 
-export class UcCopyButton extends LitElement {
+import { BaseElement } from '../../internal/BaseElement.js';
+import { Button } from '../button/Button.js';
+import { Icon } from '../icon/Icon.js';
+import { styles } from './CopyButton.styles.js';
+
+export class CopyButton extends BaseElement {
+  static dependencies: Record<string, typeof BaseElement> = {
+    'uc-button': Button,
+    'uc-icon': Icon
+  };
   static styles = [ styles ]
 
   @state() status: 'idle' | 'copied' = 'idle'; // Copy status
