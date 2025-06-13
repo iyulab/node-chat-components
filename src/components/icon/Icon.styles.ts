@@ -3,7 +3,7 @@ import { css } from "lit";
 export const styles = css`
   :host {
     display: inline-flex;
-    font-size: 16px;
+    font-size: inherit;
     color: inherit;
   }
 

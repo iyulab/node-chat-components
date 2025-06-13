@@ -2,89 +2,119 @@ import { html, nothing } from "lit";
 import { property } from "lit/decorators.js";
 
 import { BaseElement } from "../../internal/BaseElement.js";
+import { Icon } from "../icon/Icon.js";
 import { Button } from "../button/Button.js";
+import type { ToolOutput, ToolStatus } from "../message-box/MessageBox.types.js";
 import { styles } from "./ToolBlock.styles.js";
-import type { ToolMessageContent } from "../message-box/MessageBox.types.js";
 
 export class ToolBlock extends BaseElement {
+  static styles = [ super.styles, styles ];
   static dependencies: Record<string, typeof BaseElement> = {
+    'uc-icon': Icon,
     'uc-button': Button
-  }
-  static styles = [ styles ];
+  };
 
-  @property({ type: Object }) value?: ToolMessageContent;
+  @property({ type: String }) status: ToolStatus = 'WAITING';
+  @property({ type: String }) name?: string;
+  @property({ type: String }) input?: string;
+  @property({ type: Object }) output?: ToolOutput;
+
   @property({ type: Boolean, reflect: true }) collapsed: boolean = true;
 
   render() {
-    if (!this.value) return nothing;
-    
-    return html`
-      <div class="container">
-        <div class="header" @click=${this.toggle}>
-          ${!this.value.isCompleted
-            ? html`<div class="title">⏳ Tool Waiting: ${this.value.name}</div>`
-            : this.value.isCompleted && this.value.output?.isSuccess
-            ? html`<div class="title">✅ Tool Result: ${this.value.name}</div>`
-            : this.value.isCompleted && !this.value.output?.isSuccess
-            ? html`<div class="title">❌ Tool Failed: ${this.value.name}</div>`
-            : nothing}
-          
-          ${this.value.isCompleted
-            ? this.collapsed
-              ? html`<uc-icon name="plus"></uc-icon>`
-              : html`<uc-icon name="minus"></uc-icon>`
-            : nothing}
-        </div>
-        <div class="body">
-          <div class="content">
-            <div class="label">Argument</div>
-            <pre class="value">${this.value.input}</pre>
-            <div class="label">Result</div>
-            <pre class="value">${this.value.output?.data}</pre>
+    if (this.status === 'WAITING') {
+      return html`
+        <div class="container">
+          <div class="header">
+            ⏳ Waiting: ${this.name}
+          </div>
+          <div class="body">
+            ${this.input}
           </div>
         </div>
-        ${this.value.isApproved === false
-          ? html`
-            <div class="footer">
-              <uc-button @click=${() => this.denied()}>
-                Deny
-              </uc-button>
-              <uc-button @click=${() => this.confirmed()}>
-                Confirm
-              </uc-button>
-            </div>`
-          : nothing}
-      </div>
-    `;
+      `;
+    } else if (this.status === 'PENDING_APPROVAL') {
+      return html`
+        <div class="container">
+          <div class="header">
+            ⏸️ Pending: ${this.name}
+          </div>
+          <div class="body">
+            ${this.input}
+          </div>
+          <div class="footer">
+            <uc-button @click=${this.denied}>
+              Deny
+            </uc-button>
+            <uc-button @click=${this.confirmed}>
+              Confirm
+            </uc-button>
+          </div>
+        </div>
+      `;
+    } else if (this.status === 'EXECUTING') {
+      return html`
+        <div class="container">
+          <div class="header">
+            🔄 Executing: ${this.name}
+          </div>
+          <div class="body">
+            ${this.input}
+          </div>
+        </div>
+      `;
+    } else if (this.status === 'SUCCESS') {
+      return html`
+        <div class="container">
+          <div class="header" @click=${this.toggle}>
+            ✅ Success: ${this.name}
+            ${this.collapsed 
+              ? html`<uc-icon name="plus"></uc-icon>`
+              : html`<uc-icon name="minus"></uc-icon>`}
+          </div>
+          <div class="body">
+            <div class="content">
+              <div class="label">Argument</div>
+              <pre class="value">${this.input}</pre>
+              <div class="label">Result</div>
+              <pre class="value">${this.output?.data}</pre>
+            </div>
+          </div>
+        </div>
+      `;
+    } else if (this.status === 'FAILED') {
+      return html`
+        <div class="container">
+          <div class="header" @click=${this.toggle}>
+            ❌ Failed: ${this.name}
+            ${this.collapsed 
+              ? html`<uc-icon name="plus"></uc-icon>`
+              : html`<uc-icon name="minus"></uc-icon>`}
+          </div>
+          <div class="body">
+            <div class="content">
+              <div class="label">Argument</div>
+              <pre class="value">${this.input}</pre>
+              <div class="label">Error</div>
+              <pre class="value">${this.output?.data}</pre>
+            </div>
+          </div>
+        </div>
+      `;
+    } else {
+      return nothing;
+    }
   }
 
   private toggle = () => {
-    if (this.value && !this.value.isCompleted) return;
     this.collapsed = !this.collapsed;
   }
 
   private denied = () => {
-    if (!this.value) return;
-    this.value.isCompleted = true;
-    this.value.isApproved = false;
-    this.value.output = {
-      isSuccess: false,
-      data: 'Tool execution was denied by the user.'
-    }
     
-    this.dispatchEvent(new CustomEvent('tool-change', { 
-      detail: this.value
-    }));
-    this.requestUpdate();
   }
 
   private confirmed = () => {
-    if (!this.value) return;
-    this.value.isApproved = true;
 
-    this.dispatchEvent(new CustomEvent('tool-change', { 
-      detail: this.value 
-    }));
-    this.requestUpdate();
   }
 }

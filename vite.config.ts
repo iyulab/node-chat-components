@@ -11,7 +11,7 @@ export default defineConfig({
       entry: [
         'src/index.ts',
         'src/components/index.ts',
-        'src/internal/index.ts',
+        'src/events/index.ts',
       ],
       formats: ['es'],
     },

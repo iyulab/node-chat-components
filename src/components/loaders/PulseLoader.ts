@@ -1,10 +1,14 @@
 import { html } from 'lit';
-import { styles } from './PulseLoader.styles.js';
 
 import { BaseElement } from '../../internal/BaseElement.js';
+import { styles } from './PulseLoader.styles.js';
 
+/**
+ * 원형으로 펄스 효과를 주는 컴포넌트입니다.
+ */
 export class PulseLoader extends BaseElement {
-  static styles = [ styles ]
+  static styles = [ super.styles, styles ];
+  static dependencies: Record<string, typeof BaseElement> = {};
 
   render() {
     return html`

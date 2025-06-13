@@ -5,32 +5,30 @@ export const styles = css`
     display: block;
     width: 100%;
     height: auto;
+    border: 1px solid var(--uc-border-color-low);
+    border-radius: 8px;
+    font-size: 14px;
 
-    --font-size: 14px;
-    --line-height: 21px;
-    --max-height: 260px;
+    --loading-rows: 3;
+    --max-rows: 10;
   }
   :host([loading]) .header {
     cursor: wait;
+    pointer-events: none;
   }
   :host([loading]) .body {
-    height: calc(var(--line-height) * 3 + 14px);
-    max-height: calc(var(--line-height) * 3 + 14px);
     overflow: hidden !important;
-    animation: pulse 1.5s infinite;
+    max-height: calc(1.5em * var(--loading-rows) + 8px);
+    animation: pulse_action 1.5s infinite;
     cursor: wait;
-  }
-  :host(:not([loading])[collapsed]) .body {
-    max-height: 0;
-    padding: 0;
-    overflow: hidden;
+    pointer-events: none;
   }
 
   .container {
-    display: block;
-    border-radius: 8px;
-    border: 1px solid var(--uc-border-color-mid);
-    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: auto;
   }
 
   .header {
@@ -38,41 +36,43 @@ export const styles = css`
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding: 5px 10px;
-    box-sizing: border-box;
+    padding: 8px;
     cursor: pointer;
+    user-select: none;
   }
   .header .title {
-    font-size: 16px;
+    font-size: inherit;
     font-weight: 600;
-    line-height: 24px;
+    line-height: 16px;
   }
-  .header .dots::after {
+  .header .title.dots::after {
     content: '';
-    animation: dots 1.5s infinite;
+    animation: dots_action 1.5s infinite;
   }
 
   .body {
-    height: auto;
-    max-height: var(--max-height);
-    font-weight: 300;
-    font-size: var(--font-size);
-    line-height: var(--line-height);
-    padding: 14px;
-    box-sizing: border-box;
     overflow: auto;
-    overflow-wrap: anywhere;
-    transition: max-height 0.3s ease, padding 0.3s ease;
+    padding: 8px;
+    max-height: calc(1.5em * var(--max-rows) + 8px);
+    font-size: inherit;
+    line-height: 1.5;
+    font-weight: 300;
+    transition: max-height 0.15s ease, padding 0.15s ease;
+  }
+  .body[collapsed] {
+    overflow: hidden !important;
+    padding: 0;
+    max-height: 0;
   }
 
-  @keyframes dots {
-    0%, 20% { content: ''; }
-    40% { content: '.'; }
-    60% { content: '..'; }
-    80%, 100% { content: '...'; }
+  @keyframes dots_action {
+    0%, 20% { content: ' '; }
+    40% { content: ' .'; }
+    60% { content: ' ..'; }
+    80%, 100% { content: ' ...'; }
   }
 
-  @keyframes pulse {
+  @keyframes pulse_action {
     0% {
       box-shadow: inset 0px -20px 20px -15px var(--uc-shadow-color-low);
     }

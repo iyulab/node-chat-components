@@ -1,0 +1,155 @@
+:root {
+  color-scheme: light;
+
+  /* 텍스트 색상 */
+  --uc-text-color-low: #A0A0A0;
+  --uc-text-color-mid: #555555;
+  --uc-text-color-high: #1A1A1A;
+
+  /* 배경 색상 */
+  --uc-background-color-0: #FFFFFF;
+  --uc-background-color-100: #F8F8F8;
+  --uc-background-color-200: #F0F0F0;
+  --uc-background-color-300: #E8E8E8;
+  --uc-background-color-400: #DCDCDC;
+  --uc-background-color-500: #D0D0D0;
+  --uc-background-color-600: #C0C0C0;
+  --uc-background-color-700: #B0B0B0;
+  --uc-background-color-800: #A0A0A0;
+  --uc-background-color-900: #909090;
+  --uc-background-color-1000: #808080;
+
+  /* 빨강 색상 */
+  --uc-red-color-0: #fff5f5;
+  --uc-red-color-100: #ffe0e0;
+  --uc-red-color-200: #fcb3b3;
+  --uc-red-color-300: #f48787;
+  --uc-red-color-400: #ef5c5c;
+  --uc-red-color-500: #e53935;
+  --uc-red-color-600: #d32f2f;
+  --uc-red-color-700: #c62828;
+  --uc-red-color-800: #b71c1c;
+  --uc-red-color-900: #990000;
+  --uc-red-color-1000: #7a0000;
+
+  /* 파랑 색상 */
+  --uc-blue-color-0: #f0f7ff;
+  --uc-blue-color-100: #d2e6fd;
+  --uc-blue-color-200: #a8cefa;
+  --uc-blue-color-300: #7fb7f7;
+  --uc-blue-color-400: #56a0f4;
+  --uc-blue-color-500: #2f88f0;
+  --uc-blue-color-600: #1e70d6;
+  --uc-blue-color-700: #135ab0;
+  --uc-blue-color-800: #0a468a;
+  --uc-blue-color-900: #06336b;
+  --uc-blue-color-1000: #032047;
+
+  /* 초록 색상 */
+  --uc-green-color-0: #f1faf1;
+  --uc-green-color-100: #d9f0d9;
+  --uc-green-color-200: #b6e2b6;
+  --uc-green-color-300: #8fd48f;
+  --uc-green-color-400: #68c668;
+  --uc-green-color-500: #43a047;
+  --uc-green-color-600: #388e3c;
+  --uc-green-color-700: #2e7d32;
+  --uc-green-color-800: #1b5e20;
+  --uc-green-color-900: #0f4014;
+  --uc-green-color-1000: #06270a;
+
+  /* 노랑 색상 */
+  --uc-yellow-color-0: #fffdf0;
+  --uc-yellow-color-100: #fff7c2;
+  --uc-yellow-color-200: #fff09a;
+  --uc-yellow-color-300: #ffe76b;
+  --uc-yellow-color-400: #ffdc3f;
+  --uc-yellow-color-500: #fbc02d;
+  --uc-yellow-color-600: #f9a825;
+  --uc-yellow-color-700: #f57f17;
+  --uc-yellow-color-800: #e65100;
+  --uc-yellow-color-900: #b33b00;
+  --uc-yellow-color-1000: #802b00;
+
+  /* 테두리 색상 */
+  --uc-border-color-low: #E0E0E0;
+  --uc-border-color-mid: #C0C0C0;
+  --uc-border-color-high: #A0A0A0;
+
+  /* 그림자 색상 */
+  --uc-shadow-color-low: rgba(200, 200, 200, 0.3);
+  --uc-shadow-color-mid: rgba(200, 200, 200, 0.4);
+  --uc-shadow-color-high: rgba(50, 50, 50, 0.5);
+
+  /* 스크롤바 색상 */
+  --uc-scrollbar-color: #E0E0E0;
+
+  /* github flavored markdown styles */
+  --focus-outlineColor: #0969da;
+  --fgColor-default: #1f2328;
+  --fgColor-muted: #59636e;
+  --fgColor-accent: #0969da;
+  --fgColor-success: #1a7f37;
+  --fgColor-attention: #9a6700;
+  --fgColor-danger: #d1242f;
+  --fgColor-done: #8250df;
+  --bgColor-default: #ffffff;
+  --bgColor-muted: #f6f8fa;
+  --bgColor-neutral-muted: #818b981f;
+  --bgColor-attention-muted: #fff8c5;
+  --borderColor-default: #d1d9e0;
+  --borderColor-muted: #d1d9e0b3;
+  --borderColor-neutral-muted: #d1d9e0b3;
+  --borderColor-accent-emphasis: #0969da;
+  --borderColor-success-emphasis: #1a7f37;
+  --borderColor-attention-emphasis: #9a6700;
+  --borderColor-danger-emphasis: #cf222e;
+  --borderColor-done-emphasis: #8250df;
+  --color-prettylights-syntax-comment: #59636e;
+  --color-prettylights-syntax-constant: #0550ae;
+  --color-prettylights-syntax-constant-other-reference-link: #0a3069;
+  --color-prettylights-syntax-entity: #6639ba;
+  --color-prettylights-syntax-storage-modifier-import: #1f2328;
+  --color-prettylights-syntax-entity-tag: #0550ae;
+  --color-prettylights-syntax-keyword: #cf222e;
+  --color-prettylights-syntax-string: #0a3069;
+  --color-prettylights-syntax-variable: #953800;
+  --color-prettylights-syntax-brackethighlighter-unmatched: #82071e;
+  --color-prettylights-syntax-brackethighlighter-angle: #59636e;
+  --color-prettylights-syntax-invalid-illegal-text: #f6f8fa;
+  --color-prettylights-syntax-invalid-illegal-bg: #82071e;
+  --color-prettylights-syntax-carriage-return-text: #f6f8fa;
+  --color-prettylights-syntax-carriage-return-bg: #cf222e;
+  --color-prettylights-syntax-string-regexp: #116329;
+  --color-prettylights-syntax-markup-list: #3b2300;
+  --color-prettylights-syntax-markup-heading: #0550ae;
+  --color-prettylights-syntax-markup-italic: #1f2328;
+  --color-prettylights-syntax-markup-bold: #1f2328;
+  --color-prettylights-syntax-markup-deleted-text: #82071e;
+  --color-prettylights-syntax-markup-deleted-bg: #ffebe9;
+  --color-prettylights-syntax-markup-inserted-text: #116329;
+  --color-prettylights-syntax-markup-inserted-bg: #dafbe1;
+  --color-prettylights-syntax-markup-changed-text: #953800;
+  --color-prettylights-syntax-markup-changed-bg: #ffd8b5;
+  --color-prettylights-syntax-markup-ignored-text: #d1d9e0;
+  --color-prettylights-syntax-markup-ignored-bg: #0550ae;
+  --color-prettylights-syntax-meta-diff-range: #8250df;
+  --color-prettylights-syntax-sublimelinter-gutter-mark: #818b98;
+
+  /* highlight.js github styles */
+  --hljs-text-color: #24292e;
+  --hljs-background-color: #ffffff;
+  --hljs-keyword-color: #d73a49;
+  --hljs-entity-color: #6f42c1;
+  --hljs-constant-color: #005cc5;
+  --hljs-string-color: #032f62;
+  --hljs-variable-color: #e36209;
+  --hljs-comment-color: #6a737d;
+  --hljs-entity-tag-color: #22863a;
+  --hljs-markup-heading-color: #005cc5;
+  --hljs-markup-list-color: #735c0f;
+  --hljs-addition-color: #22863a;
+  --hljs-addition-bg-color: #f0fff4;
+  --hljs-deletion-color: #b31d28;
+  --hljs-deletion-bg-color: #ffeef0;
+}

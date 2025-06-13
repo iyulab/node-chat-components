@@ -18,7 +18,13 @@ export const styles = css`
   }
 
   @keyframes pulse_action {
-    0% {r: 0; opacity: 1;}
-    100% {r: 12px; opacity: 0;}
+    0% {
+      r: 0; 
+      opacity: 1;
+    }
+    100% {
+      r: 12px; 
+      opacity: 0;
+    }
   }
 `;

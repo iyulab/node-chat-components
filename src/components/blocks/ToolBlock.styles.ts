@@ -16,7 +16,6 @@ export const styles = css`
     display: block;
     border-radius: 8px;
     border: 1px solid var(--uc-border-color-mid);
-    box-sizing: border-box;
   }
 
   .header {
@@ -25,7 +24,6 @@ export const styles = css`
     align-items: center;
     justify-content: space-between;
     padding: 5px 10px;
-    box-sizing: border-box;
     cursor: pointer;
   }
   .header .title {
@@ -38,7 +36,6 @@ export const styles = css`
     height: auto;
     padding: 5px 10px;
     overflow-wrap: anywhere;
-    box-sizing: border-box;
   }
 
   .footer {
@@ -48,7 +45,6 @@ export const styles = css`
     justify-content: flex-end;
     gap: 8px;
     padding: 5px 10px;
-    box-sizing: border-box;
   }
 
   .footer uc-button {
@@ -61,7 +57,6 @@ export const styles = css`
     flex-direction: column;
     border: 1px solid var(--uc-border-color-mid);
     border-radius: 8px;
-    box-sizing: border-box;
     color: var(--uc-text-color-high);
     font-size: 12px;
     line-height: 1.5;
@@ -72,7 +67,6 @@ export const styles = css`
     font-weight: 600;
     padding: 4px 8px;
     border-bottom: 1px solid var(--uc-border-color-mid);
-    box-sizing: border-box;
     background-color: var(--uc-background-color-500);
   }
 
@@ -85,7 +79,6 @@ export const styles = css`
     max-height: 200px;
     padding: 8px;
     margin: 0;
-    box-sizing: border-box;
     background-color: var(--uc-background-color-200);
   }
 

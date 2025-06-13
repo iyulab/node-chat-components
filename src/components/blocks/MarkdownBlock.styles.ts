@@ -7,135 +7,8 @@ export const styles = css`
     height: auto;
   }
 
-  * {
-    overflow-wrap: anywhere;
-  }
-
-  /* highlight.js styles */
-  pre code.hljs {
-    display: block;
-    overflow-x: auto;
-    padding: 1em;
-  }
-
-  code.hljs {
-    padding: 3px 5px;
-  }
-
-  /* Theme-shared styles with variables */
-  .hljs {
-    color: var(--syntax-text);
-    background: var(--syntax-background);
-  }
-
-  .hljs-doctag,
-  .hljs-keyword,
-  .hljs-meta .hljs-keyword,
-  .hljs-template-tag,
-  .hljs-template-variable,
-  .hljs-type,
-  .hljs-variable.language_ {
-    color: var(--syntax-keyword);
-  }
-
-  .hljs-title,
-  .hljs-title.class_,
-  .hljs-title.class_.inherited__,
-  .hljs-title.function_ {
-    color: var(--syntax-entity);
-  }
-
-  .hljs-attr,
-  .hljs-attribute,
-  .hljs-literal,
-  .hljs-meta,
-  .hljs-number,
-  .hljs-operator,
-  .hljs-variable,
-  .hljs-selector-attr,
-  .hljs-selector-class,
-  .hljs-selector-id {
-    color: var(--syntax-constant);
-  }
-
-  .hljs-regexp,
-  .hljs-string,
-  .hljs-meta .hljs-string {
-    color: var(--syntax-string);
-  }
-
-  .hljs-built_in,
-  .hljs-symbol {
-    color: var(--syntax-variable);
-  }
-
-  .hljs-comment,
-  .hljs-code,
-  .hljs-formula {
-    color: var(--syntax-comment);
-  }
-
-  .hljs-name,
-  .hljs-quote,
-  .hljs-selector-tag,
-  .hljs-selector-pseudo {
-    color: var(--syntax-entity-tag);
-  }
-
-  .hljs-subst {
-    color: var(--syntax-text);
-  }
-
-  .hljs-section {
-    color: var(--syntax-markup-heading);
-    font-weight: bold;
-  }
-
-  .hljs-bullet {
-    color: var(--syntax-markup-list);
-  }
-
-  .hljs-emphasis {
-    color: var(--syntax-text);
-    font-style: italic;
-  }
-
-  .hljs-strong {
-    color: var(--syntax-text);
-    font-weight: bold;
-  }
-
-  .hljs-addition {
-    color: var(--syntax-addition-color);
-    background-color: var(--syntax-addition-bg);
-  }
-
-  .hljs-deletion {
-    color: var(--syntax-deletion-color);
-    background-color: var(--syntax-deletion-bg);
-  }
-
-  .hljs-char.escape_,
-  .hljs-link,
-  .hljs-params,
-  .hljs-property,
-  .hljs-punctuation,
-  .hljs-tag {
-    color: currentColor;
-  }
-
   /* github-markdown styles */
   .markdown-body {
-    -ms-text-size-adjust: 100%;
-    -webkit-text-size-adjust: 100%;
-    margin: 0;
-    color: var(--fgColor-default);
-    background-color: transparent;
-    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
-    font-size: 16px;
-    line-height: 1.5;
-    word-wrap: break-word;
-
     --base-size-4: 0.25rem;
     --base-size-8: 0.5rem;
     --base-size-16: 1rem;
@@ -146,6 +19,18 @@ export const styles = css`
     --base-text-weight-semibold: 600;
     --fontStack-monospace: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
     --fgColor-accent: Highlight;
+  }
+
+  .markdown-body {
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+    margin: 0;
+    color: var(--fgColor-default);
+    background-color: var(--bgColor-default);
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
+    font-size: 16px;
+    line-height: 1.5;
+    word-wrap: break-word;
   }
 
   .markdown-body .octicon {
@@ -263,7 +148,7 @@ export const styles = css`
     height: .25em;
     padding: 0;
     margin: var(--base-size-24) 0;
-    background-color: transparent;
+    background-color: var(--borderColor-default);
     border: 0;
   }
 
@@ -855,8 +740,8 @@ export const styles = css`
   .markdown-body pre>code {
     padding: 0;
     margin: 0;
-    word-break: break-word;
-    white-space: pre-wrap;
+    word-break: normal;
+    white-space: pre;
     background: transparent;
     border: 0;
   }

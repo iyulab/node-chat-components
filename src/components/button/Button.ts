@@ -1,77 +1,47 @@
 import { html } from "lit";
-import { property, query } from "lit/decorators.js";
+import { property } from "lit/decorators.js";
 
-import { computePosition, flip, shift, offset } from "@floating-ui/dom";
 import type { Placement } from "@floating-ui/dom";
 
 import { BaseElement } from "../../internal/BaseElement.js";
-import { SpinLoader } from "../loaders/SpinLoader.js";
+import { BarRotateLoader } from "../loaders/BarRotateLoader.js";
+import { Tooltip } from "../tooltip/Tooltip.js";
 import { styles } from "./Button.styles.js";
 
+/**
+ * Button 컴포넌트는 클릭 가능한 버튼을 나타내며, 로딩 상태와 툴팁 기능을 지원합니다.
+ * @slot - 버튼 내부에 표시할 콘텐츠를 삽입합니다.
+ */
 export class Button extends BaseElement {
+  static styles = [ super.styles, styles ];
   static dependencies: Record<string, typeof BaseElement> = {
-    'uc-spin-loader': SpinLoader
+    'uc-bar-rotate-loader': BarRotateLoader,
+    'uc-tooltip': Tooltip 
   };
-  static styles = [ styles ]
 
-  @query('.tooltip') tooltipEl!: HTMLElement;
-
+  /** 버튼이 비활성화 상태인지 여부를 설정합니다. 비활성화된 버튼은 클릭할 수 없습니다. */
   @property({ type: Boolean, reflect: true }) disabled = false;
+  /** 버튼이 로딩 상태인지 여부를 설정합니다. 로딩 중에는 버튼이 비활성화되고 스피너가 표시됩니다. */
   @property({ type: Boolean, reflect: true }) loading = false;
+  /** 툴팁의 내용을 설정합니다. 툴팁은 버튼 위에 마우스를 올리거나 포커스할 때 표시됩니다. */
   @property({ type: String }) tooltip?: string;
+  /** 툴팁의 위치를 설정합니다. 기본값은 'top'입니다. */
   @property({ type: String }) tooltipPosition?: Placement;
 
   connectedCallback(): void {
     super.connectedCallback();
     this.tabIndex = 0;
-    if (this.tooltip) {
-      this.addEventListener('mouseenter', this.showTooltip);
-      this.addEventListener('mouseleave', this.hideTooltip);
-      this.addEventListener('focusin', this.showTooltip);
-      this.addEventListener('focusout', this.hideTooltip);
-    }
-  }
-
-  disconnectedCallback(): void {
-    if (this.tooltip) {
-      this.removeEventListener('mouseenter', this.showTooltip);
-      this.removeEventListener('mouseleave', this.hideTooltip);
-      this.removeEventListener('focusin', this.showTooltip);
-      this.removeEventListener('focusout', this.hideTooltip);
-    }
-    super.disconnectedCallback();
   }
 
   render() {
     return html`
       <slot></slot>
-      <div class="overlay">
-        <uc-spin-loader></uc-spin-loader>
+      <div class="overlay" ?visible=${this.loading}>
+        <uc-bar-rotate-loader></uc-bar-rotate-loader>
       </div>
-      <div class="tooltip">
+      <uc-tooltip .trigger=${this as any} placement=${this.tooltipPosition || 'top'}>
         ${this.tooltip}
-      </div>
+      </uc-tooltip>
     `;
-  }
-
-  private showTooltip = async () => {
-    const { x, y } = await computePosition(this, this.tooltipEl, {
-      placement: this.tooltipPosition || 'top',
-      middleware: [
-        flip(),
-        shift(),
-        offset(4),
-      ],
-    });
-    Object.assign(this.tooltipEl.style, {
-      left: `${x}px`,
-      top: `${y}px`,
-    });
-
-    this.tooltipEl.classList.add('visible');
-  }
-
-  private hideTooltip = () => {
-    this.tooltipEl.classList.remove('visible');    
   }
 }
