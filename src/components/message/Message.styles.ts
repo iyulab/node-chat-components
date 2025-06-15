@@ -11,19 +11,12 @@ export const styles = css`
   .container {
     display: flex;
     flex-direction: column;
-    gap: 8px;
   }
 
   .header {
     display: flex;
     flex-direction: row;
     align-items: center;
-  }
-  .header .name {
-    font-family: 'Roboto', sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    line-height: 1.5;
   }
 
   .body {
@@ -40,6 +33,7 @@ export const styles = css`
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+    padding: 12px 0px;
     gap: 12px;
     font-size: 12px;
   }

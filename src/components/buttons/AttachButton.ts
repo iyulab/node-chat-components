@@ -37,7 +37,7 @@ export class AttachButton extends BaseElement {
     return html`
       <uc-icon name="paperclip"></uc-icon>
       <uc-tooltip .trigger=${this as any}>
-        Select files
+        Select Files
       </uc-tooltip>
       <input type="file"
         ?multiple=${this.multiple}

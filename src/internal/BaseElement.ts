@@ -37,11 +37,7 @@ export class BaseElement extends LitElement {
       try {
         customElements.define(name, this, options);
       } catch(error: any) {
-        if (process.env.NODE_ENV === 'development') {
-          throw new Error(`Failed to register component "${name}": ${error.message}`);
-        } else {
-          console.warn(`Failed to register component "${name}":`, error);
-        }
+        console.warn(`Failed to register component "${name}":`, error);
       }
     }
   }
@@ -53,7 +49,7 @@ export class BaseElement extends LitElement {
    * @param options - 추가 이벤트 옵션 (예: bubbles, composed 등)
    * @returns 이벤트가 성공적으로 디스패치되었는지 여부
    */
-  protected dispatch(name: string, value: any, options?: any): boolean {
+  protected dispatch(name: string, value?: any, options?: any): boolean {
     const event = new CustomEvent(name, {
       bubbles: true,
       composed: true,

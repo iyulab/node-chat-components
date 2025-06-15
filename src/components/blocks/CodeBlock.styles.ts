@@ -18,7 +18,7 @@ export const styles = css`
     align-items: center;
     justify-content: space-between;
     font-family: Arial, Helvetica, sans-serif;
-    font-size: 13.6px;
+    font-size: 12px;
     font-weight: 300;
     color: var(--uc-text-color-mid);
     margin-bottom: 12px;
@@ -33,7 +33,7 @@ export const styles = css`
     padding: 0;
     color: var(--hljs-text-color);
     font-family: var(--fontStack-monospace, ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace);
-    font-size: 13.6px;
+    font-size: 14px;
     line-height: 1.45;
     white-space: pre;
     scrollbar-gutter: stable;

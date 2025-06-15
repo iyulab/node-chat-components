@@ -4,7 +4,7 @@ import { property } from "lit/decorators.js";
 import { BaseElement } from "../../internal/BaseElement.js";
 import { Icon } from "../icon/Icon.js";
 import { Button } from "../button/Button.js";
-import type { ToolOutput, ToolStatus } from "../message-box/MessageBox.types.js";
+import type { ToolBlockStatus } from "../message/Message.types.js";
 import { styles } from "./ToolBlock.styles.js";
 
 export class ToolBlock extends BaseElement {
@@ -14,10 +14,10 @@ export class ToolBlock extends BaseElement {
     'uc-button': Button
   };
 
-  @property({ type: String }) status: ToolStatus = 'WAITING';
+  @property({ type: String }) status: ToolBlockStatus = 'WAITING';
   @property({ type: String }) name?: string;
   @property({ type: String }) input?: string;
-  @property({ type: Object }) output?: ToolOutput;
+  @property({ type: String }) output?: string;
 
   @property({ type: Boolean, reflect: true }) collapsed: boolean = true;
 
@@ -77,7 +77,7 @@ export class ToolBlock extends BaseElement {
               <div class="label">Argument</div>
               <pre class="value">${this.input}</pre>
               <div class="label">Result</div>
-              <pre class="value">${this.output?.data}</pre>
+              <pre class="value">${this.output}</pre>
             </div>
           </div>
         </div>
@@ -96,7 +96,7 @@ export class ToolBlock extends BaseElement {
               <div class="label">Argument</div>
               <pre class="value">${this.input}</pre>
               <div class="label">Error</div>
-              <pre class="value">${this.output?.data}</pre>
+              <pre class="value">${this.output}</pre>
             </div>
           </div>
         </div>

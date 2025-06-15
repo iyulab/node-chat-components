@@ -9,7 +9,7 @@ export const styles = css`
     background-color: var(--uc-background-color-0);
     opacity: 0;
     pointer-events: none;
-    transform: translateY(32px);
+    transform: translateY(-24px);
     transition: opacity 0.3s ease, transform 0.3s ease;
 
     --min-rows: 3;
@@ -17,8 +17,8 @@ export const styles = css`
   }
   :host([open]) {
     opacity: 1;
+    transform: translateX(0) translateY(0);
     pointer-events: auto;
-    transform: translateY(0);
   }
   :host([status="info"]) {
     --primary-color: var(--uc-blue-color-500);

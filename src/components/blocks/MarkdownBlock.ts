@@ -56,11 +56,11 @@ export class MarkdownBlock extends BaseElement {
    * @returns 변환된 HTML 문자열
    */
   private parse(value: string) {
-    const start = performance.now();
+    // const start = performance.now();
     // 시작부분에서 특수 제어문자(실제 문자가 아닌 컨트롤 문자, ex: 인코딩, 쓰기 방향표시 등)를 제거합니다.
     value = value.replace(/\u200B|\u200C|\u200D|\u200E|\u200F|\uFEFF/g, "");
     value = this.parser.parse(value, { async: false });
-    const end = performance.now();
+    // const end = performance.now();
     // console.debug(`Markdown Parser: took ${end - start}ms`);
     return value;
   }

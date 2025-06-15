@@ -4,14 +4,13 @@ import { repeat } from 'lit/directives/repeat.js';
 
 import { BaseElement } from '../../internal/BaseElement.js';
 import { CopyButton } from '../buttons/CopyButton.js';
-import { Icon } from '../icon/Icon.js';
 import { TextBlock } from '../blocks/TextBlock.js';
 import { MarkdownBlock } from '../blocks/MarkdownBlock.js';
 import { ThinkingBlock } from '../blocks/ThinkingBlock.js';
 import { ToolBlock } from '../blocks/ToolBlock.js';
 import { DotBounceLoader } from '../loaders/DotBounceLoader.js';
+import type { BlockItem } from './Message.types.js';
 import { format } from '../../utilities/time-functions.js';
-import type { BlockContent } from './Message.types.js';
 import { styles } from './Message.styles.js';
 
 export class Message extends BaseElement {
@@ -22,24 +21,21 @@ export class Message extends BaseElement {
     'uc-thinking-block': ThinkingBlock,
     'uc-tool-block': ToolBlock,
     'uc-copy-button': CopyButton,
-    'uc-icon': Icon,
     'uc-dot-bounce-loader': DotBounceLoader
   };
 
-  @property({ type: String }) name?: string;
+  @property({ type: Array }) items?: BlockItem[];
   @property({ type: String }) timestamp?: string;
-  @property({ type: Array }) content?: BlockContent[];
 
   render() {
     return html`
       <div class="container">
         <div class="header" part="header">
-          <div class="name">${this.name}</div>
           <slot name="header"></slot>
         </div>
         <div class="body" part="body">
-          ${this.content && this.content.length > 0
-            ? repeat(this.content, (_, idx) => idx, (item, idx) => {
+          ${this.items && this.items.length > 0
+            ? repeat(this.items, (_, idx) => idx, (item, idx) => {
                 return item.type === 'text'
                 ? html`
                   <uc-text-block 
@@ -53,7 +49,7 @@ export class Message extends BaseElement {
                 : item.type === 'thinking' 
                 ? html`
                   <uc-thinking-block 
-                    ?loading=${this.content?.length === ((idx || 0) + 1)}
+                    ?loading=${this.items?.length === ((idx || 0) + 1)}
                     .value=${item.value}
                   ></uc-thinking-block>`
                 : item.type === 'tool'
@@ -69,7 +65,7 @@ export class Message extends BaseElement {
         </div>
         <div class="footer" part="footer">
           <uc-copy-button
-            .value=${this.gatherTextValue(this.content)}
+            .value=${this.gatherTextValue(this.items)}
           ></uc-copy-button>
           <slot name="footer"></slot>
           <div class="flex"></div>
@@ -84,12 +80,12 @@ export class Message extends BaseElement {
   /**
    * 텍스트 및 마크다운 블록의 내용을 모아서 하나의 문자열로 반환합니다.
    */ 
-  private gatherTextValue = (content: BlockContent[] | undefined) => {
-    if (!content) return '';
+  private gatherTextValue = (items?: BlockItem[]) => {
+    if (!items) return '';
 
-    return content.reduce((acc, block) => {
-      if (block.type === 'text' || block.type === 'markdown') {
-        return acc + (block.value || '');
+    return items.reduce((acc, item) => {
+      if (item.type === 'text' || item.type === 'markdown') {
+        return acc ? acc + "\n" + (item.value || '') : (item.value || '');
       }
       return acc;
     }, '');

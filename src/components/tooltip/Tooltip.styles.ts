@@ -28,6 +28,9 @@ export const styles = css`
     pointer-events: auto;
     transform: scale(1);
   }
+  :host([hoist]) {
+    position: fixed;
+  }
 
   .arrow {
     position: absolute;

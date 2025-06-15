@@ -19,6 +19,8 @@ export class Tooltip extends BaseElement {
 
   /** 툴팁의 가시성 상태를 나타냅니다. */
   @property({ type: Boolean, reflect: true }) visible: boolean = false;
+  /** 툴팁을 'fixed' 위치로 정의할지 여부를 설정합니다. 기본값은 false입니다. */
+  @property({ type: Boolean, reflect: true }) hoist: boolean = false;
   /** 툴팁 대상 엘리먼트 (일반적으로 부모 엘리먼트) */
   @property({ attribute: false }) trigger?: HTMLElement;
   /** 툴팁의 위치를 설정합니다. */
@@ -78,6 +80,7 @@ export class Tooltip extends BaseElement {
     const position = await computePosition(this.trigger, this, {
       placement: this.placement,
       middleware: middleware,
+      strategy: this.hoist ? 'fixed' : 'absolute',
     });
 
     if (this.arrow) {
@@ -91,6 +94,7 @@ export class Tooltip extends BaseElement {
       top: `${position.y}px`,
       transformOrigin: this.getTransformOrigin(position.placement),
     });
+    await this.updateComplete; // style 업데이트 후 다시 렌더링
     this.visible = true;
   }
 

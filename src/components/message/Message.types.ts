@@ -1,21 +1,21 @@
-export interface TextBlockContent {
+export interface TextBlockItem {
   type: "text";
   value?: string;
 }
 
-export interface MarkdownBlockContent {
+export interface MarkdownBlockItem {
   type: "markdown";
   value?: string;
 }
 
-export interface ThinkingBlockContent {
+export interface ThinkingBlockItem {
   type: "thinking";
   value?: string;
 }
 
 export type ToolBlockStatus = "WAITING" | "PENDING_APPROVAL" | "EXECUTING" | "SUCCESS" | "FAILED";
 
-export interface ToolBlockContent {
+export interface ToolBlockItem {
   type: "tool";
   status: ToolBlockStatus;
   name?: string;
@@ -23,9 +23,9 @@ export interface ToolBlockContent {
   output?: string;
 }
 
-export type BlockContent = (
-  TextBlockContent |
-  MarkdownBlockContent |
-  ThinkingBlockContent |
-  ToolBlockContent
+export type BlockItem = (
+  TextBlockItem |
+  MarkdownBlockItem |
+  ThinkingBlockItem |
+  ToolBlockItem
 );

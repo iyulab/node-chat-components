@@ -3,6 +3,7 @@ import { property, query, state } from 'lit/decorators.js';
 
 import { BaseElement } from '../../internal/BaseElement.js';
 import { Icon } from '../icon/Icon.js';
+import type { AlertConfig, AlertStatus } from './Alert.types.js';
 import { styles } from './Alert.styles.js';
 
 /**
@@ -26,14 +27,11 @@ export class Alert extends BaseElement {
   /** Alert 표시 여부 */
   @property({ type: Boolean, reflect: true }) open: boolean = false;
   /** Alert 상태 (warning, danger, info, success) */
-  @property({ type: String, reflect: true }) status: "warning" | "danger" | "info" | "success" = "danger";
+  @property({ type: String, reflect: true }) status: AlertStatus = "danger";
   /** 본문 최소 행 수 */
   @property({ type: Number }) minRows: number = 3;
   /** 본문 최대 행 수 */
   @property({ type: Number }) maxRows: number = 10;
-
-  /** 자동으로 닫히기까지의 시간 (ms), 0 이하의 경우 자동 닫힘 비활성화 */
-  @property({ type: Number }) timeout: number = 0;
   /** Alert 제목 */
   @property({ type: String }) headline?: string;
   /** Alert 본문 내용 */
@@ -50,9 +48,6 @@ export class Alert extends BaseElement {
     }
     if (changedProperties.has('value') || changedProperties.has('minRows') || changedProperties.has('maxRows')) {
       this.updateOverflowState();
-    }
-    if (changedProperties.has('open') && this.open) {
-      this.setupAutoClose();
     }
   }
 
@@ -82,44 +77,42 @@ export class Alert extends BaseElement {
   }
 
   /**
-   * Alert를 표시합니다.
-   * @param value 표시할 본문 텍스트
-   * @param headline 선택적 헤드라인 텍스트
+   * Alert를 상세히 표시합니다.
+   * @param config - Alert 설정 객체
    */
-  public show(value: string, headline?: string) {
-    this.headline = headline;
-    this.value = value;
+  public async show(config: AlertConfig) {
+    this.status = config.status || "danger";
+    this.headline = config.headline;
+    this.value = config.value;
+
+    await this.updateComplete;
     this.open = true;
+    this.dispatch("show-alert");
+
+    if (config.timeout && config.timeout > 0) {
+      this.progressBarEl.animate([{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], {
+        duration: config.timeout,
+        easing: 'linear',
+        fill: 'forwards',
+      });
+
+      this.timeoutId = window.setTimeout(() => {
+        this.hide();
+      }, config.timeout);
+    }
   }
 
   /**
    * Alert를 숨깁니다.
    */
-  public hide() {
-    this.open = false;
-  }
-
-  /**
-   * 타임아웃이 설정된 경우 타이머를 시작하고,
-   * 시간이 지나면 자동으로 Alert를 닫습니다.
-   */
-  private setupAutoClose = async () => {
-    if (this.timeout <= 0 || !this.progressBarEl) return;
+  public async hide() {
     await this.updateComplete;
-    if (this.timeoutId) {
-      clearTimeout(this.timeoutId);
-      this.timeoutId = undefined;
-    }
-
-    this.progressBarEl.animate([{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], {
-      duration: this.timeout,
-      easing: 'linear',
-      fill: 'forwards',
-    });
-
-    this.timeoutId = window.setTimeout(() => {
-      this.hide();
-    }, this.timeout);
+    this.open = false;
+    clearTimeout(this.timeoutId);
+    this.timeoutId = undefined;
+    this.style.transition = '';
+    this.style.transform = '';
+    this.dispatch("hide-alert");
   }
 
   /**

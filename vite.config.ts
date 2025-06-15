@@ -1,6 +1,6 @@
 import path from 'node:path';
 import { defineConfig, normalizePath } from 'vite';
-import dts from 'vite-plugin-dts';
+import viteDts from 'vite-plugin-dts';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 export default defineConfig({
@@ -12,6 +12,7 @@ export default defineConfig({
         'src/index.ts',
         'src/components/index.ts',
         'src/events/index.ts',
+        'src/utilities/index.ts',
       ],
       formats: ['es'],
     },
@@ -21,7 +22,6 @@ export default defineConfig({
         /^@lit.*/,
         /^@floating-ui.*/,
         /^marked.*/,
-        /^marked-highlight.*/,
         /^highlight.js.*/,
       ],
       output: {
@@ -34,7 +34,7 @@ export default defineConfig({
     emptyOutDir: true,
   },
   plugins: [
-    dts({
+    viteDts({
       tsconfigPath: './tsconfig.json',
       include: ['src/**/*.ts'],
       outDir: 'dist'
