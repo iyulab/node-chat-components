@@ -55,6 +55,7 @@ export class Message extends BaseElement {
                 : item.type === 'tool'
                 ? html`
                   <uc-tool-block
+                    .index=${idx}
                     .status=${item.status}
                     .name=${item.name}
                     .input=${item.input}

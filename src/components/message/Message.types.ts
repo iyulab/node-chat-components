@@ -13,7 +13,14 @@ export interface ThinkingBlockItem {
   value?: string;
 }
 
-export type ToolBlockStatus = "WAITING" | "PENDING_APPROVAL" | "EXECUTING" | "SUCCESS" | "FAILED";
+export type ToolBlockStatus = (
+  "waiting" | 
+  "paused" | 
+  "approved" |
+  "rejected" |
+  "inProgress" |
+  "success" | 
+  "failure");
 
 export interface ToolBlockItem {
   type: "tool";

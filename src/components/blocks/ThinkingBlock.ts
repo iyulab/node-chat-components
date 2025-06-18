@@ -42,9 +42,9 @@ export class ThinkingBlock extends BaseElement {
           ${this.loading
             ? html`<div class="title dots">🤔 Thinking</div>`
             : html`<div class="title">💡 Thought</div>
-              ${this.collapsed 
-              ? html`<uc-icon name="plus"></uc-icon>`
-              : html`<uc-icon name="minus"></uc-icon>`}`}
+          ${this.collapsed
+            ? html`<uc-icon name="plus"></uc-icon>`
+            : html`<uc-icon name="minus"></uc-icon>`}`}
         </div>
         <div class="body scroll" ?collapsed=${!this.loading && this.collapsed}>
           ${this.value}

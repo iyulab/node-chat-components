@@ -18,4 +18,8 @@ export const styles = css`
     scrollbar-color: var(--uc-scrollbar-color) transparent;
     scrollbar-gutter: stable both-edges;
   }
+
+  [hidden] {
+    display: none !important;
+  }
 `;

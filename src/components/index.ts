@@ -4,6 +4,7 @@ export * from './button';
 export * from './buttons';
 export * from './icon';
 export * from './indicators';
+export * from './json-viewer';
 export * from './loaders';
 export * from './message';
 export * from './tooltip';

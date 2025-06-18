@@ -8,7 +8,6 @@ export const styles = css`
     border-radius: 8px;
     background-color: var(--uc-background-color-100);
     padding: 8px 16px;
-    margin-bottom: 1rem;
   }
 
   .header {
@@ -36,6 +35,8 @@ export const styles = css`
     font-size: 14px;
     line-height: 1.45;
     white-space: pre;
+    scrollbar-width: thin;
+    scrollbar-color: var(--us-scrollbar-color) transparent;
     scrollbar-gutter: stable;
   }
 

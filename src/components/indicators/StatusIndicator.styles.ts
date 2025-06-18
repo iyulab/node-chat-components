@@ -3,9 +3,7 @@ import { css } from "lit";
 export const styles = css`
   :host {
     display: block;
-    width: 160px;
-    height: 80px;
-
+    font-size: 16px;
     padding: 8px;
     border: 1px solid var(--uc-border-color-low);
     border-radius: 8px;
@@ -14,26 +12,25 @@ export const styles = css`
   }
   
   .container {
-    width: 100%;
-    height: 100%;
+    width: 10em;
     display: flex;
     flex-direction: column;
+    gap: 4px;
   }
   
   .title {
-    font-size: 12px;
-    line-height: 18px;
+    font-size: 0.8em;
+    line-height: 1.5;
     font-weight: 600;
   }
 
   .loader {
     width: 100%;
-    height: calc(100% - 18px);
     display: flex;
     align-items: center;
     justify-content: center;
   }
   .loader > * {
-    font-size: 40px;
+    font-size: 3em;
   }
 `;

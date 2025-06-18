@@ -18,6 +18,8 @@ export class CodeBlock extends BaseElement {
     'uc-copy-button': CopyButton,
   };
 
+  /** 코드 블록의 헤더를 숨길지 여부를 지정합니다. */
+  @property({ type: Boolean, reflect: true }) headless: boolean = false;
   /** 코드 언어를 지정합니다. */
   @property({ type: String }) language: string = 'plaintext';
   /** 표시할 코드 내용입니다. */
@@ -28,11 +30,11 @@ export class CodeBlock extends BaseElement {
     const lang = hljs.getLanguage(this.language) ? this.language : 'plaintext';
 
     return html`
-      <div class="header">
+      <div class="header" ?hidden=${this.headless}>
         <span class="language">${lang}</span>
         <uc-copy-button mode="badge" .value="${this.value}"></uc-copy-button>
       </div>
-      ${unsafeHTML(`<pre class="hljs scroll">${this.parse(this.value, lang)}</pre>`)}
+      ${unsafeHTML(`<pre class="hljs">${this.parse(this.value, lang)}</pre>`)}
     `;
   }
 

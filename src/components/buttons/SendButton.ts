@@ -15,28 +15,18 @@ export class SendButton extends BaseElement {
   };
 
   /** 로딩 상태 (로딩 중일 때 중단 버튼으로 변경됨) */
-  @property({ type: String }) mode: "send" | "stop" | "retry" | "voice" = "send";
+  @property({ type: String }) mode: "send" | "stop" | "retry" = "send";
   /** 비활성화 상태 */
   @property({ type: Boolean, reflect: true }) disabled: boolean = false;
 
   render() {
     return html`
-      <uc-icon name=${this.getIconName(this.mode)}></uc-icon>
+      <uc-icon 
+        name=${this.mode === "send" ? "arrow-up" :
+          this.mode === "stop" ? "square-fill" :
+          this.mode === "retry" ? "arrow-clockwise" :
+          ""}
+      ></uc-icon>
     `;
-  }
-
-  private getIconName(mode: string): string {
-    switch (mode) {
-      case "send":
-        return "arrow-up";
-      case "stop":
-        return "square-fill";
-      case "retry":
-        return "arrow-clockwise";
-      case "voice":
-        return "mic";
-      default:
-        return "";
-    }
   }
 }

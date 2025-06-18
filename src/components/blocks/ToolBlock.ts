@@ -4,6 +4,9 @@ import { property } from "lit/decorators.js";
 import { BaseElement } from "../../internal/BaseElement.js";
 import { Icon } from "../icon/Icon.js";
 import { Button } from "../button/Button.js";
+import { HourglassRotateLoader } from "../loaders/HourglassRotateLoader.js";
+import { RingStretchLoader } from "../loaders/RingStretchLoader.js";
+import { JsonViewer } from "../json-viewer/JsonViewer.js";
 import type { ToolBlockStatus } from "../message/Message.types.js";
 import { styles } from "./ToolBlock.styles.js";
 
@@ -11,110 +14,90 @@ export class ToolBlock extends BaseElement {
   static styles = [ super.styles, styles ];
   static dependencies: Record<string, typeof BaseElement> = {
     'uc-icon': Icon,
-    'uc-button': Button
+    'uc-button': Button,
+    'uc-hourglass-rotate-loader': HourglassRotateLoader,
+    'uc-ring-stretch-loader': RingStretchLoader,
+    'uc-json-viewer': JsonViewer,
   };
 
-  @property({ type: String }) status: ToolBlockStatus = 'WAITING';
+  @property({ type: Boolean, reflect: true }) collapsed: boolean = true;
+  @property({ type: String }) status: ToolBlockStatus = 'waiting';
+  @property({ type: Number }) index?: number;
   @property({ type: String }) name?: string;
   @property({ type: String }) input?: string;
   @property({ type: String }) output?: string;
 
-  @property({ type: Boolean, reflect: true }) collapsed: boolean = true;
-
   render() {
-    if (this.status === 'WAITING') {
-      return html`
-        <div class="container">
-          <div class="header">
-            ⏳ Waiting: ${this.name}
+    return html`
+      <div class="container">
+        <div class="header"  @click=${() => this.collapsed = !this.collapsed}>
+          ${this.status === 'waiting'
+            ? html`<uc-hourglass-rotate-loader></uc-hourglass-rotate-loader>`
+            : this.status === 'paused'
+            ? html`<uc-icon name="pause"></uc-icon>`
+            : this.status === 'approved'
+            ? html`<uc-icon name="shield-check"></uc-icon>`
+            : this.status === 'rejected'
+            ? html`<uc-icon name="shield-lock"></uc-icon>`
+            : this.status === 'inProgress'
+            ? html`<uc-ring-stretch-loader></uc-ring-stretch-loader>`
+            : this.status === 'success'
+            ? html`<uc-icon name="check"></uc-icon>`
+            : this.status === 'failure'
+            ? html`<uc-icon name="x-lg"></uc-icon>`
+            : nothing}
+          <div class="display">
+            Tool Call [${this.name}]
           </div>
-          <div class="body">
-            ${this.input}
-          </div>
+          <uc-icon
+            name=${this.collapsed ? 'plus' : 'minus'}
+          ></uc-icon>
         </div>
-      `;
-    } else if (this.status === 'PENDING_APPROVAL') {
-      return html`
-        <div class="container">
-          <div class="header">
-            ⏸️ Pending: ${this.name}
-          </div>
-          <div class="body">
-            ${this.input}
-          </div>
-          <div class="footer">
-            <uc-button @click=${this.denied}>
-              Deny
-            </uc-button>
-            <uc-button @click=${this.confirmed}>
-              Confirm
-            </uc-button>
-          </div>
-        </div>
-      `;
-    } else if (this.status === 'EXECUTING') {
-      return html`
-        <div class="container">
-          <div class="header">
-            🔄 Executing: ${this.name}
-          </div>
-          <div class="body">
-            ${this.input}
-          </div>
-        </div>
-      `;
-    } else if (this.status === 'SUCCESS') {
-      return html`
-        <div class="container">
-          <div class="header" @click=${this.toggle}>
-            ✅ Success: ${this.name}
-            ${this.collapsed 
-              ? html`<uc-icon name="plus"></uc-icon>`
-              : html`<uc-icon name="minus"></uc-icon>`}
-          </div>
-          <div class="body">
-            <div class="content">
-              <div class="label">Argument</div>
-              <pre class="value">${this.input}</pre>
-              <div class="label">Result</div>
-              <pre class="value">${this.output}</pre>
+
+        <div class="body" ?hidden=${this.collapsed}>
+          <div class="viewer" ?hidden=${!this.input}>
+            <div class="label">
+              <uc-icon name="chevron-right"></uc-icon>
             </div>
+            <uc-json-viewer
+              .data=${JSON.parse(this.input || '{}')}
+            ></uc-json-viewer>
           </div>
-        </div>
-      `;
-    } else if (this.status === 'FAILED') {
-      return html`
-        <div class="container">
-          <div class="header" @click=${this.toggle}>
-            ❌ Failed: ${this.name}
-            ${this.collapsed 
-              ? html`<uc-icon name="plus"></uc-icon>`
-              : html`<uc-icon name="minus"></uc-icon>`}
-          </div>
-          <div class="body">
-            <div class="content">
-              <div class="label">Argument</div>
-              <pre class="value">${this.input}</pre>
-              <div class="label">Error</div>
-              <pre class="value">${this.output}</pre>
+          <div class="viewer" ?hidden=${!this.output}>
+            <div class="label">
+              <uc-icon name="arrow-return"></uc-icon>
             </div>
+            <uc-json-viewer
+              .data=${JSON.parse(this.output || '{}')}
+            ></uc-json-viewer>
           </div>
         </div>
-      `;
-    } else {
-      return nothing;
-    }
+
+        <div class="footer" ?hidden=${this.status !== 'paused'}>
+          <uc-button @click=${this.handleClickConfirm}>
+            <uc-icon name="check"></uc-icon>
+            Confirm
+          </uc-button>
+          <uc-button @click=${this.handleClickDeny}>
+            <uc-icon name="x-lg"></uc-icon>
+            Deny
+          </uc-button>
+        </div>
+      </div>
+    `;
   }
 
-  private toggle = () => {
-    this.collapsed = !this.collapsed;
+  handleClickConfirm() {
+    this.dispatch('tool-approval', {
+      index: this.index,
+      isApproved: true,
+    });
   }
 
-  private denied = () => {
-    
-  }
-
-  private confirmed = () => {
-
+  handleClickDeny() {
+    this.dispatch('tool-approval', {
+      index: this.index,
+      isApproved: false,
+    });
   }
 }

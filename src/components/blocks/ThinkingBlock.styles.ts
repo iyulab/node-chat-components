@@ -28,10 +28,10 @@ export const styles = css`
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: auto;
   }
 
   .header {
+    width: 100%;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -41,9 +41,10 @@ export const styles = css`
     user-select: none;
   }
   .header .title {
+    flex: 1;
     font-size: inherit;
     font-weight: 600;
-    line-height: 16px;
+    line-height: 1;
   }
   .header .title.dots::after {
     content: '';

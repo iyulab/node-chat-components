@@ -6,20 +6,21 @@ export const styles = css`
     padding: 8px;
     font-size: 16px;
     border-radius: 8px;
-    background-color: var(--uc-background-color-200);
     cursor: pointer;
     user-select: none;
   }
   :host(:hover) {
-    background-color: var(--uc-background-color-300);
+    background-color: var(--uc-background-color-200);
   }
   :host([disabled]) {
     opacity: 0.5;
     pointer-events: none;
+    background-color: transparent;
     cursor: not-allowed;
   }
-  :host([mode="none"]) {
-    background-color: transparent;
+  /* value가 none이 아닐 때만 옐로우 */
+  :host(:not([value="none"])) {
+    background-color: var(--uc-background-color-300);
   }
 
   .container {

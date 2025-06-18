@@ -33,6 +33,11 @@ export const styles = css`
     word-wrap: break-word;
   }
 
+  /* custom block */
+  .markdown-body uc-code-block {
+    margin-bottom: var(--base-size-16);
+  }
+
   .markdown-body .octicon {
     display: inline-block;
     fill: currentColor;
@@ -715,9 +720,11 @@ export const styles = css`
     padding: .2em .4em;
     margin: 0;
     font-size: 85%;
+    font-weight: 600;
     white-space: break-spaces;
     background-color: var(--bgColor-neutral-muted);
     border-radius: 6px;
+    color: var(--color-prettylights-syntax-keyword);
   }
 
   .markdown-body code br,
