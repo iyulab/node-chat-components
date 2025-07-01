@@ -29,8 +29,8 @@ export class Button extends BaseElement {
   @property({ type: String }) tooltipPosition?: Placement;
 
   connectedCallback(): void {
+    this.setAttribute('tabindex', '0');
     super.connectedCallback();
-    this.tabIndex = 0;
   }
 
   render() {

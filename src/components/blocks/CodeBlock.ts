@@ -27,6 +27,7 @@ export class CodeBlock extends BaseElement {
 
   render() {
     if (!this.value) return nothing;
+    // 지원하지 않는 경우 'plaintext'로 설정
     const lang = hljs.getLanguage(this.language) ? this.language : 'plaintext';
 
     return html`

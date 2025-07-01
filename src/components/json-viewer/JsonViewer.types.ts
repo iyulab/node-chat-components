@@ -1,22 +1,7 @@
-export interface JsonViewerState {
-    expanded: { [path: string]: boolean };
-    filtered: { [path: string]: boolean };
-    highlight: string | null;
-}
+export type JsonValue = string | number | boolean | null;
 
-export const enum SupportedTypes {
-    String = 'string',
-    Number = 'number',
-    Boolean = 'boolean',
-    Object = 'object',
-    Null = 'null',
-    Array = 'array'
-}
+export type JsonObject = { [x: string]: JsonNode };
 
-export type Primitive = string | number | boolean | null;
+export type JsonArray = Array<JsonNode>;
 
-export type JSONValue = Primitive | JSONObject | JSONArray;
-
-export type JSONObject = { [x: string]: JSONValue };
-
-export type JSONArray = Array<JSONValue>;
+export type JsonNode = JsonValue | JsonObject | JsonArray;

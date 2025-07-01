@@ -71,24 +71,21 @@ export const styles = css`
     align-items: flex-start;
     gap: 8px;
     padding: 4px 8px;
-    background-color: var(--uc-background-color-100);
+  }
+  .body .viewer:not(:last-child) {
+    border-bottom: 1px dashed var(--uc-border-color-low);
   }
   .body .viewer .label {
     display: flex;
-    flex-direction: row;
     align-items: center;
-    gap: 8px;
+    justify-content: center;
     font-size: inherit;
     font-weight: 400;
-    line-height: 1.5;
-    user-select: none;
     width: 1.5em;
     height: 1.5em;
   }
-  .body .viewer .label uc-icon {
-    font-size: 1em;
-  }
   .body .viewer uc-json-viewer {
+    width: calc(100% - 1.5em);
     font-size: inherit;
     font-family: inherit;
     line-height: 1.5;

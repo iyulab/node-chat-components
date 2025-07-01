@@ -8,6 +8,39 @@ export const styles = css`
     border-radius: 8px;
     background-color: var(--uc-background-color-100);
     padding: 8px 16px;
+
+    --hljs-text-color: #24292e;
+    --hljs-background-color: #ffffff;
+    --hljs-keyword-color: #d73a49;
+    --hljs-entity-color: #6f42c1;
+    --hljs-constant-color: #005cc5;
+    --hljs-string-color: #032f62;
+    --hljs-variable-color: #e36209;
+    --hljs-comment-color: #6a737d;
+    --hljs-entity-tag-color: #22863a;
+    --hljs-markup-heading-color: #005cc5;
+    --hljs-markup-list-color: #735c0f;
+    --hljs-addition-color: #22863a;
+    --hljs-addition-bg-color: #f0fff4;
+    --hljs-deletion-color: #b31d28;
+    --hljs-deletion-bg-color: #ffeef0;
+  }
+  :host-context([theme="dark"]) {
+    --hljs-text-color: #c9d1d9;
+    --hljs-background-color: #0d1117;
+    --hljs-keyword-color: #ff7b72;
+    --hljs-entity-color: #d2a8ff;
+    --hljs-constant-color: #79c0ff;
+    --hljs-string-color: #a5d6ff;
+    --hljs-variable-color: #ffa657;
+    --hljs-comment-color: #8b949e;
+    --hljs-entity-tag-color: #7ee787;
+    --hljs-markup-heading-color: #1f6feb;
+    --hljs-markup-list-color: #f2cc60;
+    --hljs-addition-color: #aff5b4;
+    --hljs-addition-bg-color: #033a16;
+    --hljs-deletion-color: #ffdcd7;
+    --hljs-deletion-bg-color: #67060c;
   }
 
   .header {

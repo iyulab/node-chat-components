@@ -3,17 +3,20 @@ import { property } from "lit/decorators.js";
 
 import { BaseElement } from "../../internal/BaseElement.js";
 import { Icon } from "../icon/Icon.js";
+import { Tooltip } from "../tooltip/Tooltip.js";
 import { Button } from "../button/Button.js";
 import { HourglassRotateLoader } from "../loaders/HourglassRotateLoader.js";
 import { RingStretchLoader } from "../loaders/RingStretchLoader.js";
 import { JsonViewer } from "../json-viewer/JsonViewer.js";
 import type { ToolBlockStatus } from "../message/Message.types.js";
 import { styles } from "./ToolBlock.styles.js";
+import { JsonNode } from "../json-viewer/JsonViewer.types.js";
 
 export class ToolBlock extends BaseElement {
   static styles = [ super.styles, styles ];
   static dependencies: Record<string, typeof BaseElement> = {
     'uc-icon': Icon,
+    'uc-tooltip': Tooltip,
     'uc-button': Button,
     'uc-hourglass-rotate-loader': HourglassRotateLoader,
     'uc-ring-stretch-loader': RingStretchLoader,
@@ -57,18 +60,20 @@ export class ToolBlock extends BaseElement {
         <div class="body" ?hidden=${this.collapsed}>
           <div class="viewer" ?hidden=${!this.input}>
             <div class="label">
-              <uc-icon name="chevron-right"></uc-icon>
+              <uc-icon name="keyboard"></uc-icon>
+              <uc-tooltip placement="left">Input</uc-tooltip>
             </div>
             <uc-json-viewer
-              .data=${JSON.parse(this.input || '{}')}
+              .value=${this.parseJson(this.input)}
             ></uc-json-viewer>
           </div>
           <div class="viewer" ?hidden=${!this.output}>
             <div class="label">
               <uc-icon name="arrow-return"></uc-icon>
+              <uc-tooltip placement="left">Output</uc-tooltip>
             </div>
             <uc-json-viewer
-              .data=${JSON.parse(this.output || '{}')}
+              .value=${this.parseJson(this.output)}
             ></uc-json-viewer>
           </div>
         </div>
@@ -85,6 +90,15 @@ export class ToolBlock extends BaseElement {
         </div>
       </div>
     `;
+  }
+
+  private parseJson(value?: string): JsonNode {
+    if (!value || !value.trim()) return {};
+    try {
+      return JSON.parse(value);
+    } catch {
+      return {};
+    }
   }
 
   handleClickConfirm() {

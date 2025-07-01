@@ -1,112 +1,111 @@
 import { css } from 'lit';
 
 export const styles = css`
-  :where(:host) {
-    /* --background-color: #f5f5f5; */
-    --color: #333333;
-    --string-color: #e03131;
-    --number-color: #12b886;
-    --boolean-color: #5f3dc4;
-    --null-color: #808080;
-    --property-color: #228be6;
-    --preview-color: #bd5f1b;
-    --highlight-color: #ff0000;
-
-    --indent-size: 0.5em;
-    --indentguide: 1px solid #ccc;
-  }
-
   :host {
     display: block;
-    color: var(--color);
     font-family: inherit;
     font-size: inherit;
     line-height: 1.5;
-  }
 
-  :focus {
-    outline-color: #666968;
-    outline-width: 1px;
-    outline-style: dotted;
-  }
+    --json-property-color: #0451a5;
+    --json-string-color: #a31515;
+    --json-number-color: #098658;
+    --json-boolean-color: #0000ff;
+    --json-null-color: #0000ff;
+    --json-preview-color: #999999;
+    --json-arrow-color: #666968;
+    --json-guide-color: #c0c0c0;
 
-  .preview {
-    color: var(--preview-color);
+    --indent-size: 2em;
   }
-
-  .null {
-    color: var(--null-color);
+  :host-context([theme="dark"]) {
+    --json-property-color: #9cdcfe;
+    --json-string-color: #ce9178;
+    --json-number-color: #b5cea8;
+    --json-boolean-color: #569cd6;
+    --json-null-color: #569CD6;
+    --json-preview-color: #999999;
+    --json-arrow-color: #d4d4d4;
+    --json-guide-color: #3c3c3c;
   }
 
   .key {
-    color: var(--property-color);
+    color: var(--json-property-color);
     display: inline-flex;
-    align-items: flex-start;
-  }
-
-  .collapsable::before {
-    display: inline-flex;
-    font-size: 0.8em;
-    content: '▶';
-    width: 1.5em;
-    height: 1.5em;
     align-items: center;
-    justify-content: center;
-
-    transition: transform 195ms ease-out;
-    transform: rotate(90deg);
-
-    color: inherit;
   }
-
-  .collapsable--collapsed::before {
-    transform: rotate(0);
-  }
-
-  .collapsable {
+  .key[collapsable] {
     cursor: pointer;
     user-select: none;
   }
+  .key[collapsable]::before {
+    display: inline-flex;
+    font-size: 0.5em;
+    content: '▶';
+    align-items: center;
+    justify-content: center;
+
+    transform: rotate(90deg);
+    transition: transform 0.2s ease-out;
+    margin-right: 0.5em;
+
+    color: var(--json-arrow-color);
+  }
+  .key[collapsable][collapsed]::before {
+    transform: rotate(0);
+  }
+
+  .preview {
+    color: var(--json-preview-color);
+    margin-left: 0.5em;
+  }
 
   .string {
-    color: var(--string-color);
+    color: var(--json-string-color);
   }
 
   .number {
-    color: var(--number-color);
+    color: var(--json-number-color);
   }
 
   .boolean {
-    color: var(--boolean-color);
+    color: var(--json-boolean-color);
   }
 
+  .null {
+    color: var(--json-null-color);
+  }
+
+  /* object styles */
   ul {
+    position: relative;
+    list-style: none;
     margin: 0;
     padding: 0;
     clear: both;
   }
 
-  ul, li {
+  /* property styles */
+  li {
     position: relative;
     list-style: none;
+    outline: none;
   }
 
+  /* nested property styles */
   li ul > li {
     position: relative;
-    margin-left: calc(var(--indent-size) + 1.5em);
+    margin-left: var(--indent-size);
     padding-left: 0px;
   }
 
+  /* guide line styles */
   ul ul::before {
     content: '';
-    border-left: var(--indentguide);
+    border-left: 1px solid var(--json-guide-color);
     position: absolute;
     left: calc(1.5em / 2 - 1px);
-    top: 0.2rem;
-    bottom: 0.2rem;
-  }
-
-  mark {
-    background-color: var(--highlight-color);
+    top: 0.2em;
+    bottom: 0.2em;
   }
 `;
