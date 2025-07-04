@@ -1,15 +1,11 @@
 import { nothing } from "lit";
 import { property } from "lit/decorators.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
+import { until } from "lit/directives/until.js";
 
 import { BaseElement } from "../../internal/BaseElement.js";
+import { iconLibrary } from "./Icon.handlers.js";
 import { styles } from "./Icon.styles.js";
-import { until } from "lit/directives/until.js";
-// vite에서 제공하는 glob 기능을 사용하여 SVG 아이콘을 가져옵니다.(다른 빌드 도구에서는 사용 불가)
-const icons = import.meta.glob('../../assets/icons/*.svg', { 
-  eager: true,
-  query: '?raw'
-});
 
 /**
  * 아이콘 컴포넌트입니다.
@@ -18,13 +14,6 @@ const icons = import.meta.glob('../../assets/icons/*.svg', {
 export class Icon extends BaseElement {
   static styles = [ super.styles, styles ];
   static dependencies: Record<string, typeof BaseElement> = {};
-  /** 기본 아이콘 데이터의 레지스트리입니다. */
-  static registry: Record<string, string> = Object.fromEntries(
-    Object.entries(icons).map(([path, module]) => {
-      const name = path.split('/').pop()?.replace('.svg', '') || '';
-      return [name, (module as any).default] as [string, string];
-    }).filter(([name]) => name !== '')
-  );
   /** 아이콘을 외부에서 불러올 때 사용할 기본 경로입니다. */
   static externalPath = '/assets/icons/';
 
@@ -64,7 +53,7 @@ export class Icon extends BaseElement {
       }
     } else {
       // 내부 아이콘을 불러오는 경우
-      return Icon.registry[name]?.trim();
+      return iconLibrary.get(name)?.trim();
     }
   }
 

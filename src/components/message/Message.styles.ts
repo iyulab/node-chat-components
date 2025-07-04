@@ -25,7 +25,6 @@ export const styles = css`
     gap: 12px;
     border: none;
     border-radius: 8px;
-    background-color: var(--uc-background-color-200);
   }
 
   .footer {

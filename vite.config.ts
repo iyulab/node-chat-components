@@ -23,7 +23,6 @@ export default defineConfig({
         /^@floating-ui.*/,
         /^marked.*/,
         /^highlight.js.*/,
-        /^jsoneditor.*/,
       ],
       output: {
         preserveModules: true,
