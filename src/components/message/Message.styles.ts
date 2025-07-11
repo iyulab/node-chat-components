@@ -23,6 +23,7 @@ export const styles = css`
     display: flex;
     flex-direction: column;
     gap: 12px;
+    padding: 8px;
     border: none;
     border-radius: 8px;
   }
@@ -32,11 +33,8 @@ export const styles = css`
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 0px;
+    padding: 8px 0px;
     gap: 12px;
     font-size: 12px;
-  }
-  .footer .flex {
-    flex: 1;
   }
 `;

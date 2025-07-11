@@ -3,7 +3,6 @@ import { css } from "lit";
 export const styles = css`
   :host {
     display: block;
-    padding: 8px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-size: 16px;
     font-weight: 400;

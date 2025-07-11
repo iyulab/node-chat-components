@@ -69,7 +69,7 @@ export class Message extends BaseElement {
             .value=${this.gatherTextValue(this.items)}
           ></uc-copy-button>
           <slot name="footer"></slot>
-          <div class="flex"></div>
+          <div style="flex:1;"></div>
           <div class="timestamp">
             ${format(this.timestamp)}
           </div>
