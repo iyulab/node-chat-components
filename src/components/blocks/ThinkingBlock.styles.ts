@@ -13,15 +13,15 @@ export const styles = css`
     --max-rows: 10;
   }
   :host([loading]) .header {
-    cursor: wait;
     pointer-events: none;
+    cursor: wait;
   }
   :host([loading]) .body {
     overflow: hidden !important;
     max-height: calc(1.5em * var(--loading-rows) + 8px);
     animation: pulse_action 1.5s infinite;
-    cursor: wait;
     pointer-events: none;
+    cursor: wait;
   }
 
   .container {
@@ -58,6 +58,8 @@ export const styles = css`
     font-size: inherit;
     line-height: 1.5;
     font-weight: 300;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
     transition: max-height 0.15s ease, padding 0.15s ease;
   }
   .body[collapsed] {
