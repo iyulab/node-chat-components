@@ -36,24 +36,20 @@ export class Message extends BaseElement {
         <div class="body" part="body">
           ${this.items && this.items.length > 0
             ? repeat(this.items, (_, idx) => idx, (item, idx) => {
-                return item.type === 'text'
-                ? html`
+                return item.type === 'text' ? html`
                   <uc-text-block 
                     .value=${item.value}
                   ></uc-text-block>`
-                : item.type === 'markdown'
-                ? html`
+                : item.type === 'markdown' ? html`
                   <uc-markdown-block 
                     .value=${item.value}
                   ></uc-markdown-block>`
-                : item.type === 'thinking' 
-                ? html`
+                : item.type === 'thinking' ? html`
                   <uc-thinking-block 
                     ?loading=${this.items?.length === ((idx || 0) + 1)}
                     .value=${item.value}
                   ></uc-thinking-block>`
-                : item.type === 'tool'
-                ? html`
+                : item.type === 'tool' ? html`
                   <uc-tool-block
                     .index=${idx}
                     .status=${item.status}
@@ -66,7 +62,7 @@ export class Message extends BaseElement {
         </div>
         <div class="footer" part="footer">
           <uc-copy-button
-            .value=${this.gatherTextValue(this.items)}
+            .value=${this.getTextValue(this.items)}
           ></uc-copy-button>
           <slot name="footer"></slot>
           <div style="flex:1;"></div>
@@ -81,7 +77,7 @@ export class Message extends BaseElement {
   /**
    * 텍스트 및 마크다운 블록의 내용을 모아서 하나의 문자열로 반환합니다.
    */ 
-  private gatherTextValue = (items?: BlockItem[]) => {
+  private getTextValue = (items?: BlockItem[]) => {
     if (!items) return '';
 
     return items.reduce((acc, item) => {

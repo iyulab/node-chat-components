@@ -65,13 +65,19 @@ export class TextBlock extends BaseElement {
   }
 
   /**
+   * textarea에 포커스를 줍니다.
+   */
+  public override focus(options?: FocusOptions): void {
+    this.textareaEl.focus(options);
+  }
+
+  /**
    * 텍스트 입력시 value를 업데이트하고 이벤트를 재전파합니다.
    */
   private updateValueFrom = (event: InputEvent) => {
     // event.preventDefault();
     event.stopPropagation();
     this.value = this.textareaEl.value;
-    console.debug('TextBlock value updated:', event);
 
     // 값 변경 이벤트 재전파
     this.dispatchEvent(new InputEvent("input", {
@@ -84,7 +90,7 @@ export class TextBlock extends BaseElement {
       dataTransfer: event.dataTransfer,
       detail: event.detail,
       targetRanges: event.getTargetRanges(),
-      view: event.view  ,
+      view: event.view
     }));
   }
 

@@ -5,7 +5,7 @@ import { BaseElement } from "../../internal/BaseElement.js";
 import { Icon } from "../icon/Icon.js";
 import { styles } from "./ThinkButton.styles.js";
 
-type ThinkButtonValue = "low" | "medium" | "high" | "none";
+export type ThinkButtonValue = "low" | "medium" | "high" | "none";
 
 /**
  * 모델이 추론을 사용하고자 할 때 사용하는 버튼입니다.
