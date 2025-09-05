@@ -24,7 +24,7 @@ export class ToolBlock extends BaseElement {
   };
 
   @property({ type: Boolean, reflect: true }) collapsed: boolean = true;
-  @property({ type: String }) status: ToolBlockStatus = 'waiting';
+  @property({ type: String }) status: ToolBlockStatus = 'pending';
   @property({ type: Number }) index?: number;
   @property({ type: String }) name?: string;
   @property({ type: String }) input?: string;
@@ -34,14 +34,8 @@ export class ToolBlock extends BaseElement {
     return html`
       <div class="container">
         <div class="header"  @click=${() => this.collapsed = !this.collapsed}>
-          ${this.status === 'waiting'
-            ? html`<uc-hourglass-rotate-loader></uc-hourglass-rotate-loader>`
-            : this.status === 'paused'
+          ${this.status === 'pending' || this.status === 'paused'
             ? html`<uc-icon name="pause"></uc-icon>`
-            : this.status === 'approved'
-            ? html`<uc-icon name="shield-check"></uc-icon>`
-            : this.status === 'rejected'
-            ? html`<uc-icon name="shield-lock"></uc-icon>`
             : this.status === 'inProgress'
             ? html`<uc-ring-stretch-loader></uc-ring-stretch-loader>`
             : this.status === 'success'
@@ -97,7 +91,7 @@ export class ToolBlock extends BaseElement {
     try {
       return JSON.parse(value);
     } catch {
-      return {};
+      return value;
     }
   }
 

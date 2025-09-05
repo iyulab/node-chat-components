@@ -14,10 +14,8 @@ export interface ThinkingBlockItem {
 }
 
 export type ToolBlockStatus = (
-  "waiting" | 
-  "paused" | 
-  "approved" |
-  "rejected" |
+  "pending" |
+  "paused" |
   "inProgress" |
   "success" | 
   "failure");

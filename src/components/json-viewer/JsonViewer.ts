@@ -120,6 +120,7 @@ export class JsonViewer extends BaseElement {
     this.state = {...this.state, [path]: !isExpanded };
   }
 
+  /** JSON 데이터를 순회하며 각 경로의 확장 상태를 설정합니다. */
   private setState(value: JsonNode, parent: string = '') : Record<string, boolean> {
     if (typeof value !== 'object' || value === null) return {};
 
