@@ -5,9 +5,6 @@ export const styles = css`
     display: block;
     width: 100%;
     height: auto;
-    border: 1px solid var(--uc-border-color-low);
-    border-radius: 8px;
-    font-size: 14px;
 
     --loading-rows: 3;
     --max-rows: 10;
@@ -28,6 +25,9 @@ export const styles = css`
     display: flex;
     flex-direction: column;
     width: 100%;
+    border: 1px solid var(--uc-border-color-low);
+    border-radius: 8px;
+    font-size: 14px;
   }
 
   .header {
