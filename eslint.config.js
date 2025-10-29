@@ -1,29 +1,38 @@
 import { defineConfig } from "eslint/config";
-import jseslint from "@eslint/js";
+import js from "@eslint/js";
 import tseslint from "typescript-eslint";
 import liteslint from "eslint-plugin-lit";
 import globals from "globals";
+import { resolve } from "path";
 
 export default defineConfig([
-  { 
-    files: ["src/**/*.{js,mjs,cjs,ts}"], 
-    ignores: ["dist/**", "node_modules/**"],
-    languageOptions: { 
+  {
+    ignores: ["dist/**", "node_modules/**"]
+  },
+  js.configs.recommended,
+  ...tseslint.configs.recommended,
+  liteslint.configs["flat/recommended"],
+  {
+    files: ["src/**/*.{js,mjs,cjs,ts}"],
+    languageOptions: {
       sourceType: "module",
-      globals: globals.browser 
+      globals: globals.browser,
+      parserOptions: {
+        ecmaVersion: 2020,
+        project: "./tsconfig.json",
+        tsconfigRootDir: resolve(__dirname),
+      }
     },
-    plugins: { 
-      js: jseslint,
-      ts: tseslint,
+    plugins: {
       lit: liteslint
     },
-    extends: [
-      "js/recommended",
-      "ts/recommended",
-      "lit/flat/recommended"
-    ], 
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-unused-vars": ["warn", { 
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_"
+      }],
+      "no-console": "warn"
     }
   }
 ]);
