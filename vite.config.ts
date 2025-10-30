@@ -1,7 +1,5 @@
-import path from 'path';
-import { defineConfig, normalizePath } from 'vite';
-import viteDts from 'vite-plugin-dts';
-import { viteStaticCopy } from 'vite-plugin-static-copy';
+import { defineConfig } from 'vite';
+import dts from 'vite-plugin-dts';
 
 export default defineConfig({
   build: {
@@ -33,18 +31,10 @@ export default defineConfig({
     }
   },
   plugins: [
-    viteDts({
+    dts({
       tsconfigPath: './tsconfig.json',
       include: ['src/**/*.ts'],
       outDir: 'dist'
-    }),
-    viteStaticCopy({
-      targets: [
-        {
-          src: normalizePath(path.resolve(__dirname, './src/assets/styles')),
-          dest: 'assets'
-        }
-      ]
     })
   ]
 });
