@@ -1,4 +1,3 @@
-export * from './alert';
 export * from './blocks';
 export * from './button';
 export * from './buttons';
