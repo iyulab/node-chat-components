@@ -1,11 +1,11 @@
 import { JsonViewer } from './JsonViewer';
 
-export { JsonViewer };
-
-JsonViewer.define('uc-json-viewer');
+JsonViewer.define('u-json-viewer');
 
 declare global {
   interface HTMLElementTagNameMap {
-    'uc-json-viewer': JsonViewer;
+    'u-json-viewer': JsonViewer;
   }
 }
+
+export { JsonViewer };

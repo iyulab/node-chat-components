@@ -2,26 +2,24 @@ import { html, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
 
-import { BaseElement } from '../../internal/BaseElement.js';
-import { CopyButton } from '../buttons/CopyButton.js';
-import { TextBlock } from '../blocks/TextBlock.js';
-import { MarkdownBlock } from '../blocks/MarkdownBlock.js';
-import { ThinkingBlock } from '../blocks/ThinkingBlock.js';
-import { ToolBlock } from '../blocks/ToolBlock.js';
-import { DotBounceLoader } from '../loaders/DotBounceLoader.js';
+import { UElement } from '@iyulab/components/internals/UElement.js';
+import { CopyButton } from '../copy-button/CopyButton.js';
+import { TextBlock } from '../text-block/TextBlock.js';
+import { MarkdownBlock } from '../markdown-block/MarkdownBlock.js';
+import { ThinkingBlock } from '../thinking-block/ThinkingBlock.js';
+import { ToolBlock } from '../tool-block/ToolBlock.js';
 import type { BlockItem } from './Message.types.js';
-import { format } from '../../utilities/time-functions.js';
+import { format } from '../../internals/date-functions.js';
 import { styles } from './Message.styles.js';
 
-export class Message extends BaseElement {
+export class Message extends UElement {
   static styles = [ super.styles, styles ];
-  static dependencies: Record<string, typeof BaseElement> = {
-    'uc-text-block': TextBlock,
-    'uc-markdown-block': MarkdownBlock,
-    'uc-thinking-block': ThinkingBlock,
-    'uc-tool-block': ToolBlock,
-    'uc-copy-button': CopyButton,
-    'uc-dot-bounce-loader': DotBounceLoader
+  static dependencies: Record<string, typeof UElement> = {
+    'u-text-block': TextBlock,
+    'u-markdown-block': MarkdownBlock,
+    'u-thinking-block': ThinkingBlock,
+    'u-tool-block': ToolBlock,
+    'u-copy-button': CopyButton
   };
 
   @property({ type: Array }) items?: BlockItem[];
@@ -37,33 +35,38 @@ export class Message extends BaseElement {
           ${this.items && this.items.length > 0
             ? repeat(this.items, (_, idx) => idx, (item, idx) => {
                 return item.type === 'text' ? html`
-                  <uc-text-block 
+                  <u-text-block 
                     .value=${item.value}
-                  ></uc-text-block>`
+                  ></u-text-block>`
                 : item.type === 'markdown' ? html`
-                  <uc-markdown-block 
+                  <u-markdown-block 
                     .value=${item.value}
-                  ></uc-markdown-block>`
+                  ></u-markdown-block>`
                 : item.type === 'thinking' ? html`
-                  <uc-thinking-block 
+                  <u-thinking-block 
                     ?loading=${this.items?.length === ((idx || 0) + 1)}
                     .value=${item.value}
-                  ></uc-thinking-block>`
+                  ></u-thinking-block>`
                 : item.type === 'tool' ? html`
-                  <uc-tool-block
+                  <u-tool-block
                     .index=${idx}
                     .status=${item.status}
                     .name=${item.name}
                     .input=${item.input}
                     .output=${item.output}
-                  ></uc-tool-block>`
+                  ></u-tool-block>`
                 : nothing})
-            : html`<uc-dot-bounce-loader></uc-dot-bounce-loader>`}
+            : html`
+              <svg class="loader" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                  <circle class="dot" cx="4" cy="12" r="3"/>
+                  <circle class="dot d1" cx="12" cy="12" r="3"/>
+                  <circle class="dot d2" cx="20" cy="12" r="3"/>
+              </svg>`}
         </div>
         <div class="footer" part="footer">
-          <uc-copy-button
+          <u-copy-button
             .value=${this.getTextValue(this.items)}
-          ></uc-copy-button>
+          ></u-copy-button>
           <slot name="footer"></slot>
           <div style="flex:1;"></div>
           <div class="timestamp">

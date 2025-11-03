@@ -1,12 +1,12 @@
 import { Message } from "./Message";
 
-export { Message };
-export type * from "./Message.types";
-
-Message.define("uc-message");
+Message.define("u-message");
 
 declare global {
   interface HTMLElementTagNameMap {
-    "uc-message": Message;
+    "u-message": Message;
   }
 }
+
+export { Message };
+export type * from "./Message.types";
