@@ -2,8 +2,8 @@ import { PropertyValues, html } from "lit";
 import { property, query } from "lit/decorators.js";
 import { nothing } from "lit/html.js";
 
-import { UElement } from "@iyulab/components/internals/UElement.js";
-import { Icon } from "@iyulab/components/components/icon/Icon.js";
+import { UElement } from "@iyulab/components/dist/internals/UElement.js";
+import { Icon } from "@iyulab/components/dist/components/icon/Icon.js";
 import { styles } from "./ThinkingBlock.styles.js";
 
 /**

@@ -1,2 +1,2 @@
-export type { SubmitMessageEvent } from './uc-submit';
-export type { StopMessageEvent } from './uc-stop';
+export type { USubmitMessageEvent } from './u-submit';
+export type { UStopMessageEvent } from './u-stop';

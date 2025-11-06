@@ -4,7 +4,7 @@ import { unsafeHTML } from "lit/directives/unsafe-html.js";
 
 import hljs from "highlight.js";
 
-import { UElement } from "@iyulab/components/internals/UElement.js";
+import { UElement } from "@iyulab/components/dist/internals/UElement.js";
 import { CopyButton } from "../copy-button/CopyButton.js";
 import { styles } from "./CodeBlock.styles.js";
 

@@ -3,7 +3,7 @@ import { property, state } from 'lit/decorators.js';
 import { map } from 'lit/directives/map.js';
 import { when } from 'lit/directives/when.js';
 
-import { UElement } from '@iyulab/components/internals/UElement.js';
+import { UElement } from '@iyulab/components/dist/internals/UElement.js';
 import { jsonConverter, isValueType, getNodeName } from './JsonViewer.handlers.js';
 import type { JsonNode, JsonValue, JsonArray, JsonObject } from './JsonViewer.types.js';
 import { styles } from './JsonViewer.styles.js';

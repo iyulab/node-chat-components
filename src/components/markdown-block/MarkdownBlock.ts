@@ -7,7 +7,7 @@ import markedAlert from "marked-alert";
 import markedFootnote from "marked-footnote";
 import markedKatex from "marked-katex-extension";
 
-import { UElement } from "@iyulab/components/internals/UElement.js";
+import { UElement } from "@iyulab/components/dist/internals/UElement.js";
 import { CodeBlock } from "../code-block/CodeBlock.js";
 import { styles } from "./MarkdownBlock.styles.js";
 

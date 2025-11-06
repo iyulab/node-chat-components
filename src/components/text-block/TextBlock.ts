@@ -1,7 +1,7 @@
 import { html, PropertyValues } from "lit";
 import { property, query } from "lit/decorators.js";
 
-import { UElement } from "@iyulab/components/internals/UElement.js";
+import { UElement } from "@iyulab/components/dist/internals/UElement.js";
 import { styles } from "./TextBlock.styles.js";
 
 /**

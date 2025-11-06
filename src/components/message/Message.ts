@@ -2,7 +2,7 @@ import { html, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
 
-import { UElement } from '@iyulab/components/internals/UElement.js';
+import { UElement } from '@iyulab/components/dist/internals/UElement.js';
 import { CopyButton } from '../copy-button/CopyButton.js';
 import { TextBlock } from '../text-block/TextBlock.js';
 import { MarkdownBlock } from '../markdown-block/MarkdownBlock.js';

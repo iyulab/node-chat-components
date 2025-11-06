@@ -1,11 +1,11 @@
 import { html, nothing } from "lit";
 import { property } from "lit/decorators.js";
 
-import { UElement } from "@iyulab/components/internals/UElement.js";
-import { Icon } from "@iyulab/components/components/icon/Icon.js";
-import { Tooltip } from "@iyulab/components/components/tooltip/Tooltip.js";
-import { Button } from "@iyulab/components/components/button/Button.js";
-import { Spinner } from "@iyulab/components/components/spinner/Spinner.js";
+import { UElement } from "@iyulab/components/dist/internals/UElement.js";
+import { Icon } from "@iyulab/components/dist/components/icon/Icon.js";
+import { Tooltip } from "@iyulab/components/dist/components/tooltip/Tooltip.js";
+import { Button } from "@iyulab/components/dist/components/button/Button.js";
+import { Spinner } from "@iyulab/components/dist/components/spinner/Spinner.js";
 import { JsonViewer } from "../json-viewer/JsonViewer.js";
 import type { ToolBlockStatus } from "../message/Message.types.js";
 import { styles } from "./ToolBlock.styles.js";

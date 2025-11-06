@@ -1,9 +1,9 @@
 import { html } from "lit";
 import { property, query } from "lit/decorators.js";
 
-import { UElement } from "@iyulab/components/internals/UElement.js";
-import { Icon } from "@iyulab/components/components/icon/Icon.js";
-import { Tooltip } from "@iyulab/components/components/tooltip/Tooltip.js";
+import { UElement } from "@iyulab/components/dist/internals/UElement.js";
+import { Icon } from "@iyulab/components/dist/components/icon/Icon.js";
+import { Tooltip } from "@iyulab/components/dist/components/tooltip/Tooltip.js";
 import { styles } from "./AttachButton.styles.js";
 
 /**
