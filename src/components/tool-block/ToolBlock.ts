@@ -1,7 +1,7 @@
 import { html, nothing } from "lit";
 import { property } from "lit/decorators.js";
 
-import { UElement } from "@iyulab/components/dist/internals/UElement.js";
+import { BaseElement } from "@iyulab/components/dist/components/BaseElement.js";
 import { Icon } from "@iyulab/components/dist/components/icon/Icon.js";
 import { Tooltip } from "@iyulab/components/dist/components/tooltip/Tooltip.js";
 import { Button } from "@iyulab/components/dist/components/button/Button.js";
@@ -11,9 +11,9 @@ import type { ToolBlockStatus } from "../message/Message.types.js";
 import { styles } from "./ToolBlock.styles.js";
 import { JsonNode } from "../json-viewer/JsonViewer.types.js";
 
-export class ToolBlock extends UElement {
+export class ToolBlock extends BaseElement {
   static styles = [ super.styles, styles ];
-  static dependencies: Record<string, typeof UElement> = {
+  static dependencies: Record<string, typeof BaseElement> = {
     'u-icon': Icon,
     'u-tooltip': Tooltip,
     'u-button': Button,

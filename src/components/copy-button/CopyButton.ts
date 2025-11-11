@@ -1,7 +1,7 @@
 import { html, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
 
-import { UElement } from '@iyulab/components/dist/internals/UElement.js';
+import { BaseElement } from '@iyulab/components/dist/components/BaseElement.js';
 import { Icon } from '@iyulab/components/dist/components/icon/Icon.js';
 import { Tooltip } from '@iyulab/components/dist/components/tooltip/Tooltip.js';
 import { styles } from './CopyButton.styles.js';
@@ -10,9 +10,9 @@ import { styles } from './CopyButton.styles.js';
  * CopyButton 컴포넌트는 클릭 시 클립보드에 텍스트를 복사하는 버튼입니다.
  * 복사 상태를 표시하기 위해 아이콘이 변경됩니다.
  */
-export class CopyButton extends UElement {
+export class CopyButton extends BaseElement {
   static styles = [ super.styles, styles ];
-  static dependencies: Record<string, typeof UElement> = {
+  static dependencies: Record<string, typeof BaseElement> = {
     'u-icon': Icon,
     'u-tooltip': Tooltip,
   };

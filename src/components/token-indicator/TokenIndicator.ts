@@ -1,7 +1,7 @@
 import { html, PropertyValues } from 'lit';
 import { property, query, state } from 'lit/decorators.js';
 
-import { UElement } from '@iyulab/components/dist/internals/UElement.js';
+import { BaseElement } from '@iyulab/components/dist/components/BaseElement.js';
 import { Icon } from '@iyulab/components/dist/components/icon/Icon.js';
 import { Tooltip } from '@iyulab/components/dist/components/tooltip/Tooltip.js';
 import { styles } from './TokenIndicator.styles.js';
@@ -10,9 +10,9 @@ import { styles } from './TokenIndicator.styles.js';
  * 토큰 사용량을 게이지로 표시하는 컴포넌트입니다.
  * 사용량, 제한, 백분율을 시각적으로 나타냅니다.
  */
-export class TokenIndicator extends UElement {
+export class TokenIndicator extends BaseElement {
   static styles = [super.styles, styles];
-  static dependencies: Record<string, typeof UElement> = {
+  static dependencies: Record<string, typeof BaseElement> = {
     'u-icon': Icon,
     'u-tooltip': Tooltip,
   };

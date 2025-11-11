@@ -3,7 +3,7 @@ import { property, state } from 'lit/decorators.js';
 import { map } from 'lit/directives/map.js';
 import { when } from 'lit/directives/when.js';
 
-import { UElement } from '@iyulab/components/dist/internals/UElement.js';
+import { BaseElement } from '@iyulab/components/dist/components/BaseElement.js';
 import { jsonConverter, isValueType, getNodeName } from './JsonViewer.handlers.js';
 import type { JsonNode, JsonValue, JsonArray, JsonObject } from './JsonViewer.types.js';
 import { styles } from './JsonViewer.styles.js';
@@ -11,9 +11,9 @@ import { styles } from './JsonViewer.styles.js';
 /**
  * json 데이터를 트리 형태로 시각화하는 컴포넌트입니다.
  */
-export class JsonViewer extends UElement {
+export class JsonViewer extends BaseElement {
   static styles = [ super.styles, styles ];
-  static dependencies: Record<string, typeof UElement> = {};
+  static dependencies: Record<string, typeof BaseElement> = {};
 
   @state() state: Record<string, boolean> = {};
 

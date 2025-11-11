@@ -1,7 +1,7 @@
 import { html } from "lit";
 import { property } from "lit/decorators.js";
 
-import { UElement } from "@iyulab/components/dist/internals/UElement.js";
+import { BaseElement } from "@iyulab/components/dist/components/BaseElement.js";
 import { Icon } from "@iyulab/components/dist/components/icon/Icon.js";
 import { styles } from "./ThinkingButton.styles.js";
 
@@ -10,9 +10,9 @@ export type ThinkingValue = "low" | "medium" | "high" | "none";
 /**
  * 모델이 추론을 사용하고자 할 때 사용하는 버튼입니다.
  */
-export class ThinkingButton extends UElement {
+export class ThinkingButton extends BaseElement {
   static styles = [ super.styles, styles ];
-  static dependencies: Record<string, typeof UElement> = {
+  static dependencies: Record<string, typeof BaseElement> = {
     'u-icon': Icon
   };
   

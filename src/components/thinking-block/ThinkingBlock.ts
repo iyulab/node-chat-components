@@ -2,7 +2,7 @@ import { PropertyValues, html } from "lit";
 import { property, query } from "lit/decorators.js";
 import { nothing } from "lit/html.js";
 
-import { UElement } from "@iyulab/components/dist/internals/UElement.js";
+import { BaseElement } from "@iyulab/components/dist/components/BaseElement.js";
 import { Icon } from "@iyulab/components/dist/components/icon/Icon.js";
 import { styles } from "./ThinkingBlock.styles.js";
 
@@ -10,9 +10,9 @@ import { styles } from "./ThinkingBlock.styles.js";
  * 추론 내용을 표시하는 블록입니다.
  * 로딩 중일 때는 "Thinking..." 메시지를 표시하고, 내용 펼치기/접기 기능을 제공합니다.
  */
-export class ThinkingBlock extends UElement {
+export class ThinkingBlock extends BaseElement {
   static styles = [ super.styles, styles ];
-  static dependencies: Record<string, typeof UElement> = {
+  static dependencies: Record<string, typeof BaseElement> = {
     "u-icon": Icon
   };
 

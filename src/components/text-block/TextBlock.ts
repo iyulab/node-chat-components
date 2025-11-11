@@ -1,15 +1,15 @@
 import { html, PropertyValues } from "lit";
 import { property, query } from "lit/decorators.js";
 
-import { UElement } from "@iyulab/components/dist/internals/UElement.js";
+import { BaseElement } from "@iyulab/components/dist/components/BaseElement.js";
 import { styles } from "./TextBlock.styles.js";
 
 /**
  * 텍스트를 표시하거나 편집할 수 있는 블록 컴포넌트입니다.
  */
-export class TextBlock extends UElement {
+export class TextBlock extends BaseElement {
   static styles = [ super.styles, styles ];
-  static dependencies: Record<string, typeof UElement> = {};
+  static dependencies: Record<string, typeof BaseElement> = {};
 
   @query('textarea') textareaEl!: HTMLTextAreaElement;
   @query('pre') preEl!: HTMLPreElement;

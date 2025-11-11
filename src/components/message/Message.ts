@@ -2,7 +2,7 @@ import { html, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
 
-import { UElement } from '@iyulab/components/dist/internals/UElement.js';
+import { BaseElement } from '@iyulab/components/dist/components/BaseElement.js';
 import { CopyButton } from '../copy-button/CopyButton.js';
 import { TextBlock } from '../text-block/TextBlock.js';
 import { MarkdownBlock } from '../markdown-block/MarkdownBlock.js';
@@ -12,9 +12,9 @@ import type { BlockItem } from './Message.types.js';
 import { format } from '../../internals/date-functions.js';
 import { styles } from './Message.styles.js';
 
-export class Message extends UElement {
+export class Message extends BaseElement {
   static styles = [ super.styles, styles ];
-  static dependencies: Record<string, typeof UElement> = {
+  static dependencies: Record<string, typeof BaseElement> = {
     'u-text-block': TextBlock,
     'u-markdown-block': MarkdownBlock,
     'u-thinking-block': ThinkingBlock,

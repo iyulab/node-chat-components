@@ -1,16 +1,16 @@
 import { html } from "lit";
 import { property } from "lit/decorators.js";
 
-import { UElement } from "@iyulab/components/dist/internals/UElement.js";
+import { BaseElement } from "@iyulab/components/dist/components/BaseElement.js";
 import { Icon } from "@iyulab/components/dist/components/icon/Icon.js";
 import { styles } from "./SendButton.styles.js";
 
 /**
  * 메시지 전송/중단 버튼 컴포넌트입니다.
  */
-export class SendButton extends UElement {
+export class SendButton extends BaseElement {
   static styles = [ super.styles, styles ];
-  static dependencies: Record<string, typeof UElement> = {
+  static dependencies: Record<string, typeof BaseElement> = {
     'u-icon': Icon,
   };
 

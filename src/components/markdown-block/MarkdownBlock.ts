@@ -7,16 +7,16 @@ import markedAlert from "marked-alert";
 import markedFootnote from "marked-footnote";
 import markedKatex from "marked-katex-extension";
 
-import { UElement } from "@iyulab/components/dist/internals/UElement.js";
+import { BaseElement } from "@iyulab/components/dist/components/BaseElement.js";
 import { CodeBlock } from "../code-block/CodeBlock.js";
 import { styles } from "./MarkdownBlock.styles.js";
 
 /**
  * 마크다운 컨텐츠를 렌더링하는 컴포넌트입니다.
  */
-export class MarkdownBlock extends UElement {
+export class MarkdownBlock extends BaseElement {
   static styles = [ super.styles, styles ];
-  static dependencies: Record<string, typeof UElement> = {
+  static dependencies: Record<string, typeof BaseElement> = {
     'u-code-block': CodeBlock,
   };
 

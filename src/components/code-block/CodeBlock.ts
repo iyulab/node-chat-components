@@ -4,7 +4,7 @@ import { unsafeHTML } from "lit/directives/unsafe-html.js";
 
 import hljs from "highlight.js";
 
-import { UElement } from "@iyulab/components/dist/internals/UElement.js";
+import { BaseElement } from "@iyulab/components/dist/components/BaseElement.js";
 import { CopyButton } from "../copy-button/CopyButton.js";
 import { styles } from "./CodeBlock.styles.js";
 
@@ -12,9 +12,9 @@ import { styles } from "./CodeBlock.styles.js";
  * 코드 블록을 렌더링하는 컴포넌트입니다.
  * 언어와 코드를 받아 syntax highlighting을 적용합니다.
  */
-export class CodeBlock extends UElement {
+export class CodeBlock extends BaseElement {
   static styles = [ super.styles, styles ];
-  static dependencies: Record<string, typeof UElement> = {
+  static dependencies: Record<string, typeof BaseElement> = {
     'u-copy-button': CopyButton,
   };
 
