@@ -1,40 +1,40 @@
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
+import { resolve } from 'path';
 
 export default defineConfig({
   build: {
     target: 'esnext',
     outDir: 'dist',
     emptyOutDir: true,
+    copyPublicDir: false,
+    minify: false,
     lib: {
       entry: [
-        'src/index.ts',
-        'src/components/index.ts',
-        'src/events/index.ts',
+        resolve(__dirname, 'src/index.ts'),
       ],
       formats: ['es'],
+      fileName: (format, entry) => {
+        return format === 'es' ? `${entry}.js` : `${entry}.${format}.js`;
+      }
     },
     rollupOptions: {
       external: [
+        /^@iyulab.*/,
         /^lit.*/,
-        /^@lit.*/,
-        /^@floating-ui.*/,
         /^marked.*/,
         /^highlight.js.*/,
       ],
       output: {
         preserveModules: true,
         preserveModulesRoot: 'src',
-        entryFileNames: '[name].js',
       },
       treeshake: true,
     }
   },
   plugins: [
     dts({
-      tsconfigPath: './tsconfig.json',
-      include: ['src/**/*.ts'],
-      outDir: 'dist'
+      include: ['src/**/*'],
     })
   ]
 });
