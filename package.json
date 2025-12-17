@@ -27,12 +27,12 @@
   "main": "./dist/index.js",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "types": "./src/index.d.ts",
+      "import": "./src/index.js"
     },
     "./dist/*": {
-      "types": "./dist/*.d.ts",
-      "import": "./dist/*"
+      "types": "./src/*.d.ts",
+      "import": "./src/*"
     }
   },
   "scripts": {
