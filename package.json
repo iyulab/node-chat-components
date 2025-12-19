@@ -36,10 +36,11 @@
     }
   },
   "scripts": {
+    "start": "vite",
     "build": "eslint && vite build"
   },
   "dependencies": {
-    "@iyulab/components": "0.1.8",
+    "@iyulab/components": "0.1.10",
     "dompurify": "^3.3.1",
     "highlight.js": "^11.11.1",
     "lit": "^3.3.1",
