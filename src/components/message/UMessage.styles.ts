@@ -13,6 +13,41 @@ export const styles = css`
     flex-direction: column;
   }
 
+  /* Variant styles */
+  .variant-default .body {
+    background-color: transparent;
+    color: var(--u-txt-color, #333);
+    padding: 8px 0;
+  }
+
+  .variant-bubble .body {
+    background-color: var(--u-surface-color, #f5f5f5);
+    color: var(--u-txt-color, #333);
+    border-radius: 18px;
+    padding: 14px 18px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    max-width: 70%;
+  }
+
+  /* Position styles for bubble variant */
+  .variant-bubble.position-left {
+    align-items: flex-start;
+  }
+
+  .variant-bubble.position-left .body {
+    border-bottom-left-radius: 4px;
+  }
+
+  .variant-bubble.position-right {
+    align-items: flex-end;
+  }
+
+  .variant-bubble.position-right .body {
+    background-color: var(--u-primary-color, #007bff);
+    color: white;
+    border-bottom-right-radius: 4px;
+  }
+
   .header {
     display: flex;
     flex-direction: row;
@@ -36,6 +71,24 @@ export const styles = css`
     padding: 8px 0px;
     gap: 12px;
     font-size: 12px;
+  }
+
+  .actions {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .citations {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .timestamp {
+    white-space: nowrap;
   }
 
   .loader {

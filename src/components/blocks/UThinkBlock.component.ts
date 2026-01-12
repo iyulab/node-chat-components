@@ -1,6 +1,5 @@
 import { PropertyValues, html } from "lit";
 import { property, query } from "lit/decorators.js";
-import { nothing } from "lit/html.js";
 
 import { BaseElement } from "@iyulab/components/dist/components/BaseElement.js";
 import { UIcon } from "@iyulab/components/dist/components/icon/UIcon.component.js";
@@ -16,56 +15,54 @@ export class UThinkBlock extends BaseElement {
     "u-icon": UIcon
   };
 
-  @query('.body') bodyEl!: HTMLElement;
+  @query('.body') bodyEl!: HTMLDivElement;
 
+  /** 컨텐츠가 접혀있는지 여부 */
+  @property({ type: Boolean, reflect: true }) collapsed: boolean = true;
   /** 컨텐츠가 로딩 중인지 여부 */
   @property({ type: Boolean, reflect: true }) loading: boolean = false;
-  /** 컨텐츠가 접혀있는지 여부 */
-  @property({ type: Boolean }) collapsed: boolean = true;
   /** 추론 컨텐츠의 내용 */
   @property({ type: String }) value?: string;
 
   protected updated(changedProperties: PropertyValues) {
     super.updated(changedProperties);
 
-    if (changedProperties.has('value') && this.loading) {
-      this.scrollBodyContent();
+    if (changedProperties.has('value') && this.value) {
+      this.scrollToBottom();
     }
   }
 
   render() {
-    if (!this.value) return nothing;
-    
     return html`
-      <div class="container">
-        <div class="header" @click=${this.toggleCollapsed}>
-          ${this.loading
-            ? html`<div class="title dots">🤔 Thinking</div>`
-            : html`<div class="title">💡 Thought</div>
-          ${this.collapsed
-            ? html`<u-icon lib="internal" name="plus-lg"></u-icon>`
-            : html`<u-icon lib="internal" name="dash-lg"></u-icon>`}`}
-        </div>
-        <div class="body scroll" ?collapsed=${!this.loading && this.collapsed}>
-          ${this.value}
-        </div>
+      <div class="header" part="header"
+        @click=${() => this.collapsed = !this.collapsed}>
+        <u-icon class="prefix-icon"
+          ?loading=${this.loading}
+          lib="internal"
+          name="lightbulb-fill"
+        ></u-icon>
+        <span class="title">
+          ${this.loading ? "Thinking..." : "Thought"}
+        </span>
+        <u-icon class="suffix-icon"
+          lib="internal" 
+          name=${this.collapsed ? "plus-lg" : "dash-lg"}
+        ></u-icon>
+      </div>
+      
+      <div class="body" part="body" scrollable 
+        ?hidden=${this.collapsed}>
+        ${this.value}
       </div>
     `;
   }
 
   /**
-   * 컨텐츠 접기/펼치기 토글
-   */
-  private toggleCollapsed = () => {
-    if (this.loading) return;
-    this.collapsed = !this.collapsed;
-  }
-
-  /**
    * 컨텐츠가 로딩 중일 때, 스크롤을 맨 아래로 이동
    */
-  private scrollBodyContent = () => {
+  private scrollToBottom = () => {
     if (!this.bodyEl) return;
+
     requestAnimationFrame(() => {
       this.bodyEl.scrollTo({ 
         top: this.bodyEl.scrollHeight,

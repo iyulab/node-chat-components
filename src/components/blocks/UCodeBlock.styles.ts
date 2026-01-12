@@ -39,10 +39,10 @@ export const styles = css`
   :host {
     display: block;
     width: 100%;
+    padding: 8px 16px;
     border: 1px solid var(--u-border-color);
     border-radius: 8px;
     background-color: var(--u-neutral-100);
-    padding: 8px 16px;
   }
 
   .header {
@@ -51,28 +51,29 @@ export const styles = css`
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+    margin-bottom: 12px;
+    user-select: none;
+  }
+  .header .lang {
     font-family: Arial, Helvetica, sans-serif;
     font-size: 12px;
     font-weight: 300;
     color: var(--u-txt-color-strong);
-    margin-bottom: 12px;
-    user-select: none;
   }
 
   /* highlight.js styles */
   .hljs {
     display: block;
-    overflow-x: auto;
     margin: 0;
     padding: 0;
     color: var(--hljs-text-color);
-    font-family: var(--fontStack-monospace, ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace);
+    font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
     font-size: 14px;
     line-height: 1.45;
     white-space: pre;
+    overflow: auto;
     scrollbar-width: thin;
     scrollbar-color: var(--u-scrollbar-color) transparent;
-    scrollbar-gutter: stable;
   }
 
   .hljs-doctag,

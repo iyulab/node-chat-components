@@ -1,10 +1,8 @@
-import { html, nothing } from "lit";
+import { nothing } from "lit";
 import { property } from "lit/decorators.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 
 import { Marked } from "marked";
-import markedAlert from "marked-alert";
-import markedFootnote from "marked-footnote";
 import markedKatex from "marked-katex-extension";
 
 import { BaseElement } from "@iyulab/components/dist/components/BaseElement.js";
@@ -28,13 +26,11 @@ export class UMarkedBlock extends BaseElement {
     renderer: {
       code: ({ text, lang }) => {
         lang ||= 'plaintext'; // 기본값은 'plaintext'
-        text = this.sanitizeCode(text);
-        return `<u-code-block language="${lang}" value="${text}"></u-code-block>`;
+        text = this.sanitize(text);
+        return `<u-code-block lang="${lang}">${text}</u-code-block>`;
       },
     },
   })
-  .use(markedAlert())                       // gfm alert 기능 활성화
-  .use(markedFootnote())                    // grm footnote 기능 활성화
   .use(markedKatex({ output: "mathml" }));  // katex 수식 렌더링
 
   /** 마크다운 컨텐츠를 렌더링할 때 사용할 값입니다. */
@@ -42,38 +38,33 @@ export class UMarkedBlock extends BaseElement {
 
   render() {
     if (!this.value) return nothing;
-
-    return html`
-      <div class="markdown-body">
-        ${unsafeHTML(this.parse(this.value))}
-      </div>
-    `;
+    return unsafeHTML(this.parse(this.value));
   }
 
   /**
    * 마크다운 문자열을 HTML로 변환합니다.
+   * 특수 제어 문자를 제거하고 marked 파서로 처리합니다.
    * @param value 변환할 마크다운 문자열
    * @returns 변환된 HTML 문자열
    */
-  private parse(value: string) {
-    // const start = performance.now();
-    // 시작부분에서 특수 제어문자(실제 문자가 아닌 컨트롤 문자, ex: 인코딩, 쓰기 방향표시 등)를 제거합니다.
+  private parse(value: string): string {
+    // 특수 제어 문자 제거 (Zero Width Space, LTR/RTL marks, BOM 등)
     value = value.replace(/\u200B|\u200C|\u200D|\u200E|\u200F|\uFEFF/g, "");
-    value = this.parser.parse(value, { async: false });
-    // const end = performance.now();
-    // console.debug(`Markdown Parser: took ${end - start}ms`);
-    return value;
+    return this.parser.parse(value, { async: false }) as string;
   }
 
   /**
    * HTML 속성에 안전하게 삽입하기 위해 특수문자를 이스케이프합니다.
+   * XSS 공격을 방지하기 위한 처리입니다.
    * @param value 원본 문자열
+   * @returns 이스케이프 처리된 문자열
    */
-  private sanitizeCode(value: string): string {
-    return value.replace(/&/g, "&amp;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#39;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;");
+  private sanitize(value: string): string {
+    return value
+      .replace(/&/g, "&amp;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
   }
 }

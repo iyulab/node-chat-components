@@ -1,9 +1,9 @@
-import { html, nothing } from 'lit';
-import { property } from 'lit/decorators.js';
+import { html } from 'lit';
+import { property, state } from 'lit/decorators.js';
 
 import { BaseElement } from '@iyulab/components/dist/components/BaseElement.js';
 import { UIcon } from '@iyulab/components/dist/components/icon/UIcon.component.js';
-import { UTooltip } from '@iyulab/components/dist/components/tooltip/UTooltip.component.js';
+import { UButton } from '@iyulab/components/dist/components/button/UButton.component.js';
 import { styles } from './UCopyButton.styles.js';
 
 /**
@@ -13,44 +13,29 @@ export class UCopyButton extends BaseElement {
   static styles = [ super.styles, styles ];
   static dependencies: Record<string, typeof BaseElement> = {
     'u-icon': UIcon,
-    'u-tooltip': UTooltip,
+    'u-button': UButton,
   };
 
-  /** 버튼의 모드를 설정합니다. 기본은 'symbol'입니다. */
-  @property({ type: String, reflect: true }) mode: 'badge' | 'symbol' = 'symbol';
   /** 클립보드 복사 상태를 나타내는 플래그입니다. */
-  @property({ type: Boolean, reflect: true }) isCopied: boolean = false;
-  /** 복사할 텍스트를 설정합니다. */
-  @property({ type: String }) value?: string;
+  @state() isCopied: boolean = false;
+  
   /** 클립보드 복사 후 재사용 대기 시간 (ms) */
   @property({ type: Number }) delay: number = 1_000;
-
-  connectedCallback(): void {
-    super.connectedCallback();
-    this.addEventListener('click', this.copyToClipboard);
-  }
-
-  disconnectedCallback(): void {
-    this.removeEventListener('click', this.copyToClipboard);
-    super.disconnectedCallback();
-  }
+  /** 복사할 텍스트를 설정합니다. */
+  @property({ type: String }) value?: string;
 
   render() {
-    if (this.mode === 'badge') {
-      return html`
-        <u-icon lib="internal" name=${this.isCopied ? 'check-lg' : 'copy'}></u-icon>
-        <span class="display">${this.isCopied ? 'Copied!' : 'Copy'}</span>
-      `;
-    } else if (this.mode === 'symbol') {
-      return html`
-        <u-icon lib="internal" name=${this.isCopied ? 'check-lg' : 'copy'}></u-icon>
-        <u-tooltip for="u-icon" distance="6">
-          ${this.isCopied ? 'Copied!' : 'Copy'}
-        </u-tooltip>
-      `;
-    } else {
-      return nothing;
-    }
+    return html`
+      <u-button part="base" 
+        variant="borderless"
+        ?disabled=${this.isCopied}
+        @click=${this.copyToClipboard}>
+        <u-icon part="icon"
+          lib="internal"
+          name=${this.isCopied ? 'check-lg' : 'copy'}
+        ></u-icon>
+      </u-button>
+    `;
   }
 
   /**
@@ -61,35 +46,18 @@ export class UCopyButton extends BaseElement {
     if (!this.value) return;
     if (this.isCopied) return;
 
-    if (navigator.clipboard) {
-      // 클립보드 API가 지원되는 경우
-      await navigator.clipboard.writeText(this.value);
-    } else {
-      // 클립보드 API가 지원되지 않는 경우
-      // 임시 textarea를 만들어서 복사합니다.
-      const area = document.createElement('textarea');
-      area.style.position = 'fixed';
-      area.style.opacity = '0';
-      area.style.pointerEvents = 'none';
-      area.value = this.value;
-      document.body.appendChild(area);
-      area.focus();
-      area.select();
-
-      try {
-        document.execCommand('copy');
-      } catch (err) {
-        console.error('Failed to copy: ', err);
-      } finally {
-        document.body.removeChild(area);
-      }
-    }
-
-    if (this.delay > 0) {
+    try {
+      await window.navigator.clipboard.writeText(this.value);
+      if (this.delay <= 0) return;
+    
       this.isCopied = true;
+
       setTimeout(() => {
         this.isCopied = false;
       }, this.delay);
+    } catch (error) {
+      console.error('Failed to copy text to clipboard:', error);
+      this.isCopied = false;
     }
   }
 }

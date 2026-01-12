@@ -14,33 +14,29 @@ export class UAttachButton extends BaseElement {
     'u-icon': UIcon,
   };
 
-  @query('input[type="file"]') input!: HTMLInputElement;
+  @query('input[type="file"]') input?: HTMLInputElement;
 
   /** 첨부 파일 유형 제한, 컴마로 구분된 MIME 타입 문자열 (예: "image/*,application/pdf") */  
   @property({ type: String }) accept?: string;
   /** 다중 파일 선택 가능 여부 */
   @property({ type: Boolean }) multiple: boolean = false;
 
-  connectedCallback(): void {
-    super.connectedCallback();
-    this.addEventListener('click', this.openFileExplorer);
-  }
-
-  disconnectedCallback(): void {
-    this.removeEventListener('click', this.openFileExplorer);
-    super.disconnectedCallback();
-  }
-
   render() {
     return html`
-      <u-icon 
-        lib="internal" 
-        name="paperclip"
-      ></u-icon>
-      <input type="file"
+      <u-button part="base" 
+        variant="borderless"
+        @click=${this.handleButtonClick}>
+        <u-icon part="icon" 
+          lib="internal" 
+          name="paperclip"
+        ></u-icon>
+      </u-button>
+      
+      <input hidden
+        type="file"
         ?multiple=${this.multiple}
         .accept=${this.accept || ''}
-        @change=${this.handleFileSelected}
+        @change=${this.handleInputChange}
       />
     `;
   }
@@ -48,7 +44,7 @@ export class UAttachButton extends BaseElement {
   /**
    * 버튼 클릭 핸들러
    */
-  private openFileExplorer = () => {
+  private handleButtonClick = () => {
     if (!this.input) return;
     this.input.click();
   }
@@ -56,13 +52,16 @@ export class UAttachButton extends BaseElement {
   /**
    * 파일 선택 이벤트 핸들러
    */
-  private handleFileSelected = (e: Event) => {
+  private handleInputChange = (e: Event) => {
+    e.preventDefault();
+    e.stopPropagation();
+
     const target = e.target as HTMLInputElement;
     const files = target.files;
     if (!files || files.length === 0) return;
 
     // 파일 선택 이벤트 디스패치
-    this.emit('select-files', files);
+    this.emit('change', { files: Array.from(files) });
     // input 초기화
     target.value = '';
   }
