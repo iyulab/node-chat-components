@@ -5,13 +5,13 @@ import { BaseElement } from "@iyulab/components/dist/components/BaseElement.js";
 import { UIcon } from "@iyulab/components/dist/components/icon/UIcon.component.js";
 import { UButton } from "@iyulab/components/dist/components/button/UButton.component.js";
 import { UTextBlock } from "../blocks/UTextBlock.component.js";
-import { styles } from "./UChatInput.styles.js";
+import { styles } from "./UPrompt.styles.js";
 
 /**
  * 채팅 입력 컴포넌트입니다.
  * 텍스트 입력 영역과 우측에 액션 버튼을 배치할 수 있는 슬롯을 제공합니다.
  */
-export class UChatInput extends BaseElement {
+export class UPrompt extends BaseElement {
   static styles = [ super.styles, styles ];
   static dependencies: Record<string, typeof BaseElement> = {
     'u-icon': UIcon,
@@ -68,22 +68,21 @@ export class UChatInput extends BaseElement {
     `;
   }
 
-  public submit() {
-    if (this.loading || !this.value) return;
+  public send() {
+    const value = this.value?.trim();
 
-    this.emit('u-submit', { value: this.value });
-    this.value = '';
-  }
-
-  private handleSendButtonClick = () => {
     if (this.loading) {
       this.emit('u-cancel');
-    } else if (this.value) {
-      this.submit();
+    } else if (value) {
+      this.emit('u-submit', { value: this.value });
+      this.value = '';
+    } else {
+      // nothing to do
     }
   }
 
-  private handleTextBlockInput(e: Event) {
+  private handleTextBlockInput(e: InputEvent) {
+    e.preventDefault();
     const target = e.target as UTextBlock;
     this.value = target.value;
   }
@@ -91,7 +90,13 @@ export class UChatInput extends BaseElement {
   private handleTextBlockKeydown(e: KeyboardEvent) {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      this.submit();
+      this.send();
     }
+  }
+
+  private handleSendButtonClick = (e: MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    this.send();
   }
 }

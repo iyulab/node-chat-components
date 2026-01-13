@@ -25,7 +25,7 @@ export class URetryButton extends BaseElement {
         variant="borderless">
         <u-icon part="icon"
           lib="internal"
-          name="arrow-clockwise"
+          name="arrow-repeat"
         ></u-icon>
       </u-button>
     `;

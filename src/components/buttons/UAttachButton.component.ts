@@ -61,7 +61,7 @@ export class UAttachButton extends BaseElement {
     if (!files || files.length === 0) return;
 
     // 파일 선택 이벤트 디스패치
-    this.emit('change', { files: Array.from(files) });
+    this.emit('u-change', { files: Array.from(files) });
     // input 초기화
     target.value = '';
   }

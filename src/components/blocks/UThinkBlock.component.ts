@@ -17,10 +17,10 @@ export class UThinkBlock extends BaseElement {
 
   @query('.body') bodyEl!: HTMLDivElement;
 
-  /** 컨텐츠가 접혀있는지 여부 */
-  @property({ type: Boolean, reflect: true }) collapsed: boolean = true;
   /** 컨텐츠가 로딩 중인지 여부 */
   @property({ type: Boolean, reflect: true }) loading: boolean = false;
+  /** 컨텐츠가 접혀있는지 여부 */
+  @property({ type: Boolean, reflect: true }) collapsed: boolean = true;
   /** 추론 컨텐츠의 내용 */
   @property({ type: String }) value?: string;
 

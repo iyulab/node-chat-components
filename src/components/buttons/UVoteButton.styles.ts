@@ -2,10 +2,9 @@ import { css } from "lit";
 
 export const styles = css`
   :host {
-    display: inline-flex;
+    display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 4px;
   }
 
   u-button {

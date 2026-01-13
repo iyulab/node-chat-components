@@ -1,12 +1,12 @@
-import { UCitationTag } from "./UCitationTag.component.js";
+import { UCitationTag } from './UCitationTag.component.js';
 
-UCitationTag.define("u-citation-tag");
+UCitationTag.define('u-citation-tag');
 
 declare global {
   interface HTMLElementTagNameMap {
-    "u-citation-tag": UCitationTag;
+    'u-citation-tag': UCitationTag;
   }
 }
 
 export { UCitationTag };
-export type * from "../message/UMessage.types.js";
+export type { Citation } from './UCitationTag.component.js';

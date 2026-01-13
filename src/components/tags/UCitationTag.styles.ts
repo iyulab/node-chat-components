@@ -1,105 +1,96 @@
-import { css } from "lit";
+import { css } from 'lit';
 
 export const styles = css`
   :host {
-    display: inline-block;
-    position: relative;
+    display: inline-flex;
   }
 
-  .tag {
+  .citation-tag {
     display: inline-flex;
     align-items: center;
-    gap: 2px;
-    padding: 2px 6px;
-    border: 1px solid var(--u-primary-500, #3b82f6);
-    border-radius: 4px;
-    background-color: var(--u-primary-50, #eff6ff);
-    color: var(--u-primary-700, #1d4ed8);
+    justify-content: center;
+    min-width: 1.5rem;
+    height: 1.5rem;
+    padding: 0 0.375rem;
+    border-radius: 0.25rem;
+    background-color: var(--u-citation-bg-color, #e5e7eb);
+    color: var(--u-citation-txt-color, #374151);
     font-size: 0.75rem;
-    line-height: 1;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-
-  .tag:hover {
-    background-color: var(--u-primary-100, #dbeafe);
-    border-color: var(--u-primary-600, #2563eb);
-  }
-
-  .tag u-icon {
-    font-size: 0.625rem;
-  }
-
-  .index {
     font-weight: 500;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.2s ease;
   }
 
-  .detail {
-    position: absolute;
-    top: calc(100% + 4px);
-    left: 0;
-    min-width: 300px;
-    max-width: 400px;
-    padding: 12px;
-    border: 1px solid var(--u-neutral-200, #e5e7eb);
-    border-radius: 8px;
-    background-color: var(--u-neutral-0, #ffffff);
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-    z-index: 10;
+  .citation-tag:hover {
+    background-color: var(--u-citation-bg-color-hover, #d1d5db);
   }
 
-  .detail-header {
+  .tooltip-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    min-width: 200px;
+    max-width: 300px;
+  }
+
+  .tooltip-header {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--u-border-color, #e5e7eb);
   }
 
-  .detail-header u-icon {
-    font-size: 1rem;
-    color: var(--u-neutral-500, #6b7280);
+  .pagination {
+    flex: 1;
+    text-align: center;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--u-txt-color, #111827);
   }
 
-  .detail-title {
+  .tooltip-body {
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  .citation-icon {
+    flex-shrink: 0;
+    font-size: 1.25rem;
+    color: var(--u-icon-color, #6b7280);
+  }
+
+  .citation-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .citation-title {
     font-weight: 600;
     font-size: 0.875rem;
-    color: var(--u-neutral-900, #111827);
-    flex: 1;
+    color: var(--u-txt-color, #111827);
+    word-wrap: break-word;
   }
 
-  .detail-snippet {
-    padding: 8px;
-    margin-bottom: 8px;
-    border-radius: 4px;
-    background-color: var(--u-neutral-50, #f9fafb);
-    font-size: 0.75rem;
-    line-height: 1.5;
-    color: var(--u-neutral-700, #374151);
-  }
-
-  .detail-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-    font-size: 0.75rem;
-    color: var(--u-neutral-500, #6b7280);
-  }
-
-  .detail-link {
-    color: var(--u-primary-600, #2563eb);
+  .citation-title a {
+    color: var(--u-link-color, #3b82f6);
     text-decoration: none;
   }
 
-  .detail-link:hover {
+  .citation-title a:hover {
     text-decoration: underline;
   }
 
-  .detail-date {
-    color: var(--u-neutral-400, #9ca3af);
-  }
-
-  :host([expanded]) .tag {
-    background-color: var(--u-primary-100, #dbeafe);
-    border-color: var(--u-primary-600, #2563eb);
+  .citation-snippet {
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--u-txt-color-secondary, #6b7280);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
   }
 `;

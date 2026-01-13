@@ -4,8 +4,8 @@ import { property } from "lit/decorators.js";
 import { BaseElement } from "@iyulab/components/dist/components/BaseElement.js";
 import { UIcon } from "@iyulab/components/dist/components/icon/UIcon.component.js";
 import { USpinner } from "@iyulab/components/dist/components/spinner/USpinner.component.js";
-import { UJsonViewer } from "../json-viewer/UJsonViewer.component.js";
-import type { JsonNode } from "../json-viewer/UJsonViewer.lib.js";
+import { UJsonViewer } from "../viewers/UJsonViewer.component.js";
+import type { JsonNode } from "../viewers/UJsonViewer.lib.js";
 import { styles } from "./UToolBlock.styles.js";
 
 /**
@@ -19,10 +19,10 @@ export class UToolBlock extends BaseElement {
     'u-json-viewer': UJsonViewer,
   };
 
-  /** 블록 접힘 여부 */
-  @property({ type: Boolean, reflect: true }) collapsed: boolean = true;
   /** 로딩 상태 */
   @property({ type: Boolean, reflect: true }) loading: boolean = false;
+  /** 블록 접힘 여부 */
+  @property({ type: Boolean, reflect: true }) collapsed: boolean = true;
   /** 헤딩 텍스트 */
   @property({ type: String }) heading?: string;
   /** 입력 데이터 (JSON 문자열) */
@@ -46,21 +46,18 @@ export class UToolBlock extends BaseElement {
       </div>
 
       <div class="body" part="body" scrollable ?hidden=${this.collapsed}>
-        <div class="viewer" ?hidden=${!this.input}>
-          <u-icon lib="internal" name="chevron-right"></u-icon>
+        <div class="input-view" ?hidden=${!this.input}>
           <u-json-viewer
             .value=${this.parseJson(this.input)}
           ></u-json-viewer>
         </div>
-        <div class="viewer" ?hidden=${!this.output}>
-          <u-icon lib="internal" name="chevron-right"></u-icon>
+        <div class="output-view" ?hidden=${!this.output}>
+          <u-icon lib="internal" name="chevron-down"></u-icon>
           <u-json-viewer
             .value=${this.parseJson(this.output)}
           ></u-json-viewer>
         </div>
       </div>
-
-      <div class="footer" hidden></div>
     `;
   }
 

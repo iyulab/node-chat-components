@@ -39,29 +39,18 @@ export const styles = css`
     max-height: 260px;
     margin-top: 8px;
   }
-  .body .viewer {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    gap: 8px;
-  }
-  .body .viewer u-icon {
-    margin-left: 0.5em;
-    margin-top: 0.5em;
-    font-size: 1em;
-  }
-  .body .viewer u-json-viewer {
+  .body u-json-viewer {
     font-size: inherit;
     font-family: inherit;
     line-height: 1.5;
   }
-  .body .viewer:not(:last-child) {
-    padding-bottom: 8px;
-    border-bottom: 1px dashed var(--u-border-color);
+  .body u-icon[name="chevron-down"] {
+    align-self: center;
+    font-size: 16px;
+    color: var(--u-neutral-600, #4b5563);
   }
-
-  .footer {
-    display: contents;
+  .body .output-view {
+    display: flex;
+    flex-direction: column;
   }
 `;

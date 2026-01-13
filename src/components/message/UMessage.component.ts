@@ -7,8 +7,10 @@ import { UTextBlock } from '../blocks/UTextBlock.component.js';
 import { UMarkedBlock } from '../blocks/UMarkedBlock.component.js';
 import { UThinkBlock } from '../blocks/UThinkBlock.component.js';
 import { UToolBlock } from '../blocks/UToolBlock.component.js';
+import { UDotLoader } from '../loaders/UDotLoader.component.js';
 import { UCitationTag } from '../tags/UCitationTag.component.js';
-import type { BlockItem, CitationSource } from './UMessage.types.js';
+import type { BlockItem, CitationSource, CitationReference } from './UMessage.types.js';
+import type { Citation } from '../tags/UCitationTag.component.js';
 import { styles } from './UMessage.styles.js';
 
 /** 메시지 variant 타입 */
@@ -27,115 +29,125 @@ export class UMessage extends BaseElement {
     'u-marked-block': UMarkedBlock,
     'u-think-block': UThinkBlock,
     'u-tool-block': UToolBlock,
-    'u-citation-tag': UCitationTag
+    'u-dot-loader': UDotLoader,
+    'u-citation-tag': UCitationTag,
   };
 
-  @property({ type: String, reflect: true }) variant?: MessageVariant = 'default';  
-  @property({ type: String, reflect: true }) position?: MessagePosition = 'left';  
+  @property({ type: String, reflect: true }) variant: MessageVariant = 'default';  
+  @property({ type: String, reflect: true }) position: MessagePosition = 'left';  
+  @property({ type: Boolean, reflect: true }) loading: boolean = false;
   @property({ type: Array }) items?: BlockItem[];
   @property({ type: Array }) citations?: CitationSource[];
 
   render() {
     return html`
-      <div class="container variant-${this.variant} position-${this.position}">
-        <div class="header" part="header">
-          <slot name="header"></slot>
-        </div>
-        <div class="body" part="body">
-          ${this.items && this.items.length > 0
-            ? repeat(this.items, (_, idx) => idx, (item, idx) => {
-                return item.type === 'text' ? html`
-                  ${this.renderTextWithCitations(item.value, item.citationRefs)}`
-                : item.type === 'markdown' ? html`
-                  ${this.renderMarkdownWithCitations(item.value, item.citationRefs)}`
-                : item.type === 'thinking' ? html`
-                  <u-think-block 
-                    ?loading=${this.items?.length === ((idx || 0) + 1)}
-                    .value=${item.value}
-                  ></u-think-block>`
-                : item.type === 'tool' ? html`
-                  <u-tool-block
-                    .index=${idx}
-                    .status=${item.status}
-                    .name=${item.name}
-                    .input=${item.input}
-                    .output=${item.output}
-                  ></u-tool-block>`
-                : nothing})
-            : html`
-              <svg class="loader" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                  <circle class="dot" cx="4" cy="12" r="3"/>
-                  <circle class="dot d1" cx="12" cy="12" r="3"/>
-                  <circle class="dot d2" cx="20" cy="12" r="3"/>
-              </svg>`}
-        </div>
-        <div class="footer" part="footer">
-          <slot name="footer"></slot>
-        </div>
+      <slot name="header"></slot>
+      
+      <div class="body" part="body" variant=${this.variant} position=${this.position}>
+        ${repeat(this.items || [], (_, idx) => idx, (item, idx) => 
+            item.type === 'text' 
+            ? html`
+              <u-text-block
+                .value=${this.insertTags(item.value, item.refs)}
+              ></u-text-block>`
+            : item.type === 'markdown' 
+            ? html`
+              <u-marked-block
+                .value=${this.insertTags(item.value, item.refs)}
+              ></u-marked-block>`
+            : item.type === 'thinking'
+            ? html`
+              <u-think-block 
+                ?loading=${this.items?.length === ((idx || 0) + 1)}
+                .value=${item.value}
+              ></u-think-block>`
+            : item.type === 'tool' 
+            ? html`
+              <u-tool-block
+                .index=${idx}
+                .heading=${item.title}
+                .input=${item.input}
+                .output=${item.output}
+              ></u-tool-block>`
+            : nothing)}
+        <u-dot-loader
+          ?hidden=${!this.loading}
+        ></u-dot-loader>
       </div>
+
+      <slot name="footer"></slot>
     `;
   }
 
   /**
-   * 텍스트 블록을 citationRefs와 함께 렌더링합니다.
+   * 문자열에 citation 태그 컴포넌트를 삽입합니다.
    */
-  private renderTextWithCitations = (value?: string, refs?: any[]) => {
-    if (!value) return html`<u-text-block .value=${value}></u-text-block>`;
-    if (!refs || refs.length === 0) return html`<u-text-block .value=${value}></u-text-block>`;
-
-    const parts = this.insertCitationTags(value, refs);
-    return html`<u-text-block>${parts}</u-text-block>`;
-  }
-
-  /**
-   * 마크다운 블록을 citationRefs와 함께 렌더링합니다.
-   */
-  private renderMarkdownWithCitations = (value?: string, refs?: any[]) => {
-    if (!value) return html`<u-marked-block .value=${value}></u-marked-block>`;
-    if (!refs || refs.length === 0) return html`<u-marked-block .value=${value}></u-marked-block>`;
-
-    const parts = this.insertCitationTags(value, refs);
-    return html`<u-marked-block .value=${value}></u-marked-block>${parts.filter((p: any) => typeof p !== 'string')}`;
-  }
-
-  /**
-   * 문자열에 citation 태그를 삽입합니다.
-   */
-  private insertCitationTags = (text: string, refs: any[]): any[] => {
-    if (!this.citations || this.citations.length === 0) return [text];
-
-    // endIndex 기준으로 정렬 (뒤에서부터 삽입하기 위해 역순)
-    const sortedRefs = [...refs].sort((a, b) => b.endIndex - a.endIndex);
+  private insertTags = (text?: string, refs?: CitationReference[]): string => {
+    if (!text || !refs || refs.length === 0) return text || '';
     
-    const result: any[] = [];
-    let lastIndex = text.length;
-
-    // 뒤에서부터 처리
-    for (const ref of sortedRefs) {
-      const { citationId, endIndex } = ref;
-      const citation = this.citations[citationId];
-      
-      if (!citation) continue;
-
-      // endIndex 이후 텍스트
-      if (endIndex < lastIndex) {
-        result.unshift(text.substring(endIndex, lastIndex));
+    // citation을 위치별로 정렬
+    const sortedRefs = [...refs].sort((a, b) => a.startIndex - b.startIndex);
+    
+    // citation ID별로 그룹화
+    const citationGroups = new Map<number, CitationReference[]>();
+    sortedRefs.forEach(ref => {
+      if (!citationGroups.has(ref.citationId)) {
+        citationGroups.set(ref.citationId, []);
       }
-
-      // citation 태그 삽입
-      result.unshift(html`<u-citation-tag
-        .index=${citationId + 1}
-        .source=${citation}
-      ></u-citation-tag>`);
-
-      lastIndex = endIndex;
+      citationGroups.get(ref.citationId)!.push(ref);
+    });
+    
+    // 각 위치에 citation 태그 삽입
+    let result = '';
+    let lastIndex = 0;
+    
+    for (const [citationId, group] of citationGroups) {
+      const firstRef = group[0];
+      
+      // 이전 위치부터 현재 citation까지의 텍스트 추가
+      result += text.substring(lastIndex, firstRef.endIndex);
+      
+      // citation 데이터 생성
+      const citations = this.getCitationsForGroup([citationId]);
+      if (citations.length > 0) {
+        // lit-html로 렌더링하기 위해 placeholder 사용
+        result += `<u-citation-tag data-citations='${JSON.stringify(citations)}'></u-citation-tag>`;
+      }
+      
+      lastIndex = firstRef.endIndex;
     }
-
-    // 맨 앞 텍스트
-    if (lastIndex > 0) {
-      result.unshift(text.substring(0, lastIndex));
-    }
-
+    
+    // 나머지 텍스트 추가
+    result += text.substring(lastIndex);
+    
     return result;
+  }
+  
+  /**
+   * citation ID들로부터 Citation 객체 배열을 생성합니다.
+   */
+  private getCitationsForGroup = (citationIds: number[]): Citation[] => {
+    if (!this.citations) return [];
+    
+    return citationIds
+      .map(id => {
+        const source = this.citations![id];
+        if (!source) return null;
+        
+        const citation: Citation = {
+          title: source.title,
+          snippet: source.snippet || '',
+        };
+        
+        if (source.type === 'web') {
+          citation.url = source.url;
+          citation.icon = 'globe';
+        } else if (source.type === 'document') {
+          citation.icon = 'file-text';
+        }
+        
+        return citation;
+      })
+      .filter((c): c is Citation => c !== null);
   }
 }

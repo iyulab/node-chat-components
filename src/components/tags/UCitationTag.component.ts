@@ -1,129 +1,150 @@
-import { html } from 'lit';
-import { property } from 'lit/decorators.js';
+import { html, PropertyValues } from 'lit';
+import { property, state } from 'lit/decorators.js';
 
 import { BaseElement } from '@iyulab/components/dist/components/BaseElement.js';
 import { UIcon } from '@iyulab/components/dist/components/icon/UIcon.component.js';
-import type { CitationSource } from '../message/UMessage.types.js';
+import { UButton } from '@iyulab/components/dist/components/button/UButton.component.js';
+import { UTooltip } from '@iyulab/components/dist/components/tooltip/UTooltip.component.js';
 import { styles } from './UCitationTag.styles.js';
 
+export interface Citation {
+  /** 인용 출처 아이콘 (선택사항) */
+  icon?: string;
+  /** 인용 출처 타이틀 */
+  title: string;
+  /** 인용 출처 스니펫/내용 */
+  snippet: string;
+  /** 인용 출처 URL (선택사항) */
+  url?: string;
+}
+
 /**
- * Citation을 표시하는 태그 컴포넌트입니다.
- * 클릭 시 citation 상세 정보를 표시합니다.
+ * 인용 태그 컴포넌트입니다. 여러 개의 인용 정보를 표시하며, 툴팁으로 상세 정보를 제공합니다.
  */
 export class UCitationTag extends BaseElement {
   static styles = [ super.styles, styles ];
   static dependencies: Record<string, typeof BaseElement> = {
     'u-icon': UIcon,
+    'u-button': UButton,
+    'u-tooltip': UTooltip,
   };
 
-  /** Citation 번호 (1-based) */
-  @property({ type: Number }) index?: number;
-  /** Citation 출처 정보 */
-  @property({ type: Object }) source?: CitationSource;
-  /** 확장 여부 */
-  @property({ type: Boolean, reflect: true }) expanded: boolean = false;
+  /** 인용 정보 배열 */
+  @property({ type: Array }) citations: Citation[] = [];
 
-  render() {
-    if (!this.index || !this.source) return html``;
+  /** 현재 표시 중인 인용 인덱스 */
+  @state() currentIndex: number = 0;
 
-    return html`
-      <button
-        class="tag"
-        part="tag"
-        @click=${this.handleToggle}
-        aria-expanded=${this.expanded}
-      >
-        <span class="index">[${this.index}]</span>
-        ${this.expanded ? html`
-          <u-icon lib="internal" name="chevron-up"></u-icon>
-        ` : html`
-          <u-icon lib="internal" name="chevron-down"></u-icon>
-        `}
-      </button>
-      ${this.expanded ? this.renderCitationDetail() : ''}
-    `;
+  connectedCallback(): void {
+    super.connectedCallback();
+    
+    // data-citations 속성에서 citations 데이터 로드
+    const dataCitations = this.getAttribute('data-citations');
+    if (dataCitations) {
+      try {
+        this.citations = JSON.parse(dataCitations);
+      } catch (error) {
+        console.error('Failed to parse data-citations:', error);
+      }
+    }
   }
 
-  private renderCitationDetail() {
-    if (!this.source) return '';
+  protected updated(changedProperties: PropertyValues): void {
+    super.updated(changedProperties);
+    
+    // citations가 변경되면 인덱스를 0으로 리셋
+    if (changedProperties.has('citations')) {
+      this.currentIndex = 0;
+    }
+  }
 
-    const { type } = this.source;
+  render() {
+    if (!this.citations || this.citations.length === 0) {
+      return html``;
+    }
+
+    const currentCitation = this.citations[this.currentIndex];
+    const hasMultiple = this.citations.length > 1;
+    const tagLabel = hasMultiple ? `+${this.currentIndex + 1}` : '';
 
     return html`
-      <div class="detail" part="detail">
-        <div class="detail-header">
-          ${this.renderIcon(type)}
-          <span class="detail-title">${this.getTitle()}</span>
-        </div>
-        ${this.source.snippet ? html`
-          <div class="detail-snippet">${this.source.snippet}</div>
-        ` : ''}
-        <div class="detail-meta">
-          ${this.renderMeta()}
-        </div>
+      <div part="base" class="citation-tag">
+        <span part="label" id="citation-anchor-${this.currentIndex}">
+          ${tagLabel}
+        </span>
+        
+        <u-tooltip 
+          part="tooltip"
+          for="#citation-anchor-${this.currentIndex}"
+          placement="top"
+          interactive
+        >
+          <div part="tooltip-content" class="tooltip-content">
+            ${hasMultiple ? html`
+              <div part="tooltip-header" class="tooltip-header">
+                <u-button
+                  part="prev-button"
+                  size="small"
+                  ?disabled=${this.currentIndex === 0}
+                  @click=${this.handlePrevious}
+                >
+                  <u-icon lib="internal" name="chevron-left"></u-icon>
+                </u-button>
+                
+                <span part="pagination" class="pagination">
+                  ${this.currentIndex + 1}/${this.citations.length}
+                </span>
+                
+                <u-button
+                  part="next-button"
+                  size="small"
+                  ?disabled=${this.currentIndex === this.citations.length - 1}
+                  @click=${this.handleNext}
+                >
+                  <u-icon lib="internal" name="chevron-right"></u-icon>
+                </u-button>
+              </div>
+            ` : ''}
+            
+            <div part="tooltip-body" class="tooltip-body">
+              ${currentCitation.icon ? html`
+                <u-icon 
+                  part="citation-icon" 
+                  class="citation-icon"
+                  lib="internal" 
+                  name=${currentCitation.icon}
+                ></u-icon>
+              ` : ''}
+              
+              <div part="citation-content" class="citation-content">
+                <div part="citation-title" class="citation-title">
+                  ${currentCitation.url ? html`
+                    <a href=${currentCitation.url} target="_blank" rel="noopener noreferrer">
+                      ${currentCitation.title}
+                    </a>
+                  ` : currentCitation.title}
+                </div>
+                
+                <div part="citation-snippet" class="citation-snippet">
+                  ${currentCitation.snippet}
+                </div>
+              </div>
+            </div>
+          </div>
+        </u-tooltip>
       </div>
     `;
   }
 
-  private renderIcon(type: string) {
-    const iconMap: Record<string, string> = {
-      'web': 'globe',
-      'document': 'file-earmark-text',
-    };
-    return html`<u-icon lib="internal" name=${iconMap[type] || 'file-earmark'}></u-icon>`;
-  }
-
-  private getTitle(): string {
-    if (!this.source) return '';
-    
-    switch (this.source.type) {
-      case 'web':
-      case 'document':
-        return this.source.title;
-      default:
-        return '';
+  private handlePrevious = () => {
+    if (this.currentIndex > 0) {
+      this.currentIndex--;
     }
   }
 
-  private renderMeta() {
-    if (!this.source) return '';
-
-    switch (this.source.type) {
-      case 'web':
-        return html`
-          <a href=${this.source.url} target="_blank" rel="noopener noreferrer" class="detail-link">
-            ${this.truncateUrl(this.source.url)}
-          </a>
-          ${this.source.accessedAt ? html`
-            <span class="detail-date">• ${this.formatDate(this.source.accessedAt)}</span>
-          ` : ''}
-        `;
-      case 'document':
-        return html`
-          ${this.source.fileName ? html`<span>${this.source.fileName}</span>` : ''}
-          ${this.source.pageNumber ? html`<span>• Page ${this.source.pageNumber}</span>` : ''}
-          ${this.source.author ? html`<span>• ${this.source.author}</span>` : ''}
-        `;
-      default:
-        return '';
+  private handleNext = () => {
+    if (this.currentIndex < this.citations.length - 1) {
+      this.currentIndex++;
     }
-  }
-
-  private truncateUrl(url: string, maxLength: number = 50): string {
-    if (url.length <= maxLength) return url;
-    return url.substring(0, maxLength - 3) + '...';
-  }
-
-  private formatDate(dateString: string): string {
-    try {
-      const date = new Date(dateString);
-      return date.toLocaleDateString();
-    } catch {
-      return dateString;
-    }
-  }
-
-  private handleToggle = () => {
-    this.expanded = !this.expanded;
   }
 }

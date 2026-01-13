@@ -1,12 +1,10 @@
 /** 웹 페이지 출처 */
 export interface WebCitationSource {
   type: "web";
-  url: string;
   title: string;
   snippet?: string;
+  url: string;
   favicon?: string;
-  publishedAt?: string;
-  accessedAt?: string;
 }
 
 /** 문서 파일 출처 */
@@ -16,8 +14,6 @@ export interface DocumentCitationSource {
   snippet?: string;
   fileName?: string;
   fileType?: string;
-  pageNumber?: number;
-  author?: string;
 }
 
 /** 모든 출처 타입의 유니온 */
@@ -37,46 +33,41 @@ export interface CitationReference {
   endIndex: number;
 }
 
-/** 투표 상태 */
-export type VoteState = 'none' | 'upvote' | 'downvote';
+export interface ThinkingBlockItem {
+  type: "thinking";
+  /** 추론 텍스트 내용 */
+  value?: string;
+}
 
 export interface TextBlockItem {
   type: "text";
+  /** 텍스트 내용 */
   value?: string;
   /** 텍스트 내 citation 참조 위치들 */
-  citationRefs?: CitationReference[];
+  refs?: CitationReference[];
 }
 
 export interface MarkdownBlockItem {
   type: "markdown";
+  /** 마크다운 텍스트 */
   value?: string;
   /** 마크다운 내 citation 참조 위치들 */
-  citationRefs?: CitationReference[];
+  refs?: CitationReference[];
 }
-
-export interface ThinkingBlockItem {
-  type: "thinking";
-  value?: string;
-}
-
-export type ToolBlockStatus = (
-  "pending" |
-  "paused" |
-  "inProgress" |
-  "success" | 
-  "failure");
 
 export interface ToolBlockItem {
   type: "tool";
-  status: ToolBlockStatus;
-  name?: string;
+  /** 도구 블록 제목 */
+  title?: string;
+  /** 도구 블록 입력(json) */
   input?: string;
+  /** 도구 블록 출력(json) */
   output?: string;
 }
 
 export type BlockItem = (
+  ThinkingBlockItem |
   TextBlockItem |
   MarkdownBlockItem |
-  ThinkingBlockItem |
   ToolBlockItem
 );
