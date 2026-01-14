@@ -1,4 +1,4 @@
-import { html } from "lit";
+import { html, nothing } from "lit";
 import { property, state } from "lit/decorators.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 
@@ -59,6 +59,6 @@ export class UCodeBlock extends BaseElement {
     const slot = e.target as HTMLSlotElement;
     const nodes = slot.assignedNodes({ flatten: true });
 
-    this.value = nodes.map(node => node.textContent).join('\n');
+    this.value = nodes.map(node => node.textContent).join('\n\n');
   }
 }

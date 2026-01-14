@@ -3,7 +3,15 @@ import { css } from "lit";
 export const styles = css`
   :host {
     display: flex;
-    flex-direction: column; 
+    flex-direction: column;
+  }
+  :host([variant="default"]) {
+    width: 100%;
+  }
+  :host([variant="bubble"]) {
+    width: auto;
+    min-width: 40px;
+    max-width: 80%;
   }
   :host([position="left"]) {
     align-self: flex-start;
@@ -15,6 +23,7 @@ export const styles = css`
   }
 
   .body {
+    width: 100%;
     display: flex;
     flex-direction: column;
     gap: 12px;

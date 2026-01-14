@@ -9,4 +9,3 @@ declare global {
 }
 
 export { UCitationTag };
-export type { Citation } from './UCitationTag.component.js';

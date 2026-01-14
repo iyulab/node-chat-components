@@ -2,15 +2,9 @@ import { css } from "lit";
 
 export const styles = css`
   :host {
-    --max-rows: 10;
-  }
-
-  :host {
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: auto;
-    padding: 8px;
     font-size: 14px;
     border: 1px solid var(--u-border-color);
     border-radius: 8px;
@@ -18,6 +12,8 @@ export const styles = css`
 
   .header {
     width: 100%;
+    padding: 8px;
+    border-radius: inherit;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -26,6 +22,13 @@ export const styles = css`
     user-select: none;
     cursor: pointer;
   }
+  .header:hover {
+    background: linear-gradient(var(--u-neutral-100), transparent);
+  }
+  .header:active {
+    background: linear-gradient(var(--u-neutral-200), transparent);
+  }
+
   .header .prefix-icon {
     color: var(--u-yellow-800);
     transition: all 0.3s ease-in-out;
@@ -44,9 +47,14 @@ export const styles = css`
     font-size: inherit;
     font-weight: 300;
     line-height: 1.5;
-    margin-top: 8px;
-    max-height: calc(1.5em * var(--max-rows));
+    padding: 8px;
+    max-height: 210px;
     overflow: auto;
+  }
+  .body u-marked-block {
+    font-size: inherit;
+    font-family: inherit;
+    line-height: inherit;
   }
 
   @keyframes pulse-glow {

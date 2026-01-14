@@ -3,6 +3,7 @@ import { property, query } from "lit/decorators.js";
 
 import { BaseElement } from "@iyulab/components/dist/components/BaseElement.js";
 import { UIcon } from "@iyulab/components/dist/components/icon/UIcon.component.js";
+import { UMarkedBlock } from "./UMarkedBlock.component.js";
 import { styles } from "./UThinkBlock.styles.js";
 
 /**
@@ -12,7 +13,8 @@ import { styles } from "./UThinkBlock.styles.js";
 export class UThinkBlock extends BaseElement {
   static styles = [ super.styles, styles ];
   static dependencies: Record<string, typeof BaseElement> = {
-    "u-icon": UIcon
+    "u-icon": UIcon,
+    "u-marked-block": UMarkedBlock
   };
 
   @query('.body') bodyEl!: HTMLDivElement;
@@ -52,7 +54,9 @@ export class UThinkBlock extends BaseElement {
       
       <div class="body" part="body" scrollable 
         ?hidden=${this.collapsed}>
-        ${this.value}
+        <u-marked-block
+          .value=${this.value}
+        ></u-marked-block>
       </div>
     `;
   }

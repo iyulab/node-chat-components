@@ -7,6 +7,8 @@ import markedKatex from "marked-katex-extension";
 
 import { BaseElement } from "@iyulab/components/dist/components/BaseElement.js";
 import { UCodeBlock } from "./UCodeBlock.component.js";
+import { UCitationTag } from "../tags/UCitationTag.component.js";
+import type { Citation } from "../message/UMessage.types.js";
 import { styles } from "./UMarkedBlock.styles.js";
 
 /**
@@ -16,6 +18,7 @@ export class UMarkedBlock extends BaseElement {
   static styles = [ super.styles, styles ];
   static dependencies: Record<string, typeof BaseElement> = {
     'u-code-block': UCodeBlock,
+    'u-citation-tag': UCitationTag
   };
 
   private parser = new Marked({
@@ -35,9 +38,12 @@ export class UMarkedBlock extends BaseElement {
 
   /** 마크다운 컨텐츠를 렌더링할 때 사용할 값입니다. */
   @property({ type: String }) value?: string;
+  /** 컨텐츠의 인용 출처들입니다. */
+  @property({ type: Array }) citations?: Citation[];
 
   render() {
     if (!this.value) return nothing;
+    
     return unsafeHTML(this.parse(this.value));
   }
 
@@ -48,6 +54,15 @@ export class UMarkedBlock extends BaseElement {
    * @returns 변환된 HTML 문자열
    */
   private parse(value: string): string {
+    // 역순으로 태그 삽입 (뒤에서부터 삽입하면 앞의 인덱스가 변하지 않음)
+    if (this.citations && this.citations.length > 0) {
+      const reversed = [...this.citations].sort((a, b) => b.endIndex - a.endIndex);
+      reversed.forEach((citation) => {
+        const tag = `<u-citation-tag href="${citation.url}">${citation.name}</u-citation-tag>`;
+        value = value.slice(0, citation.endIndex) + tag + value.slice(citation.endIndex);
+      });
+    }
+
     // 특수 제어 문자 제거 (Zero Width Space, LTR/RTL marks, BOM 등)
     value = value.replace(/\u200B|\u200C|\u200D|\u200E|\u200F|\uFEFF/g, "");
     return this.parser.parse(value, { async: false }) as string;

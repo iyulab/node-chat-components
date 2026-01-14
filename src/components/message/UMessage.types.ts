@@ -1,32 +1,16 @@
-/** 웹 페이지 출처 */
-export interface WebCitationSource {
-  type: "web";
-  title: string;
-  snippet?: string;
-  url: string;
-  favicon?: string;
-}
-
-/** 문서 파일 출처 */
-export interface DocumentCitationSource {
-  type: "document";
-  title: string;
-  snippet?: string;
-  fileName?: string;
-  fileType?: string;
-}
-
-/** 모든 출처 타입의 유니온 */
-export type CitationSource = 
-  | WebCitationSource 
-  | DocumentCitationSource;
+import { JsonNode } from "../viewers/UJsonViewer.lib.js";
 
 /**
  * 메시지 컨텐츠 내에서 citation이 참조되는 위치
  */
-export interface CitationReference {
-  /** citation ID (citations 배열의 인덱스) */
-  citationId: number;
+export interface Citation {
+  /** 인용 출처 이름 */
+  name: string;
+  type: 'web';
+  title: string;
+  url: string;
+  snippet?: string;
+  favicon?: string;
   /** 텍스트 내 시작 위치 (문자 인덱스) */
   startIndex: number;
   /** 텍스트 내 종료 위치 (문자 인덱스) */
@@ -43,16 +27,14 @@ export interface TextBlockItem {
   type: "text";
   /** 텍스트 내용 */
   value?: string;
-  /** 텍스트 내 citation 참조 위치들 */
-  refs?: CitationReference[];
 }
 
 export interface MarkdownBlockItem {
   type: "markdown";
   /** 마크다운 텍스트 */
   value?: string;
-  /** 마크다운 내 citation 참조 위치들 */
-  refs?: CitationReference[];
+  /** 마크다운 내 인용 출처들 */
+  citations?: Citation[];
 }
 
 export interface ToolBlockItem {
@@ -60,9 +42,9 @@ export interface ToolBlockItem {
   /** 도구 블록 제목 */
   title?: string;
   /** 도구 블록 입력(json) */
-  input?: string;
+  input?: JsonNode;
   /** 도구 블록 출력(json) */
-  output?: string;
+  output?: JsonNode;
 }
 
 export type BlockItem = (

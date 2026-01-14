@@ -5,7 +5,7 @@ import { when } from 'lit/directives/when.js';
 
 import { BaseElement } from '@iyulab/components/dist/components/BaseElement.js';
 import type { JsonNode, JsonValue, JsonArray, JsonObject } from './UJsonViewer.lib.js';
-import { jsonConverter, isValueType, getNodeName } from './UJsonViewer.lib.js';
+import { jsonAttributeConverter, isValueType, getNodeName } from './UJsonViewer.lib.js';
 import { styles } from './UJsonViewer.styles.js';
 
 /**
@@ -20,7 +20,7 @@ export class UJsonViewer extends BaseElement {
   /** 초기 확장 상태를 관리하는 속성입니다. */
   @property({ type: Boolean }) expanded: boolean = true;
   /** JSON 데이터 (속성으로 전달 가능) */
-  @property({ type: Object, converter: jsonConverter }) value: JsonNode = {};
+  @property({ type: Object, converter: jsonAttributeConverter }) value: JsonNode = {};
 
   connectedCallback() {
     super.connectedCallback();

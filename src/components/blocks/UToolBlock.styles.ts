@@ -5,15 +5,15 @@ export const styles = css`
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: auto;
     font-size: 14px;
-    padding: 8px;
     border: 1px solid var(--u-border-color);
     border-radius: 8px;
   }
 
   .header {
     width: 100%;
+    padding: 8px;
+    border-radius: inherit;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -22,6 +22,13 @@ export const styles = css`
     cursor: pointer;
     user-select: none;
   }
+  .header:hover {
+    background: linear-gradient(var(--u-neutral-100), transparent);
+  }
+  .header:active {
+    background: linear-gradient(var(--u-neutral-200), transparent);
+  }
+
   .header u-icon[name="tools"] {
     color: var(--u-blue-800);
   }
@@ -37,7 +44,8 @@ export const styles = css`
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     width: 100%;
     max-height: 260px;
-    margin-top: 8px;
+    padding: 8px;
+    overflow: auto;
   }
   .body u-json-viewer {
     font-size: inherit;

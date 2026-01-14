@@ -5,7 +5,7 @@ import { BaseElement } from "@iyulab/components/dist/components/BaseElement.js";
 import { UIcon } from "@iyulab/components/dist/components/icon/UIcon.component.js";
 import { USpinner } from "@iyulab/components/dist/components/spinner/USpinner.component.js";
 import { UJsonViewer } from "../viewers/UJsonViewer.component.js";
-import type { JsonNode } from "../viewers/UJsonViewer.lib.js";
+import { jsonAttributeConverter, type JsonNode } from "../viewers/UJsonViewer.lib.js";
 import { styles } from "./UToolBlock.styles.js";
 
 /**
@@ -25,10 +25,10 @@ export class UToolBlock extends BaseElement {
   @property({ type: Boolean, reflect: true }) collapsed: boolean = true;
   /** 헤딩 텍스트 */
   @property({ type: String }) heading?: string;
-  /** 입력 데이터 (JSON 문자열) */
-  @property({ type: String }) input?: string;
-  /** 출력 데이터 (JSON 문자열) */
-  @property({ type: String }) output?: string;
+  /** 입력 데이터 (JSON Object) */
+  @property({ type: Object, converter: jsonAttributeConverter }) input?: JsonNode;
+  /** 출력 데이터 (JSON Object) */
+  @property({ type: Object, converter: jsonAttributeConverter }) output?: JsonNode;
 
   render() {
     return html`
@@ -48,26 +48,16 @@ export class UToolBlock extends BaseElement {
       <div class="body" part="body" scrollable ?hidden=${this.collapsed}>
         <div class="input-view" ?hidden=${!this.input}>
           <u-json-viewer
-            .value=${this.parseJson(this.input)}
+            .value=${this.input || {}}
           ></u-json-viewer>
         </div>
         <div class="output-view" ?hidden=${!this.output}>
           <u-icon lib="internal" name="chevron-down"></u-icon>
           <u-json-viewer
-            .value=${this.parseJson(this.output)}
+            .value=${this.output || {}}
           ></u-json-viewer>
         </div>
       </div>
     `;
-  }
-
-  private parseJson(value?: string): JsonNode {
-    if (!value || !value.trim()) return {};
-
-    try {
-      return JSON.parse(value);
-    } catch {
-      return value;
-    }
   }
 }

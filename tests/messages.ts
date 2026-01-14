@@ -1,17 +1,17 @@
 import { VoteValue } from "../src/components/buttons/UVoteButton.component.js";
-import { BlockItem, CitationSource } from "../src/components/message/UMessage.types.js";
+import { BlockItem } from "../src/components/message/UMessage.types.js";
+import { generateRandomId } from "./generator.js";
 
 export interface Message {
-  id: number;
+  id: string;
   role: 'user' | 'assistant';
   items: BlockItem[];
-  citations?: CitationSource[];
   voteValue?: VoteValue;
 }
 
 export const messages: Message[] = [
   {
-    id: 0,
+    id: generateRandomId(),
     role: 'user',
     items: [
       {
@@ -21,7 +21,7 @@ export const messages: Message[] = [
     ]
   },
   {
-    id: 1,
+    id: generateRandomId(),
     role: 'assistant',
     items: [
       {
@@ -31,8 +31,8 @@ export const messages: Message[] = [
       {
         type: 'tool',
         title: 'Search Weather API',
-        input: JSON.stringify({ location: 'Seoul', date: '2024-06-15' }),
-        output: JSON.stringify({ temperature: 22, condition: '맑음' }),
+        input: { location: 'Seoul', date: '2024-06-15' },
+        output: { temperature: 22, condition: '맑음' },
       },
       {
         type: 'markdown',
@@ -53,33 +53,27 @@ interface Weather {
 \`\`\`
 더 자세한 내용은 기상청 웹사이트를 참고해주세요.
 `,
-        refs: [
+        citations: [
           {
-            citationId: 0,
+            name: "기상청 날씨 정보",
             startIndex: 145,
-            endIndex: 156
+            endIndex: 156,
+            type: 'web',
+            title: "기상청 날씨 정보",
+            url: "https://www.kma.go.kr/weather/forecast/mid-term_01.jsp",
+            snippet: "오늘 서울 지역의 날씨는 맑고 기온은 22도입니다. 미세먼지 농도는 '보통' 수준을 유지하고 있습니다."
           },
           {
-            citationId: 1,
-            startIndex: 280,
-            endIndex: 295
+            name: "오늘의 날씨 뉴스",
+            startIndex: 157,
+            endIndex: 168,
+            type: 'web',
+            title: "오늘의 날씨 뉴스",
+            url: "https://news.example.com/todays-weather",
+            snippet: "전국적으로 맑은 날씨가 이어지며, 낮 최고기온은 23~25도 사이를 기록할 것으로 예상됩니다."
           }
         ]
       },
-    ],
-    citations: [
-      {
-        type: 'web',
-        title: "기상청 날씨 정보",
-        snippet: "오늘 서울 지역의 날씨는 맑고 기온은 22도입니다. 미세먼지 농도는 '보통' 수준을 유지하고 있습니다.",
-        url: "https://www.kma.go.kr/weather/forecast/mid-term_01.jsp"
-      },
-      {
-        type: 'web',
-        title: "오늘의 날씨 뉴스",
-        snippet: "전국적으로 맑은 날씨가 이어지며, 낮 최고기온은 23~25도 사이를 기록할 것으로 예상됩니다.",
-        url: "https://news.example.com/todays-weather"
-      }
     ],
     voteValue: 'none'
   }

@@ -4,8 +4,10 @@ import { repeat } from "lit/directives/repeat.js";
 
 import '../src';
 import { theme } from '@iyulab/components/dist/utilities/theme.js';
+import "@iyulab/components/dist/components/tooltip/UTooltip.js";
+import { type UTooltip } from "@iyulab/components/dist/components/tooltip/UTooltip.js";
 import { type Message, messages } from "./messages";
-import { generateMessage } from "./generator";
+import { generateMessage, generateRandomId } from "./generator";
 
 @customElement('preview-app')
 export class PreviewApp extends LitElement {
@@ -25,6 +27,8 @@ export class PreviewApp extends LitElement {
 
     if (changedProperties.has('messages')) {
       this.scrollToBottom();
+      const tooltips = this.shadowRoot?.querySelectorAll('u-tooltip') as NodeListOf<UTooltip>;
+      tooltips?.forEach(tooltip => { if(tooltip.scan) tooltip.scan() });
     }
   }
 
@@ -48,9 +52,7 @@ export class PreviewApp extends LitElement {
             ? repeat(this.messages, msg => msg.id , msg => msg.role === 'user'
               ? html`
                 <u-message variant="bubble" position="right"
-                  style="max-width: 80%;"
-                  .items=${msg.items}
-                  .citations=${msg.citations}>
+                  .items=${msg.items}>
                   <div class="msg-footer" slot="footer">
                     <u-copy-button
                       .value=${this.getTextValue(msg)}>
@@ -59,9 +61,7 @@ export class PreviewApp extends LitElement {
                 </u-message>`
               : html`
                 <u-message variant="default" position="left"
-                  style="min-width: 80%;"
-                  .items=${msg.items}
-                  .citations=${msg.citations}>
+                  .items=${msg.items}>
                   <div class="msg-header" slot="header">
                     🤖 The Assistant
                   </div>
@@ -106,6 +106,24 @@ export class PreviewApp extends LitElement {
             ></u-attach-button>
           </div>
         </u-prompt>
+
+        <div style="display:contents;">
+          <u-tooltip for="u-copy-button" placement="bottom" distance="8">
+            텍스트 복사
+          </u-tooltip>
+          <u-tooltip for="u-retry-button" placement="bottom" distance="8">
+            다시 시도
+          </u-tooltip>
+          <u-tooltip for="u-vote-button" placement="bottom" distance="8">
+            응답 평가
+          </u-tooltip>
+          <u-tooltip for="u-share-button" placement="bottom" distance="8">
+            공유 하기
+          </u-tooltip>
+          <u-tooltip for="u-report-button" placement="bottom" distance="8">
+            신고 하기
+          </u-tooltip>
+        </div>
       </div>
     `;
   }
@@ -114,16 +132,13 @@ export class PreviewApp extends LitElement {
     const value = e.detail.value;
     if (!value.trim()) return;
     
-    // 사용자 메시지 추가
+    // 사용자 및 어시스턴트 메시지 추가
     this.messages = [...this.messages, {
-      id: this.messages.length++,
+      id: generateRandomId(),
       role: 'user',
       items: [{ type: 'text', value: value }],
-    }];
-    
-    // 어시스턴트 메시지 추가
-    this.messages = [...this.messages, {
-      id: this.messages.length++,
+    }, {
+      id: generateRandomId(),
       role: 'assistant',
       items: [],
     }];
@@ -139,8 +154,9 @@ export class PreviewApp extends LitElement {
       lastmsg.loading = true;
       
       // 메시지 생성
-      const message = await generateMessage(this.messages, this.aborter.signal);
-      this.messages = [...this.messages.slice(0, -1), message];
+      const messages = this.messages.slice(0, -1); // 마지막 어시스턴트 메시지 제외
+      const message = await generateMessage(messages, this.aborter.signal);
+      this.messages = [...messages, message];
     } catch (error) {
       if (error instanceof Error && error.message === 'Request was aborted.') {
         // 요청이 중단된 경우
@@ -163,14 +179,14 @@ export class PreviewApp extends LitElement {
 
   private handleRetryClick = async (event: Event) => {
     const target = event.target as any;
-    const messageId = Number(target.getAttribute('data-id'));
+    const messageId = target.getAttribute('data-id');
     const idx = this.messages.findIndex(msg => msg.id === messageId);
     if (idx < 0) return;
 
     // 이전 메시지들까지만 남기고 어시스턴트 메시지 제거
     const messages = this.messages.slice(0, idx);
     this.messages = [...messages, {
-      id: messages.length,
+      id: generateRandomId(),
       role: 'assistant',
       items: []
     }];
@@ -206,7 +222,7 @@ export class PreviewApp extends LitElement {
 
   private handleVoteChange = (event: CustomEvent) => {
     const target = event.target as any;
-    const messageId = Number(target.getAttribute('data-id'));
+    const messageId = target.getAttribute('data-id');
     
     this.messages.forEach(msg => {
       if (msg.id === messageId) {
@@ -271,6 +287,7 @@ export class PreviewApp extends LitElement {
       height: 100vh;
       display: flex;
       flex-direction: column;
+      overflow: hidden;
     }
 
     .header {
@@ -298,8 +315,11 @@ export class PreviewApp extends LitElement {
       display: flex;
       flex-direction: column;
       padding: 20px;
-      padding-bottom: 140px;
+      padding-bottom: 180px;
+      overflow-x: hidden;
       overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(100, 100, 100, 0.2) transparent;
     }
 
     u-message {
