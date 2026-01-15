@@ -1,6 +1,9 @@
 import { css } from "lit";
 
 export const styles = css`
+  :host(:empty) u-tooltip {
+    display: none;
+  }
   :host([loading]) u-icon {
     animation: spin 1s linear infinite;
   }

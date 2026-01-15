@@ -4,6 +4,7 @@ import { property } from 'lit/decorators.js';
 import { BaseElement } from '@iyulab/components/dist/components/BaseElement.js';
 import { UIcon } from '@iyulab/components/dist/components/icon/UIcon.component.js';
 import { UButton } from '@iyulab/components/dist/components/button/UButton.component.js';
+import { UTooltip } from '@iyulab/components/dist/components/tooltip/UTooltip.component.js';
 import { styles } from './UVoteButton.styles.js';
 
 /** 투표 상태 타입 */
@@ -17,6 +18,7 @@ export class UVoteButton extends BaseElement {
   static dependencies: Record<string, typeof BaseElement> = {
     'u-icon': UIcon,
     'u-button': UButton,
+    'u-tooltip': UTooltip
   };
 
   /** 현재 투표 상태 */
@@ -40,6 +42,10 @@ export class UVoteButton extends BaseElement {
           name=${this.value === 'down' ? 'hand-thumbs-down-fill' : 'hand-thumbs-down'}
         ></u-icon>
       </u-button>
+
+      <u-tooltip for="u-button" placement="bottom" distance="8">
+        <slot></slot>
+      </u-tooltip>
     `;
   }
 

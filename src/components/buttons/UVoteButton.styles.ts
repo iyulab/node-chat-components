@@ -6,6 +6,9 @@ export const styles = css`
     flex-direction: row;
     align-items: center;
   }
+  :host(:empty) u-tooltip {
+    display: none;
+  }
 
   u-button {
     color: var(--u-txt-color-weak);

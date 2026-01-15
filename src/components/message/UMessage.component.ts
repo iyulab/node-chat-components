@@ -8,8 +8,7 @@ import { UMarkedBlock } from '../blocks/UMarkedBlock.component.js';
 import { UThinkBlock } from '../blocks/UThinkBlock.component.js';
 import { UToolBlock } from '../blocks/UToolBlock.component.js';
 import { UDotLoader } from '../loaders/UDotLoader.component.js';
-import { UCitationTag } from '../tags/UCitationTag.component.js';
-import type { BlockItem } from './UMessage.types.js';
+import type { BlockItem } from '../../types/BlockItem';
 import { styles } from './UMessage.styles.js';
 
 /** 메시지 variant 타입 */
@@ -28,8 +27,7 @@ export class UMessage extends BaseElement {
     'u-marked-block': UMarkedBlock,
     'u-think-block': UThinkBlock,
     'u-tool-block': UToolBlock,
-    'u-dot-loader': UDotLoader,
-    'u-citation-tag': UCitationTag,
+    'u-dot-loader': UDotLoader
   };
 
   @property({ type: String, reflect: true }) variant: MessageVariant = 'default';  
@@ -52,18 +50,17 @@ export class UMessage extends BaseElement {
             ? html`
               <u-marked-block
                 .value=${item.value}
-                .citations=${item.citations}
+                .refs=${item.refs}
               ></u-marked-block>`
             : item.type === 'thinking'
             ? html`
               <u-think-block 
-                ?loading=${this.items?.length === ((idx || 0) + 1)}
                 .value=${item.value}
               ></u-think-block>`
             : item.type === 'tool' 
             ? html`
               <u-tool-block
-                .index=${idx}
+                index=${idx}
                 .heading=${item.title}
                 .input=${item.input}
                 .output=${item.output}
@@ -74,7 +71,7 @@ export class UMessage extends BaseElement {
         ></u-dot-loader>
       </div>
 
-      <slot name="footer"></slot>
+      <slot name="footer" ?hidden=${this.loading}></slot>
     `;
   }
 }

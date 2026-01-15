@@ -1,10 +1,4 @@
-export type JsonValue = string | number | boolean | null;
-
-export type JsonObject = { [x: string]: JsonNode };
-
-export type JsonArray = Array<JsonNode>;
-
-export type JsonNode = JsonValue | JsonObject | JsonArray;
+import type { JsonNode } from "../types/JsonNode";
 
 /** 
  * 이 컨버터는 JsonNode 타입을 사용하여 JSON 데이터를 처리합니다.
@@ -26,15 +20,4 @@ export const jsonAttributeConverter = {
       return '{}';
     }
   }
-}
-
-export const isValueType = (value: JsonNode): boolean => {
-  return value !== Object(value);
-}
-
-export const getNodeName = (value: JsonNode): string => {
-  if (value === null) return 'null';
-  if (Array.isArray(value)) return 'array';
-  if (typeof value === 'object') return 'object';
-  return typeof value;
 }

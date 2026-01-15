@@ -3,6 +3,8 @@ import { property, query } from "lit/decorators.js";
 
 import { BaseElement } from "@iyulab/components/dist/components/BaseElement.js";
 import { UIcon } from "@iyulab/components/dist/components/icon/UIcon.component.js";
+import { UButton } from "@iyulab/components/dist/components/button/UButton.component.js";
+import { UTooltip } from "@iyulab/components/dist/components/tooltip/UTooltip.component.js";
 import { styles } from "./UAttachButton.styles.js";
 
 /**
@@ -12,6 +14,8 @@ export class UAttachButton extends BaseElement {
   static styles = [ super.styles, styles ];
   static dependencies: Record<string, typeof BaseElement> = {
     'u-icon': UIcon,
+    'u-button': UButton,
+    'u-tooltip': UTooltip
   };
 
   @query('input[type="file"]') input?: HTMLInputElement;
@@ -31,11 +35,16 @@ export class UAttachButton extends BaseElement {
           name="paperclip"
         ></u-icon>
       </u-button>
+
+      <u-tooltip for="u-button" placement="bottom" distance="8">
+        <slot></slot>
+      </u-tooltip>
       
-      <input hidden
+      <input 
+        hidden
         type="file"
         ?multiple=${this.multiple}
-        .accept=${this.accept || ''}
+        .accept=${this.accept || '*'}
         @change=${this.handleInputChange}
       />
     `;
@@ -61,7 +70,10 @@ export class UAttachButton extends BaseElement {
     if (!files || files.length === 0) return;
 
     // 파일 선택 이벤트 디스패치
-    this.emit('u-change', { files: Array.from(files) });
+    this.emit('u-change', { 
+      files: Array.from(files) 
+    });
+    
     // input 초기화
     target.value = '';
   }

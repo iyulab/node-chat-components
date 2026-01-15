@@ -4,14 +4,14 @@ import { map } from 'lit/directives/map.js';
 import { when } from 'lit/directives/when.js';
 
 import { BaseElement } from '@iyulab/components/dist/components/BaseElement.js';
-import type { JsonNode, JsonValue, JsonArray, JsonObject } from './UJsonViewer.lib.js';
-import { jsonAttributeConverter, isValueType, getNodeName } from './UJsonViewer.lib.js';
-import { styles } from './UJsonViewer.styles.js';
+import { jsonAttributeConverter } from '../../internals/attribute-converters.js';
+import type { JsonNode, JsonArray, JsonObject, JsonValue } from '../../types/JsonNode.js';
+import { styles } from './UJsonBlock.styles.js';
 
 /**
  * json 데이터를 트리 형태로 시각화하는 컴포넌트입니다.
  */
-export class UJsonViewer extends BaseElement {
+export class UJsonBlock extends BaseElement {
   static styles = [ super.styles, styles ];
   static dependencies: Record<string, typeof BaseElement> = {};
 
@@ -49,7 +49,7 @@ export class UJsonViewer extends BaseElement {
    * @param parent - 부모 노드의 경로
    */
   private renderNode(value: JsonNode, parent: string = ''): TemplateResult {
-    return isValueType(value)
+    return this.isValueType(value)
       ? this.renderValue(value as JsonValue)
       : this.renderObject(value as JsonObject | JsonArray, parent);
   }
@@ -59,7 +59,11 @@ export class UJsonViewer extends BaseElement {
    * @param node - JsonValue (string, number, boolean, null 등)
    */
   private renderValue(node: JsonValue): TemplateResult {
-    const type = getNodeName(node);
+    const type = node === null ? 'null'
+    : Array.isArray(node) ? 'array'
+    : typeof node === 'object' ? 'object'
+    : typeof node
+    
     return html`
       <span part="${type}" class="${type}" role="treeitem">
         ${JSON.stringify(node)}
@@ -77,7 +81,7 @@ export class UJsonViewer extends BaseElement {
       <ul part="object" role="group">
         ${map(Object.entries(node), ([key, value]) => {
           const path = parent ? `${parent}.${key}` : key;
-          const isValue = isValueType(value);
+          const isValue = this.isValueType(value);
           const isExpanded = this.state[path] ?? this.expanded;
 
           return html`
@@ -88,7 +92,7 @@ export class UJsonViewer extends BaseElement {
                     class="key"
                     ?collapsable="${!isValue}"
                     ?collapsed="${!isValue && !isExpanded}"
-                    @click=${!isValue ? () => this.toggle(path) : null}>
+                    @click=${!isValue ? () => this.handlePropertyKeyClick(path) : null}>
                 ${key}:
                 ${when(!isValue && !isExpanded,() => this.renderPreview(value as any))}
               </span>
@@ -113,12 +117,6 @@ export class UJsonViewer extends BaseElement {
     `;
   }
 
-  /** 노드 확장/축소 클릭 핸들러 */
-  private toggle(path: string) {
-    const isExpanded = this.state[path] ?? false;
-    this.state = {...this.state, [path]: !isExpanded };
-  }
-
   /** JSON 데이터를 순회하며 각 경로의 확장 상태를 설정합니다. */
   private setState(value: JsonNode, parent: string = '') : Record<string, boolean> {
     if (typeof value !== 'object' || value === null) return {};
@@ -130,5 +128,15 @@ export class UJsonViewer extends BaseElement {
       Object.assign(state, this.setState(item, path));
     });
     return state;
+  }
+
+  private isValueType = (value: JsonNode): boolean => {
+    return value !== Object(value);
+  }
+
+  /** 노드 확장/축소 클릭 핸들러 */
+  private handlePropertyKeyClick(path: string) {
+    const isExpanded = this.state[path] ?? false;
+    this.state = {...this.state, [path]: !isExpanded };
   }
 }

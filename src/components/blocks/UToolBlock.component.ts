@@ -4,8 +4,9 @@ import { property } from "lit/decorators.js";
 import { BaseElement } from "@iyulab/components/dist/components/BaseElement.js";
 import { UIcon } from "@iyulab/components/dist/components/icon/UIcon.component.js";
 import { USpinner } from "@iyulab/components/dist/components/spinner/USpinner.component.js";
-import { UJsonViewer } from "../viewers/UJsonViewer.component.js";
-import { jsonAttributeConverter, type JsonNode } from "../viewers/UJsonViewer.lib.js";
+import { UJsonBlock } from "./UJsonBlock.component.js";
+import { jsonAttributeConverter } from "../../internals/attribute-converters.js";
+import type { JsonNode } from "../../types/JsonNode.js";
 import { styles } from "./UToolBlock.styles.js";
 
 /**
@@ -16,7 +17,7 @@ export class UToolBlock extends BaseElement {
   static dependencies: Record<string, typeof BaseElement> = {
     'u-icon': UIcon,
     'u-spinner': USpinner,
-    'u-json-viewer': UJsonViewer,
+    'u-json-block': UJsonBlock,
   };
 
   /** 로딩 상태 */
@@ -47,15 +48,15 @@ export class UToolBlock extends BaseElement {
 
       <div class="body" part="body" scrollable ?hidden=${this.collapsed}>
         <div class="input-view" ?hidden=${!this.input}>
-          <u-json-viewer
+          <u-json-block
             .value=${this.input || {}}
-          ></u-json-viewer>
+          ></u-json-block>
         </div>
         <div class="output-view" ?hidden=${!this.output}>
           <u-icon lib="internal" name="chevron-down"></u-icon>
-          <u-json-viewer
+          <u-json-block
             .value=${this.output || {}}
-          ></u-json-viewer>
+          ></u-json-block>
         </div>
       </div>
     `;

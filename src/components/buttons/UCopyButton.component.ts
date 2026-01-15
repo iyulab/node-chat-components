@@ -4,6 +4,7 @@ import { property, state } from 'lit/decorators.js';
 import { BaseElement } from '@iyulab/components/dist/components/BaseElement.js';
 import { UIcon } from '@iyulab/components/dist/components/icon/UIcon.component.js';
 import { UButton } from '@iyulab/components/dist/components/button/UButton.component.js';
+import { UTooltip } from '@iyulab/components/dist/components/tooltip/UTooltip.component.js';
 import { styles } from './UCopyButton.styles.js';
 
 /**
@@ -14,6 +15,7 @@ export class UCopyButton extends BaseElement {
   static dependencies: Record<string, typeof BaseElement> = {
     'u-icon': UIcon,
     'u-button': UButton,
+    'u-tooltip': UTooltip
   };
 
   /** 클립보드 복사 상태를 나타내는 플래그입니다. */
@@ -35,6 +37,10 @@ export class UCopyButton extends BaseElement {
           name=${this.isCopied ? 'check-lg' : 'copy'}
         ></u-icon>
       </u-button>
+
+      <u-tooltip for="u-button" placement="bottom" distance="8">
+        <slot></slot>
+      </u-tooltip>
     `;
   }
 

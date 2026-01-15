@@ -3,21 +3,48 @@ import { customElement, state } from "lit/decorators.js";
 import { repeat } from "lit/directives/repeat.js";
 
 import '../src';
-import { theme } from '@iyulab/components/dist/utilities/theme.js';
-import "@iyulab/components/dist/components/tooltip/UTooltip.js";
-import { type UTooltip } from "@iyulab/components/dist/components/tooltip/UTooltip.js";
+import { Theme } from '@iyulab/components/dist/utilities/Theme.js';
 import { type Message, messages } from "./messages";
 import { generateMessage, generateRandomId } from "./generator";
+import type { ReferenceSource } from "../src/types/BlockReference";
 
 @customElement('preview-app')
 export class PreviewApp extends LitElement {
   private aborter: AbortController = new AbortController();
 
   @state() messages: Message[] = messages;
+  @state() showReferenceDemo: boolean = false;
+
+  // 데모용 참조 데이터
+  private demoReferences: ReferenceSource[] = [
+    {
+      type: 'web',
+      url: 'https://developer.mozilla.org/ko/docs/Web/JavaScript',
+      title: 'JavaScript - MDN Web Docs',
+      snippet: 'JavaScript는 프로토타입 기반의 동적 스크립트 언어입니다. 객체지향, 명령형, 선언형(함수형 프로그래밍) 스타일을 지원합니다.',
+      favicon: 'https://developer.mozilla.org/favicon.ico'
+    },
+    {
+      type: 'web',
+      url: 'https://www.typescriptlang.org/',
+      title: 'TypeScript: JavaScript With Syntax For Types',
+      snippet: 'TypeScript extends JavaScript by adding types to the language. TypeScript speeds up your development experience.',
+      favicon: 'https://www.typescriptlang.org/favicon.ico'
+    },
+    {
+      type: 'document',
+      fileName: 'project-guide.pdf',
+      contentType: 'application/pdf',
+      section: '3장. 아키텍처 설계',
+      snippet: '시스템 아키텍처는 마이크로서비스 패턴을 기반으로 설계되었으며, 각 서비스는 독립적으로 배포 가능합니다.',
+      score: '0.95',
+      url: 'https://example.com/docs/project-guide.pdf'
+    }
+  ];
 
   connectedCallback(): void {
     super.connectedCallback();
-    theme.init({
+    Theme.init({
       store: { type: 'localStorage', prefix: 'uui-' },
     });
   }
@@ -27,8 +54,6 @@ export class PreviewApp extends LitElement {
 
     if (changedProperties.has('messages')) {
       this.scrollToBottom();
-      const tooltips = this.shadowRoot?.querySelectorAll('u-tooltip') as NodeListOf<UTooltip>;
-      tooltips?.forEach(tooltip => { if(tooltip.scan) tooltip.scan() });
     }
   }
 
@@ -41,14 +66,40 @@ export class PreviewApp extends LitElement {
             <u-button @click=${() => this.messages = []}>
               전체 삭제
             </u-button>
-            <u-button @click=${() => theme.set(theme.get() === 'dark' ? 'light' : 'dark')}>
+            <u-button @click=${() => this.showReferenceDemo = !this.showReferenceDemo}>
+              ${this.showReferenceDemo ? '채팅 보기' : '참조 카드 보기'}
+            </u-button>
+            <u-button @click=${() => Theme.set(Theme.get() === 'dark' ? 'light' : 'dark')}>
               테마 변경
             </u-button>
           </div>
         </div>
         
-        <div class="messages">
-          ${this.messages.length > 0
+        ${this.showReferenceDemo ? this.renderReferenceDemo() : this.renderMessages()}
+
+        ${!this.showReferenceDemo ? html`
+          <u-prompt 
+            placeholder="메시지를 입력하세요..."
+            @u-submit=${this.handleSubmitMessage}
+            @u-cancel=${this.handleCancelMessage}>
+            <div slot="left-actions">
+              <u-attach-button
+                multiple  
+                accept="image/*,.pdf,.text/plain"
+                @u-change=${this.handleAttachClick}>
+                파일 첨부
+              </u-attach-button>
+            </div>
+          </u-prompt>
+        ` : ''}
+      </div>
+    `;
+  }
+
+  private renderMessages() {
+    return html`
+      <div class="messages">
+        ${this.messages.length > 0
             ? repeat(this.messages, msg => msg.id , msg => msg.role === 'user'
               ? html`
                 <u-message variant="bubble" position="right"
@@ -56,6 +107,7 @@ export class PreviewApp extends LitElement {
                   <div class="msg-footer" slot="footer">
                     <u-copy-button
                       .value=${this.getTextValue(msg)}>
+                      텍스트 복사
                     </u-copy-button>
                   </div>
                 </u-message>`
@@ -68,23 +120,28 @@ export class PreviewApp extends LitElement {
                   <div class="msg-footer" slot="footer">
                     <u-copy-button
                       .value=${this.getTextValue(msg)}>
+                      텍스트 복사
                     </u-copy-button>
                     <u-retry-button
                       data-id=${msg.id}
                       @click=${this.handleRetryClick}>
+                      다시 시도
                     </u-retry-button>
                     <u-vote-button
                       data-id=${msg.id}
                       .value=${msg.voteValue || 'none'}
                       @u-change=${this.handleVoteChange}>
+                      응답 평가
                     </u-vote-button>
                     <u-share-button
                       data-id=${msg.id}
                       @click=${this.handleShareClick}>
+                      공유 하기
                     </u-share-button>
                     <u-report-button
                       data-id=${msg.id}
                       @click=${this.handleReportClick}>
+                      신고 하기
                     </u-report-button>
                   </div>
                 </u-message>`)
@@ -92,38 +149,126 @@ export class PreviewApp extends LitElement {
               <div style="flex:1; display:flex; align-items:center; justify-content:center;">
                 <p>메시지를 입력해보세요!</p>
               </div>`}
-        </div>
+      </div>
+    `;
+  }
 
-        <u-prompt 
-          placeholder="메시지를 입력하세요..."
-          @u-submit=${this.handleSubmitMessage}
-          @u-cancel=${this.handleCancelMessage}>
-          <div slot="left-actions">
-            <u-attach-button
-              multiple  
-              accept="image/*,.pdf,.text/plain"
-              @u-change=${this.handleAttachClick}
-            ></u-attach-button>
+  private renderReferenceDemo() {
+    return html`
+      <div class="reference-demo">
+        <h2>📚 참조 카드 컴포넌트 데모</h2>
+        
+        <section class="demo-section">
+          <h3>1. 웹 참조 카드</h3>
+          <p class="description">
+            type="web" + image(favicon) + href + heading + snippet + tags
+          </p>
+          <div class="card-container">
+            <u-ref-card
+              type="web"
+              heading="JavaScript - MDN Web Docs"
+              image="https://developer.mozilla.org/favicon.ico"
+              href="https://developer.mozilla.org/ko/docs/Web/JavaScript"
+              .tags=${['developer.mozilla.org', 'JavaScript', 'Programming']}>
+              JavaScript는 프로토타입 기반의 동적 스크립트 언어입니다. 객체지향, 명령형, 선언형(함수형 프로그래밍) 스타일을 지원합니다.
+            </u-ref-card>
           </div>
-        </u-prompt>
+        </section>
 
-        <div style="display:contents;">
-          <u-tooltip for="u-copy-button" placement="bottom" distance="8">
-            텍스트 복사
-          </u-tooltip>
-          <u-tooltip for="u-retry-button" placement="bottom" distance="8">
-            다시 시도
-          </u-tooltip>
-          <u-tooltip for="u-vote-button" placement="bottom" distance="8">
-            응답 평가
-          </u-tooltip>
-          <u-tooltip for="u-share-button" placement="bottom" distance="8">
-            공유 하기
-          </u-tooltip>
-          <u-tooltip for="u-report-button" placement="bottom" distance="8">
-            신고 하기
-          </u-tooltip>
-        </div>
+        <section class="demo-section">
+          <h3>2. 웹 참조 카드 - 아이콘만</h3>
+          <p class="description">
+            type="web" + icon + href (image 없이 icon 사용)
+          </p>
+          <div class="card-container">
+            <u-ref-card
+              type="web"
+              heading="TypeScript: JavaScript With Syntax For Types"
+              icon="code-square"
+              href="https://www.typescriptlang.org/"
+              .tags=${['typescriptlang.org', 'TypeScript']}>
+              TypeScript extends JavaScript by adding types to the language.
+            </u-ref-card>
+          </div>
+        </section>
+
+        <section class="demo-section">
+          <h3>3. 문서 참조 카드</h3>
+          <p class="description">
+            type="document" + heading + snippet + tags
+          </p>
+          <div class="card-container">
+            <u-ref-card
+              type="document"
+              heading="project-guide.pdf"
+              href="https://example.com/docs/project-guide.pdf"
+              .tags=${['PDF', '섬션: 3장. 아키텍처 설계', '관련성: 0.95']}>
+              시스템 아키텍처는 마이크로서비스 패턴을 기반으로 설계되었으며, 각 서비스는 독립적으로 배포 가능합니다.
+            </u-ref-card>
+          </div>
+        </section>
+
+        <section class="demo-section">
+          <h3>4. 참조 카드 그룹 (페이지네이션)</h3>
+          <p class="description">
+            좌우 화살표로 각 카드를 탐색할 수 있습니다. slot으로 u-ref-card를 주입합니다.
+          </p>
+          <div class="card-container">
+            <u-ref-card-group>
+              <u-ref-card
+                type="web"
+                heading="JavaScript - MDN Web Docs"
+                image="https://developer.mozilla.org/favicon.ico"
+                href="https://developer.mozilla.org/ko/docs/Web/JavaScript"
+                .tags=${['developer.mozilla.org']}>
+                JavaScript는 프로토타입 기반의 동적 스크립트 언어입니다.
+              </u-ref-card>
+              
+              <u-ref-card
+                type="web"
+                heading="TypeScript"
+                icon="code-square"
+                href="https://www.typescriptlang.org/"
+                .tags=${['typescriptlang.org']}>
+                TypeScript extends JavaScript by adding types.
+              </u-ref-card>
+              
+              <u-ref-card
+                type="document"
+                heading="project-guide.pdf"
+                href="https://example.com/docs/project-guide.pdf"
+                .tags=${['PDF', '섬션: 3장', '관련성: 0.95']}>
+                마이크로서비스 패턴 기반 아키텍처 설계
+              </u-ref-card>
+            </u-ref-card-group>
+          </div>
+        </section>
+
+        <section class="demo-section">
+          <h3>5. 실제 사용 예시</h3>
+          <p class="description">
+            URefTag 툴팁 내부에 URefCardGroup을 배치하는 방법
+          </p>
+          <div class="usage-example">
+            <code>
+&lt;u-ref-tag&gt;<br/>
+  &nbsp;&nbsp;&lt;u-tooltip slot="tooltip"&gt;<br/>
+  &nbsp;&nbsp;&nbsp;&nbsp;&lt;u-ref-card-group&gt;<br/>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;u-ref-card type="web" heading="..."
+&nbsp;href="..."&gt;<br/>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;콘텐츠...<br/>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/u-ref-card&gt;<br/>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;u-ref-card type="document" heading="..."
+&gt;<br/>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;콘텐츠...<br/>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/u-ref-card&gt;<br/>
+  &nbsp;&nbsp;&nbsp;&nbsp;&lt;/u-ref-card-group&gt;<br/>
+  &nbsp;&nbsp;&lt;/u-tooltip&gt;<br/>
+  &nbsp;&nbsp;[1]<br/>
+&lt;/u-ref-tag&gt;
+            </code>
+          </div>
+        </section>
       </div>
     `;
   }
@@ -351,6 +496,60 @@ export class PreviewApp extends LitElement {
       flex-shrink: 0;
       backdrop-filter: blur(10px);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .reference-demo {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .reference-demo h2 {
+      margin: 0 0 24px 0;
+      color: var(--u-color-text);
+    }
+
+    .demo-section {
+      margin-bottom: 32px;
+      padding: 20px;
+      background: var(--u-color-surface-secondary);
+      border-radius: var(--u-border-radius-medium);
+    }
+
+    .demo-section h3 {
+      margin: 0 0 12px 0;
+      color: var(--u-color-text);
+      font-size: 1.1rem;
+    }
+
+    .description {
+      margin: 0 0 16px 0;
+      color: var(--u-color-text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .card-container {
+      display: flex;
+      justify-content: center;
+      padding: 16px;
+      background: var(--u-color-surface);
+      border-radius: var(--u-border-radius-medium);
+      border: 1px solid var(--u-color-border);
+    }
+
+    .usage-example {
+      background: var(--u-color-surface);
+      padding: 16px;
+      border-radius: var(--u-border-radius-medium);
+      border: 1px solid var(--u-color-border);
+    }
+
+    .usage-example code {
+      display: block;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      color: var(--u-color-text);
+      line-height: 1.6;
     }
 
     @keyframes slideIn {

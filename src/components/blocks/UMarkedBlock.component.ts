@@ -7,8 +7,8 @@ import markedKatex from "marked-katex-extension";
 
 import { BaseElement } from "@iyulab/components/dist/components/BaseElement.js";
 import { UCodeBlock } from "./UCodeBlock.component.js";
-import { UCitationTag } from "../tags/UCitationTag.component.js";
-import type { Citation } from "../message/UMessage.types.js";
+import { URefTag } from "../references/URefTag.component.js";
+import type { TextBlockReference } from "../../types/BlockReference";
 import { styles } from "./UMarkedBlock.styles.js";
 
 /**
@@ -18,7 +18,7 @@ export class UMarkedBlock extends BaseElement {
   static styles = [ super.styles, styles ];
   static dependencies: Record<string, typeof BaseElement> = {
     'u-code-block': UCodeBlock,
-    'u-citation-tag': UCitationTag
+    'u-ref-tag': URefTag
   };
 
   private parser = new Marked({
@@ -39,7 +39,7 @@ export class UMarkedBlock extends BaseElement {
   /** 마크다운 컨텐츠를 렌더링할 때 사용할 값입니다. */
   @property({ type: String }) value?: string;
   /** 컨텐츠의 인용 출처들입니다. */
-  @property({ type: Array }) citations?: Citation[];
+  @property({ type: Array }) refs?: TextBlockReference[];
 
   render() {
     if (!this.value) return nothing;
@@ -55,11 +55,13 @@ export class UMarkedBlock extends BaseElement {
    */
   private parse(value: string): string {
     // 역순으로 태그 삽입 (뒤에서부터 삽입하면 앞의 인덱스가 변하지 않음)
-    if (this.citations && this.citations.length > 0) {
-      const reversed = [...this.citations].sort((a, b) => b.endIndex - a.endIndex);
-      reversed.forEach((citation) => {
-        const tag = `<u-citation-tag href="${citation.url}">${citation.name}</u-citation-tag>`;
-        value = value.slice(0, citation.endIndex) + tag + value.slice(citation.endIndex);
+    if (this.refs && this.refs.length > 0) {
+      const reversed = [...this.refs].sort((a, b) => b.endIndex - a.endIndex);
+      reversed.forEach((ref) => {
+        const tags = ref.sources.map((source) => {
+          return `<u-ref-tag href="${source.url}">${ref.name}</u-ref-tag>`
+        }).join('');
+        value = value.slice(0, ref.endIndex) + tags + value.slice(ref.endIndex);
       });
     }
 
