@@ -48,8 +48,8 @@ export class UMarkedBlock extends BaseElement {
   }
 
   /**
-   * 마크다운 문자열을 HTML로 변환합니다.
-   * 특수 제어 문자를 제거하고 marked 파서로 처리합니다.
+   * 마크다운 문자열을 파싱하여 HTML 문자열로 변환합니다.
+   * citations 속성에 정의된 인용 태그를 삽입합니다.
    * @param value 변환할 마크다운 문자열
    * @returns 변환된 HTML 문자열
    */
