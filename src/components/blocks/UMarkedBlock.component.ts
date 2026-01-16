@@ -1,4 +1,4 @@
-import { LitElement, nothing } from "lit";
+import { nothing } from "lit";
 import { property } from "lit/decorators.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 

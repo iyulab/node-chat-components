@@ -9,4 +9,3 @@ declare global {
 }
 
 export { UMessage };
-export type * from "./UMessage.types";
