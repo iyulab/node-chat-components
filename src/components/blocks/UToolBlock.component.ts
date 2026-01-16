@@ -5,7 +5,7 @@ import { BaseElement } from "@iyulab/components/dist/components/BaseElement.js";
 import { UIcon } from "@iyulab/components/dist/components/icon/UIcon.component.js";
 import { USpinner } from "@iyulab/components/dist/components/spinner/USpinner.component.js";
 import { UJsonBlock } from "./UJsonBlock.component.js";
-import { jsonAttributeConverter } from "../../internals/attribute-converters.js";
+import { jsonAttrConverter } from "../../utilities/converters.js";
 import type { JsonNode } from "../../types/JsonNode.js";
 import { styles } from "./UToolBlock.styles.js";
 
@@ -27,9 +27,9 @@ export class UToolBlock extends BaseElement {
   /** 헤딩 텍스트 */
   @property({ type: String }) heading?: string;
   /** 입력 데이터 (JSON Object) */
-  @property({ type: Object, converter: jsonAttributeConverter }) input?: JsonNode;
+  @property({ type: Object, converter: jsonAttrConverter }) input?: JsonNode;
   /** 출력 데이터 (JSON Object) */
-  @property({ type: Object, converter: jsonAttributeConverter }) output?: JsonNode;
+  @property({ type: Object, converter: jsonAttrConverter }) output?: JsonNode;
 
   render() {
     return html`

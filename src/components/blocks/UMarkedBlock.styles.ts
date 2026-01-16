@@ -60,6 +60,16 @@ export const styles = css`
   .katex math {
     margin: var(--base-size-16) 0;
   }
+
+  u-tooltip {
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    background-color: transparent;
+  }
+  u-tooltip[visible] {
+    opacity: 1;
+  }
   /* Custom Block End */
 
   a {

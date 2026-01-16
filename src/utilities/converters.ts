@@ -4,7 +4,7 @@ import type { JsonNode } from "../types/JsonNode";
  * 이 컨버터는 JsonNode 타입을 사용하여 JSON 데이터를 처리합니다.
  * 문자열 어트리뷰트로 전달된 JSON 문자열을 객체로 변환/직렬화합니다. 
  */
-export const jsonAttributeConverter = {
+export const jsonAttrConverter = {
   fromAttribute: (value: string | null): JsonNode => {
     if (!value || !value.trim()) return {};
     try {

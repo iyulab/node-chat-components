@@ -4,7 +4,7 @@ import { map } from 'lit/directives/map.js';
 import { when } from 'lit/directives/when.js';
 
 import { BaseElement } from '@iyulab/components/dist/components/BaseElement.js';
-import { jsonAttributeConverter } from '../../internals/attribute-converters.js';
+import { jsonAttrConverter } from '../../utilities/converters.js';
 import type { JsonNode, JsonArray, JsonObject, JsonValue } from '../../types/JsonNode.js';
 import { styles } from './UJsonBlock.styles.js';
 
@@ -20,7 +20,7 @@ export class UJsonBlock extends BaseElement {
   /** 초기 확장 상태를 관리하는 속성입니다. */
   @property({ type: Boolean }) expanded: boolean = true;
   /** JSON 데이터 (속성으로 전달 가능) */
-  @property({ type: Object, converter: jsonAttributeConverter }) value: JsonNode = {};
+  @property({ type: Object, converter: jsonAttrConverter }) value: JsonNode = {};
 
   connectedCallback() {
     super.connectedCallback();

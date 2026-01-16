@@ -2,6 +2,7 @@ import { html } from 'lit';
 import { property } from 'lit/decorators.js';
 
 import { BaseElement } from '@iyulab/components/dist/components/BaseElement.js';
+import { UTooltip } from '@iyulab/components/dist/components/tooltip/UTooltip.component.js';
 import { UIcon } from '@iyulab/components/dist/components/icon/UIcon.component.js';
 import { styles } from './URefTag.styles.js';
 
@@ -12,6 +13,7 @@ export class URefTag extends BaseElement {
   static styles = [ super.styles, styles ];
   static dependencies: Record<string, typeof BaseElement> = {
     'u-icon': UIcon,
+    'u-tooltip': UTooltip
   };
 
   /** 인용 출처 소스 데이터 */
@@ -23,10 +25,11 @@ export class URefTag extends BaseElement {
         <slot></slot>
       </a>
 
-      <u-icon
-        lib="internal"
-        name="box-arrow-up-right"
-      ></u-icon>
+      <u-icon lib="internal" name="box-arrow-up-right"></u-icon>
+
+      <u-tooltip interactive placement="bottom" distance="4">
+        <slot name="tooltip"></slot>
+      </u-tooltip>
     `;
   }
 }

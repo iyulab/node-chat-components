@@ -1,7 +1,8 @@
 import OpenAI from 'openai';
 import type { ResponseInput } from 'openai/resources/responses/responses.mjs';
 import type { Message } from "./messages";
-import type { BlockItem } from '../src/components/message/UMessage.types.js';
+import type { BlockItem } from '../src/types/BlockItem';
+import type { BlockReference } from '../src/types/BlockReference';
 
 const openai = new OpenAI({
   apiKey: import.meta.env.VITE_OPENAI_API_KEY,
@@ -17,7 +18,7 @@ export async function generateMessage(messages: Message[], signal: AbortSignal):
 
     const content = msg.items
       .filter(item => item.type === 'text' || item.type === 'markdown')
-      .map(item => item.value)
+      .map((item: any) => item.value)
       .join('\n\n');
 
     acc.push({
@@ -67,12 +68,31 @@ export async function generateMessage(messages: Message[], signal: AbortSignal):
         acc.push({ type: 'thinking', value: summary });
       }
     } else if (output.type === 'message') {
+      let text: string = "";
+      let refs: BlockReference[] = [];
+      output.content.filter(c => c.type === 'output_text').map(c => {
+        text += c.text;
+        c.annotations.map(a => {
+          if (a.type === 'url_citation') {
+            refs.push({
+              name: a.title,
+              startIndex: a.start_index,
+              endIndex: a.end_index,
+              sources: [
+                {
+                  type: 'web',
+                  url: a.url,
+                  title: a.title,
+                }
+              ]
+            })
+          }
+        })
+      });
       acc.push({
         type: 'markdown',
-        value: output.content
-          .filter(c => c.type === 'output_text')
-          .map(c => c.text)
-          .join('\n\n')
+        value: text,
+        refs: refs
       });
     } else if (output.type === 'web_search_call') {
       const action = (output as any).action;

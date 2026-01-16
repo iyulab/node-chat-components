@@ -1,6 +1,8 @@
 import { html } from 'lit';
 import { property } from 'lit/decorators.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 
+import { arrayAttrConverter } from '@iyulab/components/dist/utilities/converters.js';
 import { BaseElement } from '@iyulab/components/dist/components/BaseElement.js';
 import { UIcon } from '@iyulab/components/dist/components/icon/UIcon.component.js';
 import { styles } from './URefCard.styles.js';
@@ -17,47 +19,64 @@ export class URefCard extends BaseElement {
 
   /** 카드 타입 (web 또는 document) */
   @property({ type: String, reflect: true }) type: 'web' | 'document' = 'web';
-  /** 이미지 URL (예: favicon) */
-  @property({ type: String }) image?: string;
-  /** 카드 헤딩 (타이틀) */
-  @property({ type: String }) heading?: string;
   /** 외부 링크 URL */
-  @property({ type: String }) href?: string;
+  @property({ type: String }) href: string = "#"
+  /** 카드 타이틀 */
+  @property({ type: String }) heading?: string;
   /** 태그 목록 */
-  @property({ type: Array }) tags?: string[];
+  @property({ type: Array, converter: arrayAttrConverter(v => v) }) tags?: string[];
 
-  render() {;
-    const iconColor = this.type === 'web' ? 'blue' : 'green';
-    
+  render() {
     return html`
-      <div class="card">
-        <div class="card-header">
-          <div class="card-icon ${iconColor}">
-            ${this.image 
-              ? html`<img src="${this.image}" alt="icon" class="image" />` 
-              : html`<u-icon lib="internal" name="${this.type === 'web' ? 'globe' : 'file-earmark'}"></u-icon>`}
+      <a href="${this.href}" target="_blank" rel="noopener noreferrer">
+        <div class="header">
+          <img class="favicon" 
+            src="${this.getFaviconUrl(this.href)}" 
+            alt="favicon"
+          />
+          <div class="title" title="${ifDefined(this.heading)}">
+            ${this.heading || this.getPageTitle(this.href)}
           </div>
-          
-          <a href="${this.href || "#"}" target="_blank" rel="noopener noreferrer" class="type-badge-link ${this.type}">
-            <span class="badge-text">${this.type === 'web' ? 'WEB' : 'DOCUMENT'}</span>
-            <u-icon lib="internal" name="box-arrow-up-right"></u-icon>
-          </a>
+
+          <div style="flex: 1;"></div>
+
+          <div class="badge" type=${this.type}>
+            <u-icon 
+              lib="internal" 
+              name=${this.type === 'web' ? 'globe' : 'file-earmark'}
+            ></u-icon>
+            ${this.type.toUpperCase()}
+          </div>
+        </div>
+
+        <div class="body">
+          <slot></slot>
         </div>
         
-        <div class="card-content">
-          <h4 class="heading" ?hidden=${!this.heading}>
-            ${this.heading}
-          </h4>
-          
-          <div class="snippet">
-            <slot></slot>
-          </div>
-          
-          <div class="tags" ?hidden=${!this.tags || this.tags.length === 0}>
-            ${this.tags?.map(tag => html`<span class="tag">${tag}</span>`)}
-          </div>
+        <div class="footer" ?hidden=${!this.tags || this.tags.length === 0}>
+          ${this.tags?.map(tag => html`<span class="tag">${tag}</span>`)}
         </div>
-      </div>
+      </a>
     `;
+  }
+
+  /** URL에서 Google의 파비콘 URL을 반환합니다. */
+  private getFaviconUrl(url: string): string {
+    try {
+      const hostname = new URL(url).hostname;
+      // Google Favicon API (64px);
+      return `https://www.google.com/s2/favicons?sz=64&domain=${hostname}`;
+    } catch {
+      return `/favicon.ico`
+    }
+  }
+
+  /** URL에서 도메인 사이트 주소를 반환합니다. */
+  private getPageTitle(url: string): string {
+    try {
+      return new URL(url).hostname;
+    } catch {
+      return "Unkown"
+    }
   }
 }
