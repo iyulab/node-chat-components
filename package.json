@@ -37,7 +37,7 @@
     }
   },
   "scripts": {
-    "start": "vite",
+    "test": "vite",
     "build": "eslint && vite build"
   },
   "dependencies": {
@@ -57,7 +57,7 @@
     "globals": "^17.0.0",
     "openai": "^6.16.0",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.53.0",
+    "typescript-eslint": "^8.53.1",
     "vite": "^7.3.1",
     "vite-plugin-dts": "^4.5.4"
   }
