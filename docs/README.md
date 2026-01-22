@@ -51,6 +51,7 @@ const current = Theme.get();
 - `u-text-block` - 텍스트 표시/편집
 - `u-think-block` - AI 추론 과정 표시
 - `u-tool-block` - 도구 호출 표시
+- `u-ref-block` - 참조 출처 블록
 
 ### Buttons
 - `u-attach-button` - 파일 첨부 버튼
@@ -77,3 +78,4 @@ const current = Theme.get();
 - [PROMPT.md](./components/PROMPT.md) - 프롬프트 컴포넌트
 - [BLOCKS.md](./components/BLOCKS.md) - 블록 컴포넌트
 - [BUTTONS.md](./components/BUTTONS.md) - 버튼 컴포넌트
+- [REFERENCES.md](./components/REFERENCES.md) - 참조 컴포넌트

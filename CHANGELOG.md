@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.0 (2026-01-22)
+
+- Renamed `TextBlockReference` to `ReferenceCitation` and field `name` to `label`
+- Updated `url` field in `ReferenceSource` to be optiona
+- Added `URefBlock` component for displaying multiple reference sources
+- Enhanced `URefCard` and `URefTag` components with improved functionality
+
 ## 0.2.0 (2026-01-16)
 
 ### Added

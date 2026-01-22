@@ -38,7 +38,7 @@ JSON 데이터를 트리 형태로 시각화합니다.
 | Property | Type | Description |
 |----------|------|-------------|
 | `value` | `string` | 마크다운 내용 |
-| `refs` | `TextBlockReference[]` | 마크다운 내 인용 출처들 |
+| `refs` | `ReferenceCitation[]` | 마크다운 내 인용 정보들 |
 
 ```html
 <u-marked-block value="# Title\n**bold** text"></u-marked-block>
@@ -99,4 +99,25 @@ AI의 추론 과정을 표시합니다. 접기/펼치기를 지원합니다.
   .input=${{ city: "Seoul" }}
   .output=${{ temp: 15 }}
 ></u-tool-block>
+```
+
+---
+
+## u-ref-block
+
+참조 출처들을 블록 형태로 표시합니다. 접기/펼치기를 지원합니다.
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `sources` | `ReferenceSource[]` | - | 출처 목록 |
+| `heading` | `string` | `'References'` | 블록 제목 |
+| `collapsed` | `boolean` | `true` | 접힘 상태 |
+
+```html
+<u-ref-block 
+  heading="출처" 
+  .sources=${[
+    { type: 'web', url: 'https://example.com', title: 'Example' }
+  ]}
+></u-ref-block>
 ```
