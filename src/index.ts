@@ -5,6 +5,7 @@ export * from './components/blocks/UMarkedBlock.js';
 export * from './components/blocks/UTextBlock.js';
 export * from './components/blocks/UThinkBlock.js';
 export * from './components/blocks/UToolBlock.js';
+export * from './components/blocks/URefBlock.js';
 export * from './components/buttons/UAttachButton.js';
 export * from './components/buttons/UCopyButton.js';
 export * from './components/buttons/UVoteButton.js';
@@ -20,8 +21,8 @@ export * from './components/references/URefCardGroup.js';
 
 // types exports
 export type * from './types/BlockItem';
-export type * from './types/BlockReference';
 export type * from './types/JsonNode';
+export type * from './types/References';
 
 // event types exports
 export type * from './events/UCancelEvent';

@@ -11,7 +11,7 @@ import { UCodeBlock } from "./UCodeBlock.component.js";
 import { URefTag } from "../references/URefTag.component.js";
 import { URefCard } from "../references/URefCard.component.js";
 import { URefCardGroup } from "../references/URefCardGroup.component.js";
-import type { ReferenceSource, TextBlockReference } from "../../types/BlockReference";
+import type { ReferenceSource, ReferenceCitation } from "../../types/References.js";
 import { styles } from "./UMarkedBlock.styles.js";
 
 /**
@@ -40,9 +40,9 @@ export class UMarkedBlock extends BaseElement {
     renderer: {
       code: ({ text, lang }) => {
         lang ||= "plaintext";
-        const safeLang = this.escapeHTML(lang);
 
         // 코드블록은 "보여주기"가 목적이므로: refs 태그 제거 + HTML escape
+        const safeLang = this.escapeHTML(lang);
         const safeText = this.sanitizeText(text);
 
         return `<u-code-block lang="${safeLang}">${safeText}</u-code-block>`;
@@ -53,7 +53,7 @@ export class UMarkedBlock extends BaseElement {
   /** 마크다운 컨텐츠를 렌더링할 때 사용할 값입니다. */
   @property({ type: String }) value?: string;
   /** 컨텐츠의 인용 출처들입니다. */
-  @property({ type: Array }) refs?: TextBlockReference[];
+  @property({ type: Array }) refs?: ReferenceCitation[];
 
   render() {
     if (!this.value) return nothing;
@@ -76,7 +76,7 @@ export class UMarkedBlock extends BaseElement {
    * @param value 삽입할 마크다운 문자열
    * @return 삽입된 마크다운 문자열
    */
-  private insert(value: string, refs: TextBlockReference[]) {
+  private insert(value: string, refs: ReferenceCitation[]) {
     // endIndex 기준 역순 삽입 (앞 인덱스가 변하지 않게)
     const reversed = [...refs].sort((a, b) => b.endIndex - a.endIndex);
 
@@ -85,8 +85,8 @@ export class UMarkedBlock extends BaseElement {
       const firstSource = sources.at(0);
 
       // 텍스트/속성 안전 처리
-      const tagName = this.escapeHTML(ref.name ?? "");
-      const tagLink = this.escapeHTML(firstSource?.url ?? "#");
+      const tagName = this.escapeHTML(ref.label ?? `[${refs.indexOf(ref) + 1}]`);
+      const tagLink = this.escapeHTML(firstSource?.url ?? "");
 
       let tooltip = "";
 
@@ -116,8 +116,8 @@ export class UMarkedBlock extends BaseElement {
    * 참조 카드 엘리먼트를 안전하게 빌드합니다.
    */
   private buildCard(source: ReferenceSource, slot: boolean) {
-    const type = this.escapeHTML(source.type ?? "");
-    const href = this.escapeHTML(source.url ?? "#");
+    const type = this.escapeHTML(source.type || "web");
+    const href = this.escapeHTML(source.url ?? "");
     const heading = this.escapeHTML(source.title ?? "");
     const tags = this.escapeHTML((source.tags ?? []).join(","));
     const snippet = this.escapeHTML(source.snippet ?? "");

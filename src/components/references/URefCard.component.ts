@@ -20,7 +20,7 @@ export class URefCard extends BaseElement {
   /** 카드 타입 (web 또는 document) */
   @property({ type: String, reflect: true }) type: 'web' | 'document' = 'web';
   /** 외부 링크 URL */
-  @property({ type: String }) href: string = "#"
+  @property({ type: String }) href?: string;
   /** 카드 타이틀 */
   @property({ type: String }) heading?: string;
   /** 태그 목록 */
@@ -28,14 +28,15 @@ export class URefCard extends BaseElement {
 
   render() {
     return html`
-      <a href="${this.href}" target="_blank" rel="noopener noreferrer">
+      <a href="${ifDefined(this.href)}" target="_blank" rel="noopener noreferrer"
+        @click=${this.handleAnchorClick}>
         <div class="header">
           <img class="favicon" 
             src="${this.getFaviconUrl(this.href)}" 
             alt="favicon"
           />
           <div class="title" title="${ifDefined(this.heading)}">
-            ${this.heading || this.getPageTitle(this.href)}
+            ${this.heading || this.getDomainName(this.href)}
           </div>
 
           <div style="flex: 1;"></div>
@@ -60,8 +61,19 @@ export class URefCard extends BaseElement {
     `;
   }
 
+  /** 링크 클릭 핸들러 */
+  private handleAnchorClick(e: Event) {
+    // 기본 동작 방지: href가 없을 때
+    if (!this.href) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  }
+
   /** URL에서 Google의 파비콘 URL을 반환합니다. */
-  private getFaviconUrl(url: string): string {
+  private getFaviconUrl(url?: string): string {
+    if (!url) return `/favicon.ico`;
+
     try {
       const hostname = new URL(url).hostname;
       // Google Favicon API (64px);
@@ -72,11 +84,13 @@ export class URefCard extends BaseElement {
   }
 
   /** URL에서 도메인 사이트 주소를 반환합니다. */
-  private getPageTitle(url: string): string {
+  private getDomainName(url?: string): string {
+    if (!url) return "";
+
     try {
       return new URL(url).hostname;
     } catch {
-      return "Unkown"
+      return ""
     }
   }
 }

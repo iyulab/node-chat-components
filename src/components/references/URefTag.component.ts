@@ -1,5 +1,6 @@
 import { html } from 'lit';
 import { property } from 'lit/decorators.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 
 import { BaseElement } from '@iyulab/components/dist/components/BaseElement.js';
 import { UTooltip } from '@iyulab/components/dist/components/tooltip/UTooltip.component.js';
@@ -17,11 +18,12 @@ export class URefTag extends BaseElement {
   };
 
   /** 인용 출처 소스 데이터 */
-  @property({ type: String }) href: string = '#';
+  @property({ type: String }) href?: string;
 
   render() {
     return html`
-      <a href="${this.href}" target="_blank" rel="noopener noreferrer">
+      <a href="${ifDefined(this.href)}" target="_blank" rel="noopener noreferrer"
+        @click=${this.handleAnchorClick}>
         <slot></slot>
       </a>
 
@@ -31,5 +33,14 @@ export class URefTag extends BaseElement {
         <slot name="tooltip"></slot>
       </u-tooltip>
     `;
+  }
+
+  /** 링크 클릭 핸들러 */
+  private handleAnchorClick(e: Event) {
+    // 기본 동작 방지: href가 없을 때
+    if (!this.href) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
   }
 }

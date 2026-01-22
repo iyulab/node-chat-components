@@ -64,7 +64,7 @@ interface Weather {
 더 자세한 내용은 기상청 웹사이트나 날씨뉴스를 참고해주세요.`,
         refs: [
           {
-            name: "서울",
+            label: "서울",
             startIndex: 8,
             endIndex: 10,
             sources: [
@@ -78,7 +78,7 @@ interface Weather {
             ]
           },
           {
-            name: "기상청 웹사이트나 날씨뉴스",
+            label: "기상청 웹사이트나 날씨뉴스",
             startIndex: 191,
             endIndex: 209,
             sources: [
@@ -181,7 +181,7 @@ interface Weather {
 더 많은 정보는 학술 데이터베이스에서 확인하실 수 있습니다.`,
         refs: [
           {
-            name: "GPT-4",
+            label: "GPT-4",
             startIndex: 61,
             endIndex: 66,
             sources: [
@@ -201,7 +201,7 @@ interface Weather {
             ]
           },
           {
-            name: "Claude",
+            label: "Claude",
             startIndex: 68,
             endIndex: 74,
             sources: [
@@ -214,7 +214,7 @@ interface Weather {
             ]
           },
           {
-            name: "Transformer 아키텍처",
+            label: "Transformer 아키텍처",
             startIndex: 330,
             endIndex: 348,
             sources: [
@@ -235,13 +235,13 @@ interface Weather {
             ]
           },
           {
-            name: "학술 데이터베이스",
+            label: "학술 데이터베이스",
             startIndex: 403,
             endIndex: 413,
             sources: [
               {
                 type: 'web',
-                url: "https://arxiv.org/list/cs.AI/recent",
+                // url: "https://arxiv.org/list/cs.AI/recent",
                 title: "arXiv.org - Artificial Intelligence",
                 snippet: "arXiv is a free distribution service and an open-access archive for scholarly articles in physics, mathematics, computer science, and more.",
                 tags: ["research", "open-access"]
@@ -260,6 +260,28 @@ interface Weather {
                 tags: ["research", "semantic-search"]
               }
             ]
+          }
+        ]
+      },
+      {
+        type: 'reference',
+        sources: [
+          {
+            type: 'web',
+            title: "Top AI Trends in 2024",
+            url: "https://example.com/ai-trends",
+            snippet: "An overview of the top AI technology trends to watch in 2024, including advancements in large language models and generative AI.",
+          },
+          {
+            type: 'web',
+            title: "The Future of Large Language Models",
+            url: "https://example.com/llm-future",
+            snippet: "A deep dive into the future developments and applications of large language models in various industries.",
+          },
+          {
+            type: 'document',
+            title: "Attention Is All You Need",
+            snippet: "The dominant sequence transduction models are based on complex recurrent or convolutional neural networks that include an encoder and a decoder. The best performing models also connect the encoder and decoder through an attention mechanism.",
           }
         ]
       }

@@ -7,6 +7,7 @@ import { UTextBlock } from '../blocks/UTextBlock.component.js';
 import { UMarkedBlock } from '../blocks/UMarkedBlock.component.js';
 import { UThinkBlock } from '../blocks/UThinkBlock.component.js';
 import { UToolBlock } from '../blocks/UToolBlock.component.js';
+import { URefBlock } from '../blocks/URefBlock.component.js';
 import { UDotLoader } from '../loaders/UDotLoader.component.js';
 import type { BlockItem } from '../../types/BlockItem';
 import { styles } from './UMessage.styles.js';
@@ -27,6 +28,7 @@ export class UMessage extends BaseElement {
     'u-marked-block': UMarkedBlock,
     'u-think-block': UThinkBlock,
     'u-tool-block': UToolBlock,
+    'u-ref-block': URefBlock,
     'u-dot-loader': UDotLoader
   };
 
@@ -65,6 +67,12 @@ export class UMessage extends BaseElement {
                 .input=${item.input}
                 .output=${item.output}
               ></u-tool-block>`
+            : item.type === 'reference'
+            ? html`
+              <u-ref-block
+                .heading=${"References"}
+                .sources=${item.sources}
+              ></u-ref-block>`
             : nothing)}
         <u-dot-loader
           ?hidden=${!this.loading}
