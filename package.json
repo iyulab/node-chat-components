@@ -47,7 +47,7 @@
     "lit": "^3.3.2",
     "marked": "^17.0.3",
     "marked-katex-extension": "^5.1.7",
-    "quill": "2.0.2"
+    "quill": "2.0.3"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
@@ -56,10 +56,10 @@
     "eslint": "^10.0.2",
     "eslint-plugin-lit": "^2.2.1",
     "globals": "^17.3.0",
-    "openai": "^6.23.0",
+    "openai": "^6.25.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.56.1",
     "vite": "^7.3.1",
-    "vite-plugin-dts": "^2.3.0"
+    "vite-plugin-dts": "^4.5.4"
   }
 }
