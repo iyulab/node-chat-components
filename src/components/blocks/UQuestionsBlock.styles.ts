@@ -2,7 +2,6 @@ import { css } from "lit";
 
 export const styles = css`
   :host {
-    width: 100%;
     display: flex;
     flex-direction: column;
     gap: 0.4em;
@@ -10,9 +9,8 @@ export const styles = css`
   }
 
   button {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+    display: block;
+    width: fit-content;
     padding: 0.5em 0.75em;
     font-size: 0.875em;
     text-align: left;
@@ -32,10 +30,5 @@ export const styles = css`
   }
   button:active {
     transform: translateY(0);
-  }
-
-  span {
-    flex: 1;
-    min-width: 0;
   }
 `;

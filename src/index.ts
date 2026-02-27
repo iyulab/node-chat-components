@@ -6,6 +6,7 @@ export * from './components/blocks/UTextBlock.js';
 export * from './components/blocks/UThinkBlock.js';
 export * from './components/blocks/UToolBlock.js';
 export * from './components/blocks/URefBlock.js';
+export * from './components/blocks/UQuestionsBlock.js';
 export * from './components/buttons/UAttachButton.js';
 export * from './components/buttons/UCopyButton.js';
 export * from './components/buttons/UVoteButton.js';
@@ -21,7 +22,6 @@ export * from './components/references/URefCardGroup.js';
 // widget exports
 export * from './components/widgets/UImagesWidget.js';
 export * from './components/widgets/UVideoWidget.js';
-export * from './components/widgets/UQuestionsWidget.js';
 export * from './components/widgets/UMapWidget.js';
 export * from './components/widgets/UChartWidget.js';
 

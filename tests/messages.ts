@@ -314,29 +314,31 @@ interface Weather {
 
 \`\`\`widget-json
 {
-  "type": "images",
-  "items": [
-    {
-      "src": "https://picsum.photos/400/300?random=1",
-      "alt": "Beautiful landscape",
-      "caption": "Mountain view"
-    },
-    {
-      "src": "https://picsum.photos/400/300?random=2",
-      "alt": "City skyline",
-      "caption": "Urban life"
-    },
-    {
-      "src": "https://picsum.photos/400/300?random=3",
-      "alt": "Ocean waves",
-      "caption": "Peaceful ocean"
-    },
-    {
-      "src": "https://picsum.photos/400/300?random=4",
-      "alt": "Forest path",
-      "caption": "Nature walk"
-    }
-  ]
+  "tag": "u-images-widget",
+  "properties": {
+    "items": [
+      {
+        "src": "https://picsum.photos/400/300?random=1",
+        "alt": "Beautiful landscape",
+        "caption": "Mountain view"
+      },
+      {
+        "src": "https://picsum.photos/400/300?random=2",
+        "alt": "City skyline",
+        "caption": "Urban life"
+      },
+      {
+        "src": "https://picsum.photos/400/300?random=3",
+        "alt": "Ocean waves",
+        "caption": "Peaceful ocean"
+      },
+      {
+        "src": "https://picsum.photos/400/300?random=4",
+        "alt": "Forest path",
+        "caption": "Nature walk"
+      }
+    ]
+  }
 }
 \`\`\`
 
@@ -346,9 +348,11 @@ interface Weather {
 
 \`\`\`widget-json
 {
-  "type": "video",
-  "src": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-  "ratio": "16:9"
+  "tag": "u-video-widget",
+  "properties": {
+    "src": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    "ratio": "16:9"
+  }
 }
 \`\`\`
 
@@ -358,13 +362,15 @@ interface Weather {
 
 \`\`\`widget-json
 {
-  "type": "question",
-  "questions": [
-    "AI 기술의 미래는?",
-    "프로그래밍 언어 추천해줘",
-    "건강한 식단 알려줘",
-    "여행지 추천 부탁해"
-  ]
+  "tag": "u-questions-widget",
+  "properties": {
+    "questions": [
+      "AI 기술의 미래는?",
+      "프로그래밍 언어 추천해줘",
+      "건강한 식단 알려줘",
+      "여행지 추천 부탁해"
+    ]
+  }
 }
 \`\`\`
 
@@ -374,12 +380,14 @@ interface Weather {
 
 \`\`\`widget-json
 {
-  "type": "map",
-  "lat": 37.5665,
-  "lng": 126.9780,
-  "zoom": 13,
-  "title": "서울",
-  "description": "대한민국의 수도"
+  "tag": "u-map-widget",
+  "properties": {
+    "lat": 37.5665,
+    "lng": 126.9780,
+    "zoom": 13,
+    "label": "서울",
+    "description": "대한민국의 수도"
+  }
 }
 \`\`\`
 
@@ -389,33 +397,35 @@ interface Weather {
 
 \`\`\`widget-json
 {
-  "type": "chart",
-  "chartType": "bar",
-  "data": {
-    "labels": ["1월", "2월", "3월", "4월", "5월", "6월"],
-    "datasets": [{
-      "label": "판매량",
-      "data": [12, 19, 15, 25, 22, 30],
-      "backgroundColor": "rgba(54, 162, 235, 0.5)",
-      "borderColor": "rgba(54, 162, 235, 1)",
-      "borderWidth": 1
-    }]
-  },
-  "options": {
-    "responsive": true,
-    "plugins": {
-      "title": {
-        "display": true,
-        "text": "월별 판매 현황"
-      },
-      "legend": {
-        "display": true,
-        "position": "top"
-      }
+  "tag": "u-chart-widget",
+  "properties": {
+    "type": "bar",
+    "data": {
+      "labels": ["1월", "2월", "3월", "4월", "5월", "6월"],
+      "datasets": [{
+        "label": "판매량",
+        "data": [12, 19, 15, 25, 22, 30],
+        "backgroundColor": "rgba(54, 162, 235, 0.5)",
+        "borderColor": "rgba(54, 162, 235, 1)",
+        "borderWidth": 1
+      }]
     },
-    "scales": {
-      "y": {
-        "beginAtZero": true
+    "options": {
+      "responsive": true,
+      "plugins": {
+        "title": {
+          "display": true,
+          "text": "월별 판매 현황"
+        },
+        "legend": {
+          "display": true,
+          "position": "top"
+        }
+      },
+      "scales": {
+        "y": {
+          "beginAtZero": true
+        }
       }
     }
   }
