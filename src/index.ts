@@ -37,3 +37,4 @@ export type * from './events/USubmitEvent';
 
 // utilities exports
 export * from './utilities/WidgetRegistry.js';
+export * from './utilities/ActionRegistry.js';

@@ -42,6 +42,19 @@ export interface ReferenceBlockItem {
   sources: ReferenceSource[];
 }
 
+/** 질문 제안 액션 블록입니다. */
+export interface QuestionsActionBlockItem {
+  type: "questions";
+  /** 표시할 질문 목록 */
+  values: string[];
+}
+
+/**
+ * Action 메시지에 포함될 수 있는 아이템 타입
+ * 향후 dom-click 등 다른 action 타입 추가 가능
+ */
+export type ActionBlockItem = QuestionsActionBlockItem;
+
 /**
  * 타입별 메시지 컨텐츠 아이템
  */
@@ -50,5 +63,6 @@ export type BlockItem = (
   TextBlockItem |
   MarkdownBlockItem |
   ToolBlockItem | 
-  ReferenceBlockItem
+  ReferenceBlockItem |
+  QuestionsActionBlockItem
 );

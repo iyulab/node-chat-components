@@ -3,6 +3,7 @@ import type { ResponseInput } from 'openai/resources/responses/responses.mjs';
 import type { Message } from "./messages";
 import type { BlockItem } from '../src/types/BlockItem';
 import { WidgetRegistry } from '../src/utilities/WidgetRegistry.js';
+import { ActionRegistry } from '../src/utilities/ActionRegistry.js';
 
 const openai = new OpenAI({
   apiKey: import.meta.env.VITE_OPENAI_API_KEY,
@@ -33,11 +34,14 @@ export async function* generateMessageStream(
     return acc;
   }, []);
 
-  // 시스템 메시지로 widget instruction 추가
+  // 시스템 메시지로 widget/action instruction 추가
+  const widgetPrompt = WidgetRegistry.buildPrompt();
+  const actionPrompt = ActionRegistry.buildPrompt();
+  const instructions = [widgetPrompt, actionPrompt].filter(Boolean).join('\n\n');
   input.unshift({
     type: 'message',
     role: 'system',
-    content: `You are a helpful AI assistant that can use various widgets to enhance your responses.\n\n${WidgetRegistry.buildPrompt()}`
+    content: `You are a helpful AI assistant that can use various widgets and actions to enhance your responses.${instructions ? '\n\n' + instructions : ''}`
   });
 
   const stream = await openai.responses.create({

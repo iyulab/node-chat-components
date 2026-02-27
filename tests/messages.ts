@@ -1,5 +1,5 @@
 import { VoteValue } from "../src/components/buttons/UVoteButton.component.js";
-import { BlockItem, TextBlockItem } from "../src/types/BlockItem";
+import { BlockItem, TextBlockItem, ActionBlockItem } from "../src/types/BlockItem";
 import { generateRandomId } from "./generator.js";
 
 export interface UserMessage {
@@ -15,7 +15,17 @@ export interface AssistantMessage {
   voteValue?: VoteValue;
 }
 
-export type Message = UserMessage | AssistantMessage;
+/**
+ * Action 메시지: user 측에 렌더링되지만 LLM 컨텍스트에는 포함되지 않습니다.
+ * LLM 응답의 action-json 블록에서 추출되어 생성됩니다.
+ */
+export interface ActionMessage {
+  role: 'action';
+  id: string;
+  items: ActionBlockItem[];
+}
+
+export type Message = UserMessage | AssistantMessage | ActionMessage;
 
 export const messages: Message[] = [
   {

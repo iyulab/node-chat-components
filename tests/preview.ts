@@ -5,9 +5,10 @@ import { repeat } from "lit/directives/repeat.js";
 import '../src';
 import { Theme } from '@iyulab/components';
 import { WidgetRegistry } from '../src/utilities/WidgetRegistry.js';
+import { ActionRegistry, PresetAction } from '../src/utilities/ActionRegistry.js';
 import { PresetWidget } from '../src/types/Widgets.js';
 import type { BlockItem } from '../src/types/BlockItem';
-import { type Message, messages } from "./messages";
+import { type Message, type ActionMessage, messages } from "./messages";
 import { generateMessageStream, generateRandomId } from "./generator";
 
 @customElement('preview-app')
@@ -19,8 +20,9 @@ export class PreviewApp extends LitElement {
 
   connectedCallback(): void {
     super.connectedCallback();
-    // 테스트용으로 모든 프리셋 위젯 등록
+    // 테스트용으로 모든 프리셋 위젯/액션 등록
     WidgetRegistry.use(PresetWidget.All);
+    ActionRegistry.use(PresetAction.All);
     // Theme 초기화 (선택적으로 브라우저 스토리지 사용)
     Theme.init({
       store: { type: 'localStorage', prefix: 'uui-' },
@@ -55,13 +57,15 @@ export class PreviewApp extends LitElement {
             <div class="instructions-header">
               <h3>LLM Widget Instructions</h3>
               <div>
-                <u-copy-button .value=${WidgetRegistry.buildPrompt()}>복사</u-copy-button>
+                <u-copy-button .value=${WidgetRegistry.buildPrompt() + '\n\n' + ActionRegistry.buildPrompt()}>복사</u-copy-button>
                 <u-button @click=${() => this.showInstructions = false}>닫기</u-button>
               </div>
             </div>
-            <pre class="instructions-content">${WidgetRegistry.buildPrompt()}</pre>
+            <pre class="instructions-content">${WidgetRegistry.buildPrompt()}
+
+${ActionRegistry.buildPrompt()}</pre>
             <p class="instructions-note">
-              💡 위 instruction을 LLM 시스템 프롬프트에 추가하면 위젯을 사용할 수 있습니다.
+              💡 위 instruction을 LLM 시스템 프롬프트에 추가하면 위젯과 액션을 사용할 수 있습니다.
             </p>
           </div>
         ` : nothing}
@@ -76,6 +80,11 @@ export class PreviewApp extends LitElement {
                     <u-copy-button .value=${this.getTextValue(msg)}>텍스트 복사</u-copy-button>
                   </div>
                 </u-message>`
+              : msg.role === 'action'
+              ? html`
+                <u-message variant="bubble" position="right">
+                  ${this.renderActionItems((msg as ActionMessage).items, msg.id)}
+                </u-message>`
               : html`
                 <u-message variant="default" position="left">
                   <div class="msg-header" slot="header">🤖 The Assistant</div>
@@ -84,7 +93,7 @@ export class PreviewApp extends LitElement {
                     <u-copy-button .value=${this.getTextValue(msg)}>텍스트 복사</u-copy-button>
                     <u-retry-button data-id=${msg.id} @click=${this.handleRetry}>다시 시도</u-retry-button>
                     <u-vote-button data-id=${msg.id}
-                      .value=${msg.voteValue || 'none'}
+                      .value=${(msg as any).voteValue || 'none'}
                       @u-change=${this.handleVote}>응답 평가</u-vote-button>
                     <u-share-button data-id=${msg.id} @click=${this.handleShare}>공유 하기</u-share-button>
                     <u-report-button data-id=${msg.id} @click=${this.handleReport}>신고 하기</u-report-button>
@@ -119,7 +128,49 @@ export class PreviewApp extends LitElement {
     );
   }
 
+  private renderActionItems(items: ActionMessage['items'], actionMsgId: string) {
+    return items.map(item =>
+      item.type === 'questions'
+        ? html`<u-questions-block
+            .values=${item.values}
+            @query=${(e: CustomEvent) => this.handleQuery(e, actionMsgId)}>
+          </u-questions-block>`
+        : nothing
+    );
+  }
+
   // ── 이벤트 핸들러 ──
+
+  private handleQuery = async (e: CustomEvent, actionMsgId: string) => {
+    const { value } = e.detail;
+    if (!value?.trim()) return;
+
+    // 1. action 메시지 제거
+    const withoutAction = this.messages.filter(m => m.id !== actionMsgId);
+
+    // 2. user 텍스트 메시지 추가
+    const nextMessages = [...withoutAction, {
+      id: generateRandomId(),
+      role: 'user' as const,
+      items: [{ type: 'text' as const, value }],
+    }];
+    this.messages = nextMessages;
+
+    await this.updateComplete;
+    const prompt = this.shadowRoot?.querySelector('u-prompt') as any;
+
+    try {
+      if (prompt) prompt.loading = true;
+      await this.streamAssistant(nextMessages);
+    } catch (error) {
+      if (!(error instanceof Error && error.message === 'Request was aborted.')) {
+        console.error('Query failed:', error);
+      }
+    } finally {
+      this.aborter = new AbortController();
+      if (prompt) prompt.loading = false;
+    }
+  }
 
   private handleSubmit = async (e: CustomEvent) => {
     const value = e.detail.value;
@@ -207,6 +258,28 @@ export class PreviewApp extends LitElement {
       this.requestUpdate();
     }
     await this.updateComplete;
+
+    // 스트리밍 완료 → action-json 블록 추출 및 action 메시지 생성
+    const lastMsg = this.messages[this.messages.length - 1];
+    if (lastMsg?.role === 'assistant') {
+      const markdownItem = lastMsg.items.find(i => i.type === 'markdown') as any;
+      if (markdownItem?.value) {
+        console.log('[ActionRegistry] extractPrompt input:', markdownItem.value);
+        const [clean, actions] = ActionRegistry.extractPrompt(markdownItem.value);
+        console.log('[ActionRegistry] extracted actions:', actions);
+        if (actions.length > 0) {
+          markdownItem.value = clean;
+          this.messages = [
+            ...this.messages,
+            {
+              id: generateRandomId(),
+              role: 'action' as const,
+              items: actions,
+            }
+          ];
+        }
+      }
+    }
 
     const lastmsg = this.shadowRoot?.querySelectorAll('u-message')[this.messages.length - 1] as any;
     if (lastmsg) lastmsg.loading = false;
