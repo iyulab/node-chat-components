@@ -8,6 +8,7 @@ import markedKatex from "marked-katex-extension";
 import { BaseElement } from "@iyulab/components/dist/components/BaseElement.js";
 import { UTooltip } from "@iyulab/components/dist/components/tooltip/UTooltip.component.js";
 import { UCodeBlock } from "./UCodeBlock.component.js";
+import { UTableBlock } from "./UTableBlock.component.js";
 import { URefTag } from "../references/URefTag.component.js";
 import { URefCard } from "../references/URefCard.component.js";
 import { URefCardGroup } from "../references/URefCardGroup.component.js";
@@ -28,6 +29,7 @@ export class UMarkedBlock extends BaseElement {
   static dependencies: Record<string, typeof BaseElement> = {
     "u-tooltip": UTooltip,
     "u-code-block": UCodeBlock,
+    "u-table-block": UTableBlock,
     "u-ref-tag": URefTag,
     "u-ref-card": URefCard,
     "u-ref-card-group": URefCardGroup
@@ -58,6 +60,18 @@ export class UMarkedBlock extends BaseElement {
         const safeText = this.sanitizeText(text);
 
         return `<u-code-block lang="${safeLang}">${safeText}</u-code-block>`;
+      },
+      table: (token) => {
+        const headers = token.header.map((h: { text: string; align: string | null }) => ({
+          text: h.text,
+          align: h.align as "left" | "center" | "right" | null,
+        }));
+        const rows = token.rows.map((row: Array<{ text: string }>) =>
+          row.map((cell) => cell.text)
+        );
+        const data = JSON.stringify({ headers, rows })
+          .replace(/<\/script>/gi, "<\\/script>");
+        return `<u-table-block><script type="application/json">${data}</script></u-table-block>`;
       },
     },
   }).use(markedKatex({ output: "mathml" }));

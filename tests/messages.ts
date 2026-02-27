@@ -445,5 +445,37 @@ interface Weather {
 이렇게 다양한 위젯들을 사용할 수 있습니다!`
       }
     ]
+  },
+  {
+    id: generateRandomId(),
+    role: 'user',
+    items: [
+      {
+        type: 'text',
+        value: '주요 프로그래밍 언어 비교 표를 보여줘.'
+      }
+    ]
+  },
+  {
+    id: generateRandomId(),
+    role: 'assistant',
+    items: [
+      {
+        type: 'markdown',
+        value:
+`주요 프로그래밍 언어를 비교한 표입니다.
+
+| 언어 | 패러다임 | 주요 용도 | 학습 난이도 | 성능 |
+|:---|:---:|:---|:---:|---:|
+| TypeScript | 멀티 | 웹 프론트/백엔드 | 중 | 중 |
+| Python | 멀티 | AI/데이터 분석 | 하 | 중하 |
+| Rust | 멀티 | 시스템 프로그래밍 | 상 | 최상 |
+| Go | 멀티 | 백엔드/클라우드 | 중하 | 상 |
+| Kotlin | 멀티 | Android/JVM | 중 | 상 |
+| Swift | 멀티 | iOS/macOS | 중 | 상 |
+
+정렬 가능하며, CSV 다운로드도 지원합니다.`
+      }
+    ]
   }
 ]

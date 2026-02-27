@@ -7,6 +7,7 @@ export * from './components/blocks/UThinkBlock.js';
 export * from './components/blocks/UToolBlock.js';
 export * from './components/blocks/URefBlock.js';
 export * from './components/blocks/UQuestionsBlock.js';
+export * from './components/blocks/UTableBlock.js';
 export * from './components/buttons/UAttachButton.js';
 export * from './components/buttons/UCopyButton.js';
 export * from './components/buttons/UVoteButton.js';
