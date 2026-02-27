@@ -287,5 +287,143 @@ interface Weather {
       }
     ],
     voteValue: 'none'
+  },
+  // 위젯 테스트 메시지들
+  {
+    id: generateRandomId(),
+    role: 'user',
+    items: [
+      {
+        type: 'text',
+        value: '위젯 기능들을 보여줘'
+      }
+    ]
+  },
+  {
+    id: generateRandomId(),
+    role: 'assistant',
+    items: [
+      {
+        type: 'markdown',
+        value: 
+`네! 다양한 위젯 기능들을 보여드리겠습니다.
+
+## 1. 이미지 갤러리
+
+아름다운 풍경 사진들을 갤러리로 보여드립니다:
+
+\`\`\`widget-json
+{
+  "type": "images",
+  "items": [
+    {
+      "src": "https://picsum.photos/400/300?random=1",
+      "alt": "Beautiful landscape",
+      "caption": "Mountain view"
+    },
+    {
+      "src": "https://picsum.photos/400/300?random=2",
+      "alt": "City skyline",
+      "caption": "Urban life"
+    },
+    {
+      "src": "https://picsum.photos/400/300?random=3",
+      "alt": "Ocean waves",
+      "caption": "Peaceful ocean"
+    },
+    {
+      "src": "https://picsum.photos/400/300?random=4",
+      "alt": "Forest path",
+      "caption": "Nature walk"
+    }
+  ]
+}
+\`\`\`
+
+## 2. 비디오 플레이어
+
+재미있는 영상을 보여드립니다:
+
+\`\`\`widget-json
+{
+  "type": "video",
+  "src": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+  "ratio": "16:9"
+}
+\`\`\`
+
+## 3. 추천 질문
+
+더 궁금한 내용이 있으신가요?
+
+\`\`\`widget-json
+{
+  "type": "question",
+  "questions": [
+    "AI 기술의 미래는?",
+    "프로그래밍 언어 추천해줘",
+    "건강한 식단 알려줘",
+    "여행지 추천 부탁해"
+  ]
+}
+\`\`\`
+
+## 4. 지도
+
+서울의 위치를 지도로 보여드립니다:
+
+\`\`\`widget-json
+{
+  "type": "map",
+  "lat": 37.5665,
+  "lng": 126.9780,
+  "zoom": 13,
+  "title": "서울",
+  "description": "대한민국의 수도"
+}
+\`\`\`
+
+## 5. 차트
+
+월별 판매 데이터를 차트로 보여드립니다:
+
+\`\`\`widget-json
+{
+  "type": "chart",
+  "chartType": "bar",
+  "data": {
+    "labels": ["1월", "2월", "3월", "4월", "5월", "6월"],
+    "datasets": [{
+      "label": "판매량",
+      "data": [12, 19, 15, 25, 22, 30],
+      "backgroundColor": "rgba(54, 162, 235, 0.5)",
+      "borderColor": "rgba(54, 162, 235, 1)",
+      "borderWidth": 1
+    }]
+  },
+  "options": {
+    "responsive": true,
+    "plugins": {
+      "title": {
+        "display": true,
+        "text": "월별 판매 현황"
+      },
+      "legend": {
+        "display": true,
+        "position": "top"
+      }
+    },
+    "scales": {
+      "y": {
+        "beginAtZero": true
+      }
+    }
+  }
+}
+\`\`\`
+
+이렇게 다양한 위젯들을 사용할 수 있습니다!`
+      }
+    ]
   }
 ]

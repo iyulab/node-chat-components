@@ -1,20 +1,27 @@
-import { LitElement, PropertyValues, css, html } from "lit";
+import { LitElement, PropertyValues, css, html, nothing } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { repeat } from "lit/directives/repeat.js";
 
 import '../src';
 import { Theme } from '@iyulab/components';
+import { WidgetRegistry } from '../src/utilities/WidgetRegistry.js';
+import { PresetWidget } from '../src/types/Widgets.js';
+import type { BlockItem } from '../src/types/BlockItem';
 import { type Message, messages } from "./messages";
-import { generateMessage, generateRandomId } from "./generator";
+import { generateMessageStream, generateRandomId } from "./generator";
 
 @customElement('preview-app')
 export class PreviewApp extends LitElement {
   private aborter: AbortController = new AbortController();
 
   @state() messages: Message[] = messages;
+  @state() showInstructions = false;
 
   connectedCallback(): void {
     super.connectedCallback();
+    // 테스트용으로 모든 프리셋 위젯 등록
+    WidgetRegistry.use(PresetWidget.All);
+    // Theme 초기화 (선택적으로 브라우저 스토리지 사용)
     Theme.init({
       store: { type: 'localStorage', prefix: 'uui-' },
     });
@@ -22,7 +29,6 @@ export class PreviewApp extends LitElement {
 
   protected updated(changedProperties: PropertyValues): void {
     super.updated(changedProperties);
-
     if (changedProperties.has('messages')) {
       this.scrollToBottom();
     }
@@ -34,77 +40,66 @@ export class PreviewApp extends LitElement {
         <div class="header">
           <h1>💬 Chat Room</h1>
           <div>
-            <u-button @click=${() => this.messages = []}>
-              전체 삭제
+            <u-button @click=${() => this.showInstructions = !this.showInstructions}>
+              📋 Widget Instructions
             </u-button>
+            <u-button @click=${() => this.messages = []}>전체 삭제</u-button>
             <u-button @click=${() => Theme.set(Theme.get() === 'dark' ? 'light' : 'dark')}>
               테마 변경
             </u-button>
           </div>
         </div>
-        
+
+        ${this.showInstructions ? html`
+          <div class="instructions-panel">
+            <div class="instructions-header">
+              <h3>LLM Widget Instructions</h3>
+              <div>
+                <u-copy-button .value=${WidgetRegistry.buildPrompt()}>복사</u-copy-button>
+                <u-button @click=${() => this.showInstructions = false}>닫기</u-button>
+              </div>
+            </div>
+            <pre class="instructions-content">${WidgetRegistry.buildPrompt()}</pre>
+            <p class="instructions-note">
+              💡 위 instruction을 LLM 시스템 프롬프트에 추가하면 위젯을 사용할 수 있습니다.
+            </p>
+          </div>
+        ` : nothing}
+
         <div class="messages">
           ${this.messages.length > 0
-              ? repeat(this.messages, msg => msg.id , msg => msg.role === 'user'
-                ? html`
-                  <u-message variant="bubble" position="right"
-                    .items=${msg.items}>
-                    <div class="msg-footer" slot="footer">
-                      <u-copy-button
-                        .value=${this.getTextValue(msg)}>
-                        텍스트 복사
-                      </u-copy-button>
-                    </div>
-                  </u-message>`
-                : html`
-                  <u-message variant="default" position="left"
-                    .items=${msg.items}>
-                    <div class="msg-header" slot="header">
-                      🤖 The Assistant
-                    </div>
-                    <div class="msg-footer" slot="footer">
-                      <u-copy-button
-                        .value=${this.getTextValue(msg)}>
-                        텍스트 복사
-                      </u-copy-button>
-                      <u-retry-button
-                        data-id=${msg.id}
-                        @click=${this.handleRetryClick}>
-                        다시 시도
-                      </u-retry-button>
-                      <u-vote-button
-                        data-id=${msg.id}
-                        .value=${msg.voteValue || 'none'}
-                        @u-change=${this.handleVoteChange}>
-                        응답 평가
-                      </u-vote-button>
-                      <u-share-button
-                        data-id=${msg.id}
-                        @click=${this.handleShareClick}>
-                        공유 하기
-                      </u-share-button>
-                      <u-report-button
-                        data-id=${msg.id}
-                        @click=${this.handleReportClick}>
-                        신고 하기
-                      </u-report-button>
-                    </div>
-                  </u-message>`)
+            ? repeat(this.messages, msg => msg.id, msg => msg.role === 'user'
+              ? html`
+                <u-message variant="bubble" position="right">
+                  ${this.renderBlocks(msg.items)}
+                  <div class="msg-footer" slot="footer">
+                    <u-copy-button .value=${this.getTextValue(msg)}>텍스트 복사</u-copy-button>
+                  </div>
+                </u-message>`
               : html`
-                <div style="flex:1; display:flex; align-items:center; justify-content:center;">
-                  <p>메시지를 입력해보세요!</p>
-                </div>`}
+                <u-message variant="default" position="left">
+                  <div class="msg-header" slot="header">🤖 The Assistant</div>
+                  ${this.renderBlocks(msg.items)}
+                  <div class="msg-footer" slot="footer">
+                    <u-copy-button .value=${this.getTextValue(msg)}>텍스트 복사</u-copy-button>
+                    <u-retry-button data-id=${msg.id} @click=${this.handleRetry}>다시 시도</u-retry-button>
+                    <u-vote-button data-id=${msg.id}
+                      .value=${msg.voteValue || 'none'}
+                      @u-change=${this.handleVote}>응답 평가</u-vote-button>
+                    <u-share-button data-id=${msg.id} @click=${this.handleShare}>공유 하기</u-share-button>
+                    <u-report-button data-id=${msg.id} @click=${this.handleReport}>신고 하기</u-report-button>
+                  </div>
+                </u-message>`)
+            : html`<div class="empty"><p>메시지를 입력해보세요!</p></div>`}
         </div>
 
-        <u-prompt 
+        <u-prompt
           placeholder="메시지를 입력하세요..."
-          @u-submit=${this.handleSubmitMessage}
-          @u-cancel=${this.handleCancelMessage}>
+          @u-submit=${this.handleSubmit}
+          @u-cancel=${this.handleCancel}>
           <div slot="left-actions">
-            <u-attach-button
-              multiple  
-              accept="image/*,.pdf,.text/plain"
-              @u-change=${this.handleAttachClick}>
+            <u-attach-button multiple accept="image/*,.pdf,.text/plain"
+              @u-change=${(e: CustomEvent) => console.log('Attached files:', e.detail.files)}>
               파일 첨부
             </u-attach-button>
           </div>
@@ -113,144 +108,126 @@ export class PreviewApp extends LitElement {
     `;
   }
 
-  private handleSubmitMessage = async (e: CustomEvent) => {
+  private renderBlocks(items: BlockItem[]) {
+    return items.map(item =>
+      item.type === 'text' ? html`<u-text-block .value=${item.value}></u-text-block>`
+      : item.type === 'markdown' ? html`<u-marked-block .value=${item.value} .refs=${item.refs}></u-marked-block>`
+      : item.type === 'thinking' ? html`<u-think-block .value=${item.value}></u-think-block>`
+      : item.type === 'tool' ? html`<u-tool-block .heading=${item.title} .input=${item.input} .output=${item.output}></u-tool-block>`
+      : item.type === 'reference' ? html`<u-ref-block heading="References" .sources=${item.sources}></u-ref-block>`
+      : nothing
+    );
+  }
+
+  // ── 이벤트 핸들러 ──
+
+  private handleSubmit = async (e: CustomEvent) => {
     const value = e.detail.value;
     if (!value.trim()) return;
-    
-    // 사용자 및 어시스턴트 메시지 추가
-    this.messages = [...this.messages, {
-      id: generateRandomId(),
-      role: 'user',
-      items: [{ type: 'text', value: value }],
-    }, {
-      id: generateRandomId(),
-      role: 'assistant',
-      items: [],
-    }];
 
-    // 메시지 렌더링 대기
+    const userMessages = [...this.messages, {
+      id: generateRandomId(),
+      role: 'user' as const,
+      items: [{ type: 'text' as const, value }],
+    }];
+    this.messages = userMessages;
+
     await this.updateComplete;
     const prompt = this.shadowRoot?.querySelector('u-prompt') as any;
-    const lastmsg = this.shadowRoot?.querySelectorAll('u-message')[this.messages.length - 1] as any;
 
     try {
-      // 로딩 상태 시작
       prompt.loading = true;
-      lastmsg.loading = true;
-      
-      // 메시지 생성
-      const messages = this.messages.slice(0, -1); // 마지막 어시스턴트 메시지 제외
-      const message = await generateMessage(messages, this.aborter.signal);
-      this.messages = [...messages, message];
+      await this.streamAssistant(userMessages);
     } catch (error) {
-      if (error instanceof Error && error.message === 'Request was aborted.') {
-        // 요청이 중단된 경우
-      } else {
+      if (!(error instanceof Error && error.message === 'Request was aborted.')) {
         console.error('Message generation failed:', error);
       }
     } finally {
       this.aborter = new AbortController();
       prompt.loading = false;
-      lastmsg.loading = false;
     }
   }
 
-  private handleCancelMessage = (e: CustomEvent) => {
-    const target = e.target as any;
+  private handleCancel = () => {
     this.aborter.abort();
     this.aborter = new AbortController();
-    target.loading = false;
+    const prompt = this.shadowRoot?.querySelector('u-prompt') as any;
+    if (prompt) prompt.loading = false;
   }
 
-  private handleRetryClick = async (event: Event) => {
-    const target = event.target as any;
-    const messageId = target.getAttribute('data-id');
-    const idx = this.messages.findIndex(msg => msg.id === messageId);
+  private handleRetry = async (e: Event) => {
+    const id = (e.target as HTMLElement).getAttribute('data-id');
+    const idx = this.messages.findIndex(msg => msg.id === id);
     if (idx < 0) return;
 
-    // 이전 메시지들까지만 남기고 어시스턴트 메시지 제거
-    const messages = this.messages.slice(0, idx);
-    this.messages = [...messages, {
-      id: generateRandomId(),
-      role: 'assistant',
-      items: []
-    }];
+    const prev = this.messages.slice(0, idx);
+    this.messages = prev;
 
-    // 메시지 렌더링 대기
     await this.updateComplete;
     const prompt = this.shadowRoot?.querySelector('u-prompt') as any;
-    const lastmsg = this.shadowRoot?.querySelectorAll('u-message')[this.messages.length - 1] as any;
-    const button = lastmsg?.querySelector('u-retry-button') as any;
-    
-    try {
-      // 로딩 상태 시작
-      button.loading = true;
-      prompt.loading = true;
-      lastmsg.loading = true;
 
-      // 메시지 재생성
-      const message = await generateMessage(messages, this.aborter.signal);
-      this.messages = [...messages, message];
+    try {
+      prompt.loading = true;
+      await this.streamAssistant(prev);
     } catch (error) {
-      if (error instanceof Error && error.message === 'Request was aborted.') {
-        // 요청이 중단된 경우
-      } else {
+      if (!(error instanceof Error && error.message === 'Request was aborted.')) {
         console.error('Retry failed:', error);
       }
     } finally {
       this.aborter = new AbortController();
-      button.loading = false;
       prompt.loading = false;
-      lastmsg.loading = false;
     }
   }
 
-  private handleVoteChange = (event: CustomEvent) => {
-    const target = event.target as any;
-    const messageId = target.getAttribute('data-id');
-    
+  private handleVote = (e: CustomEvent) => {
+    const id = (e.target as HTMLElement).getAttribute('data-id');
     this.messages.forEach(msg => {
-      if (msg.role === 'assistant' && msg.id === messageId) {
-        msg.voteValue = event.detail.value;
+      if (msg.role === 'assistant' && msg.id === id) {
+        msg.voteValue = e.detail.value;
       }
     });
   }
 
-  private handleShareClick = (event: Event) => {
-    const target = event.target as any;
-    const messageId = Number(target.getAttribute('data-id'));
-    alert(`메시지 ${messageId}를 공유했습니다.`);
+  private handleShare = (e: Event) => {
+    const id = (e.target as HTMLElement).getAttribute('data-id');
+    alert(`메시지 ${id}를 공유했습니다.`);
   }
 
-  private handleReportClick = (event: Event) => {
-    const target = event.target as any;
-    const messageId = Number(target.getAttribute('data-id'));
-    alert(`메시지 ${messageId}를 신고했습니다.`);
-  }
-  
-  private handleAttachClick = (event: CustomEvent) => {
-    const files: File[] = event.detail.files;
-    console.log('Attached files:', files);
+  private handleReport = (e: Event) => {
+    const id = (e.target as HTMLElement).getAttribute('data-id');
+    alert(`메시지 ${id}를 신고했습니다.`);
   }
 
-  private getTextValue = (msg: Message): string => {
+  // ── 유틸 ──
+
+  private async streamAssistant(userMessages: Message[]) {
+    const stream = generateMessageStream(userMessages, this.aborter.signal);
+    for await (const message of stream) {
+      this.messages = [...userMessages, message];
+      this.requestUpdate();
+    }
+    await this.updateComplete;
+
+    const lastmsg = this.shadowRoot?.querySelectorAll('u-message')[this.messages.length - 1] as any;
+    if (lastmsg) lastmsg.loading = false;
+  }
+
+  private getTextValue(msg: Message): string {
     return msg.items
       .filter(item => item.type === 'text' || item.type === 'markdown')
       .map((item: any) => item.value || '')
       .join('\n');
   }
 
-  private scrollToBottom = () => {
+  private scrollToBottom() {
     const container = this.shadowRoot?.querySelector('.messages');
     if (!container) return;
-    
     requestAnimationFrame(() => {
-      container.scrollTo({
-        top: container.scrollHeight,
-        behavior: 'smooth',
-      });
+      container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
     });
   }
+
+  // ── 스타일 ──
 
   static styles = css`
     :host {
@@ -260,10 +237,7 @@ export class PreviewApp extends LitElement {
       align-items: center;
       justify-content: center;
     }
-
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     .container {
       position: relative;
@@ -277,22 +251,44 @@ export class PreviewApp extends LitElement {
 
     .header {
       display: flex;
-      flex-direction: row;
       align-items: center;
       justify-content: space-between;
       padding: 20px;
       border-bottom: 1px solid var(--u-border-color);
     }
-    .header h1 {
-      margin: 0;
-      font-size: 1.5rem;
-      font-weight: 600;
+    .header h1 { margin: 0; font-size: 1.5rem; font-weight: 600; }
+    .header div { display: flex; align-items: center; gap: 10px; }
+
+    .instructions-panel {
+      border-bottom: 1px solid var(--u-border-color);
+      background: var(--u-background-secondary);
+      padding: 20px;
+      max-height: 400px;
+      overflow-y: auto;
     }
-    .header div {
+    .instructions-header {
       display: flex;
-      flex-direction: row;
+      justify-content: space-between;
       align-items: center;
-      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .instructions-header h3 { margin: 0; font-size: 1.125rem; font-weight: 600; }
+    .instructions-header div { display: flex; gap: 8px; }
+    .instructions-content {
+      background: var(--u-background);
+      border: 1px solid var(--u-border-color);
+      border-radius: 8px;
+      padding: 16px;
+      font-size: 0.875rem;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      overflow-x: auto;
+      margin: 0;
+    }
+    .instructions-note {
+      margin: 12px 0 0 0;
+      font-size: 0.875rem;
+      color: var(--u-text-secondary);
     }
 
     .messages {
@@ -306,13 +302,15 @@ export class PreviewApp extends LitElement {
       scrollbar-width: thin;
       scrollbar-color: rgba(100, 100, 100, 0.2) transparent;
     }
+    .empty {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-    u-message {
-      animation: slideIn 0.3s ease-out;
-    }
-    u-message + u-message {
-      margin-top: 12px;
-    }
+    u-message { animation: slideIn 0.3s ease-out; }
+    u-message + u-message { margin-top: 12px; }
     u-message .msg-header {
       color: var(--u-neutral-800);
       font-size: 1.25rem;
@@ -322,7 +320,6 @@ export class PreviewApp extends LitElement {
     u-message .msg-footer {
       margin-top: 6px;
       display: flex;
-      flex-direction: row;
       align-items: center;
     }
 
@@ -338,69 +335,9 @@ export class PreviewApp extends LitElement {
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
-    .reference-demo {
-      flex: 1;
-      padding: 20px;
-      overflow-y: auto;
-    }
-
-    .reference-demo h2 {
-      margin: 0 0 24px 0;
-      color: var(--u-color-text);
-    }
-
-    .demo-section {
-      margin-bottom: 32px;
-      padding: 20px;
-      background: var(--u-color-surface-secondary);
-      border-radius: var(--u-border-radius-medium);
-    }
-
-    .demo-section h3 {
-      margin: 0 0 12px 0;
-      color: var(--u-color-text);
-      font-size: 1.1rem;
-    }
-
-    .description {
-      margin: 0 0 16px 0;
-      color: var(--u-color-text-secondary);
-      font-size: 0.9rem;
-    }
-
-    .card-container {
-      display: flex;
-      justify-content: center;
-      padding: 16px;
-      background: var(--u-color-surface);
-      border-radius: var(--u-border-radius-medium);
-      border: 1px solid var(--u-color-border);
-    }
-
-    .usage-example {
-      background: var(--u-color-surface);
-      padding: 16px;
-      border-radius: var(--u-border-radius-medium);
-      border: 1px solid var(--u-color-border);
-    }
-
-    .usage-example code {
-      display: block;
-      font-family: 'Courier New', monospace;
-      font-size: 0.9rem;
-      color: var(--u-color-text);
-      line-height: 1.6;
-    }
-
     @keyframes slideIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   `;
 }

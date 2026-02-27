@@ -42,12 +42,12 @@
   },
   "dependencies": {
     "@iyulab/components": "^0.3.0",
+    "chart.js": "^4.4.7",
     "dompurify": "^3.3.1",
     "highlight.js": "^11.11.1",
     "lit": "^3.3.2",
     "marked": "^17.0.3",
-    "marked-katex-extension": "^5.1.7",
-    "quill": "2.0.3"
+    "marked-katex-extension": "^5.1.7"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

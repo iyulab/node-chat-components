@@ -2,14 +2,17 @@ import OpenAI from 'openai';
 import type { ResponseInput } from 'openai/resources/responses/responses.mjs';
 import type { Message } from "./messages";
 import type { BlockItem } from '../src/types/BlockItem';
-import type { BlockReference } from '../src/types/BlockReference';
+import { WidgetRegistry } from '../src/utilities/WidgetRegistry.js';
 
 const openai = new OpenAI({
   apiKey: import.meta.env.VITE_OPENAI_API_KEY,
   dangerouslyAllowBrowser: true, // 브라우저에서 사용하기 위해 필요
 });
 
-export async function generateMessage(messages: Message[], signal: AbortSignal): Promise<Message> {
+export async function* generateMessageStream(
+  messages: Message[], 
+  signal: AbortSignal
+): AsyncGenerator<Message, void, unknown> {
   // Message 배열을 입력 텍스트로 변환
   const input = messages.reduce<ResponseInput>((acc, msg) => {
     if (msg.role !== 'user' && msg.role !== 'assistant') {
@@ -30,7 +33,14 @@ export async function generateMessage(messages: Message[], signal: AbortSignal):
     return acc;
   }, []);
 
-  const response = await openai.responses.create({
+  // 시스템 메시지로 widget instruction 추가
+  input.unshift({
+    type: 'message',
+    role: 'system',
+    content: `You are a helpful AI assistant that can use various widgets to enhance your responses.\n\n${WidgetRegistry.buildPrompt()}`
+  });
+
+  const stream = await openai.responses.create({
     model: 'gpt-5-mini',
     include: [
       'reasoning.encrypted_content',
@@ -47,89 +57,120 @@ export async function generateMessage(messages: Message[], signal: AbortSignal):
     ],
     tool_choice: 'auto',
     truncation: 'auto',
+    stream: true,
   }, {
     signal: signal
   });
-  console.log('Generated response:', response);
   
-  const blocks = response.output.reduce<BlockItem[]>((acc, output) => { {
-    if (output.type === 'reasoning') {
-      const summary = output.summary
-        .filter(s => s.type === 'summary_text' && s.text)
-        .map(s => s.text)
-        .join('\n\n\n');
-      if (!summary) return acc;
-      
-      // 이미 thinking 블록이 있으면 내용 추가, 없으면 새로 추가
-      const existing = acc.find(b => b.type === 'thinking');
-      if (existing) {
-        existing.value += '\n\n\n' + summary;
-      } else {
-        acc.push({ type: 'thinking', value: summary });
+  const blocks: BlockItem[] = [];
+  const messageId = generateRandomId();
+
+  try {
+    for await (const event of stream) {
+      const eventType = (event as any).type;
+      if (!eventType) continue;
+
+      let shouldYield = false;
+
+      // delta 이벤트 처리 (텍스트 스트리밍)
+      if (eventType === 'response.output_text.delta' || eventType === 'response.reasoning_summary_text.delta') {
+        const deltaText = (event as any).delta;
+        
+        if (deltaText && typeof deltaText === 'string') {
+          // reasoning delta
+          if (eventType === 'response.reasoning_summary_text.delta') {
+            const existing = blocks.find(b => b.type === 'thinking');
+            if (existing) {
+              existing.value += deltaText;
+            } else {
+              blocks.push({ type: 'thinking', value: deltaText });
+            }
+          }
+          // output text delta  
+          else if (eventType === 'response.output_text.delta') {
+            const existing = blocks.find(b => b.type === 'markdown');
+            if (existing) {
+              existing.value += deltaText;
+            } else {
+              blocks.push({ type: 'markdown', value: deltaText, refs: [] });
+            }
+          }
+          
+          // delta는 즉시 yield
+          yield {
+            id: messageId,
+            role: 'assistant',
+            items: [...blocks]
+          };
+          continue;
+        }
       }
-    } else if (output.type === 'message') {
-      let text: string = "";
-      let refs: BlockReference[] = [];
-      output.content.filter(c => c.type === 'output_text').map(c => {
-        text += c.text;
-        c.annotations.map(a => {
-          if (a.type === 'url_citation') {
-            refs.push({
-              name: a.title,
-              startIndex: a.start_index,
-              endIndex: a.end_index,
-              sources: [
-                {
-                  type: 'web',
-                  url: a.url,
-                  title: a.title,
-                }
-              ]
-            })
+
+      // output_item 관련 이벤트 처리
+      if (eventType.includes('output_item') && !eventType.includes('delta')) {
+        const item = (event as any).item || (event as any).output_item;
+        if (!item) continue;
+
+        // done 이벤트는 무시 (delta로 이미 처리됨)
+        if (eventType === 'response.output_item.done') {
+          continue;
+        }
+
+        // reasoning 블록 초기화
+        if (eventType === 'response.output_item.added' && item.type === 'reasoning') {
+          if (!blocks.find(b => b.type === 'thinking')) {
+            blocks.push({ type: 'thinking', value: '' });
           }
-        })
-      });
-      acc.push({
-        type: 'markdown',
-        value: text,
-        refs: refs
-      });
-    } else if (output.type === 'web_search_call') {
-      const action = (output as any).action;
-      if (action.type === 'search') {
-        acc.push({
-          type: 'tool',
-          title: 'Web Search',
-          input: {
-            queries: action.queries,
-          },
-          output: {
-            sources: action.sources,
+        }
+        // message 블록 초기화
+        else if (eventType === 'response.output_item.added' && item.type === 'message') {
+          if (!blocks.find(b => b.type === 'markdown')) {
+            blocks.push({ type: 'markdown', value: '', refs: [] });
           }
-        });
-      } else if (action.type === 'open_page') {
-        acc.push({
-          type: 'tool',
-          title: 'Web Page Open',
-          input: {
-            url: action.url,
+        }
+        // web_search_call 블록 처리
+        else if (item.type === 'web_search_call') {
+          const action = (item as any).action;
+          if (action) {
+            if (action.type === 'search') {
+              blocks.push({
+                type: 'tool',
+                title: 'Web Search',
+                input: { queries: action.queries },
+                output: { sources: action.sources },
+              });
+            } else if (action.type === 'open_page') {
+              blocks.push({
+                type: 'tool',
+                title: 'Web Page Open',
+                input: { url: action.url },
+              });
+            } else {
+              blocks.push({
+                type: 'tool',
+                title: 'Web Search Action',
+                input: action,
+              });
+            }
+            shouldYield = true;
           }
-        });
-      } else {
-        acc.push({
-          type: 'tool',
-          title: 'Web Search Action',
-          input: action,
-        });
+        }
+      }
+      
+      // 일반 이벤트 yield
+      if (shouldYield && blocks.length > 0) {
+        yield {
+          id: messageId,
+          role: 'assistant',
+          items: [...blocks]
+        };
       }
     }
-    return acc;
-  }}, []);
-
-  return {
-    id: generateRandomId(),
-    role: 'assistant',
-    items: blocks
+  } catch (error) {
+    if (signal.aborted) {
+      throw new Error('Request was aborted.');
+    }
+    throw error;
   }
 }
 

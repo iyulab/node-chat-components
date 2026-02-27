@@ -12,6 +12,7 @@ import { URefTag } from "../references/URefTag.component.js";
 import { URefCard } from "../references/URefCard.component.js";
 import { URefCardGroup } from "../references/URefCardGroup.component.js";
 import type { ReferenceSource, ReferenceCitation } from "../../types/References.js";
+import { WidgetRegistry } from "../../utilities/WidgetRegistry.js";
 import { styles } from "./UMarkedBlock.styles.js";
 
 /**
@@ -29,7 +30,7 @@ export class UMarkedBlock extends BaseElement {
     "u-code-block": UCodeBlock,
     "u-ref-tag": URefTag,
     "u-ref-card": URefCard,
-    "u-ref-card-group": URefCardGroup,
+    "u-ref-card-group": URefCardGroup
   };
 
   private parser = new Marked({
@@ -40,6 +41,17 @@ export class UMarkedBlock extends BaseElement {
     renderer: {
       code: ({ text, lang }) => {
         lang ||= "plaintext";
+
+        // Widget 코드블록 감지
+        if (lang === 'widget-json') {
+          try {
+            const json = JSON.parse(text);
+            return WidgetRegistry.buildHTML(json) || '';
+          } catch (e) {
+            const errorMsg = e instanceof Error ? e.message : 'Unknown error';
+            return `<u-code-block lang="plaintext">Invalid format: ${this.escapeHTML(errorMsg)}</u-code-block>`;
+          }
+        }
 
         // 코드블록은 "보여주기"가 목적이므로: refs 태그 제거 + HTML escape
         const safeLang = this.escapeHTML(lang);
@@ -158,4 +170,5 @@ export class UMarkedBlock extends BaseElement {
       .replace(/"/g, "&quot;")
       .replace(/'/g, "&#39;");
   }
+
 }

@@ -1,15 +1,7 @@
-import { html, nothing } from 'lit';
+import { html } from 'lit';
 import { property } from 'lit/decorators.js';
-import { repeat } from 'lit/directives/repeat.js';
 
 import { BaseElement } from '@iyulab/components/dist/components/BaseElement.js';
-import { UTextBlock } from '../blocks/UTextBlock.component.js';
-import { UMarkedBlock } from '../blocks/UMarkedBlock.component.js';
-import { UThinkBlock } from '../blocks/UThinkBlock.component.js';
-import { UToolBlock } from '../blocks/UToolBlock.component.js';
-import { URefBlock } from '../blocks/URefBlock.component.js';
-import { UDotLoader } from '../loaders/UDotLoader.component.js';
-import type { BlockItem } from '../../types/BlockItem';
 import { styles } from './UMessage.styles.js';
 
 /** 메시지 variant 타입 */
@@ -19,64 +11,28 @@ export type MessagePosition = 'left' | 'right';
 
 /**
  * 채팅 메시지 컴포넌트입니다.
- * 다양한 유형의 블록 아이템과 인용 출처를 렌더링할 수 있습니다.
+ * 슬롯을 통해 다양한 블록 컴포넌트를 자유롭게 배치할 수 있습니다.
  */
 export class UMessage extends BaseElement {
   static styles = [ super.styles, styles ];
-  static dependencies: Record<string, typeof BaseElement> = {
-    'u-text-block': UTextBlock,
-    'u-marked-block': UMarkedBlock,
-    'u-think-block': UThinkBlock,
-    'u-tool-block': UToolBlock,
-    'u-ref-block': URefBlock,
-    'u-dot-loader': UDotLoader
-  };
+  static dependencies: Record<string, typeof BaseElement> = {};
 
-  @property({ type: String, reflect: true }) variant: MessageVariant = 'default';  
-  @property({ type: String, reflect: true }) position: MessagePosition = 'left';  
+  @property({ type: String, reflect: true }) variant: MessageVariant = 'default';
+  @property({ type: String, reflect: true }) position: MessagePosition = 'left';
   @property({ type: Boolean, reflect: true }) loading: boolean = false;
-  @property({ type: Array }) items?: BlockItem[];
 
   render() {
     return html`
       <slot name="header"></slot>
-      
+
       <div class="body" part="body" variant=${this.variant} position=${this.position}>
-        ${repeat(this.items || [], (_, idx) => idx, (item, idx) => 
-            item.type === 'text' 
-            ? html`
-              <u-text-block
-                .value=${item.value}
-              ></u-text-block>`
-            : item.type === 'markdown' 
-            ? html`
-              <u-marked-block
-                .value=${item.value}
-                .refs=${item.refs}
-              ></u-marked-block>`
-            : item.type === 'thinking'
-            ? html`
-              <u-think-block 
-                .value=${item.value}
-              ></u-think-block>`
-            : item.type === 'tool' 
-            ? html`
-              <u-tool-block
-                index=${idx}
-                .heading=${item.title}
-                .input=${item.input}
-                .output=${item.output}
-              ></u-tool-block>`
-            : item.type === 'reference'
-            ? html`
-              <u-ref-block
-                .heading=${"References"}
-                .sources=${item.sources}
-              ></u-ref-block>`
-            : nothing)}
-        <u-dot-loader
-          ?hidden=${!this.loading}
-        ></u-dot-loader>
+        <slot></slot>
+        <svg class="dot-loader" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+          ?hidden=${!this.loading}>
+          <circle class="d0" cx="4" cy="12" r="3" />
+          <circle class="d1" cx="12" cy="12" r="3" />
+          <circle class="d2" cx="20" cy="12" r="3" />
+        </svg>
       </div>
 
       <slot name="footer" ?hidden=${this.loading}></slot>
