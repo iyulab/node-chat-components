@@ -5,6 +5,7 @@ import { repeat } from "lit/directives/repeat.js";
 import { UElement } from "@iyulab/components/dist/components/UElement.js";
 import { UIcon } from "@iyulab/components/dist/components/icon/UIcon.component.js";
 import { UButton } from "@iyulab/components/dist/components/button/UButton.component.js";
+import { UProgressBar } from "@iyulab/components/dist/components/progress-bar/UProgressBar.component.js";
 import type { FileItem } from "../../types/BlockItem.js";
 import { styles } from "./UFilesBlock.styles.js";
 
@@ -16,6 +17,7 @@ export class UFilesBlock extends UElement {
   static dependencies: Record<string, typeof UElement> = {
     "u-icon": UIcon,
     "u-button": UButton,
+    "u-progress-bar": UProgressBar,
   };
 
   /** 파일 목록 */
@@ -26,51 +28,86 @@ export class UFilesBlock extends UElement {
   render() {
     if (!this.files?.length) return nothing;
 
-    return repeat(this.files, (_, i) => i, (f, i) => html`
-        <div class="item">
-          <div class="icon-wrap">
-            <u-icon lib="bootstrap" name=${this.resolveIcon(f.mimeType)}></u-icon>
-            ${f.url ? html`
-              <u-button class="download-btn" variant="borderless" title="다운로드"
-                @click=${(e: Event) => this.handleDownloadClick(e, f)}>
-                <u-icon lib="bootstrap" name="download"></u-icon>
-              </u-button>
-            ` : nothing}
+    return repeat(this.files, (_, i) => i, (f, i) => {
+      const phase = f.upload?.phase ?? "done";
+      const isUploading = phase === "uploading";
+      const isError = phase === "error";
+
+      return html`
+        <div class="item" phase=${phase}>
+          <div class="thumbnail">
+            <u-icon lib="bootstrap" name=${this.resolveIcon(f.type)}></u-icon>
+            <div class="thumbnail-overlay" ?hidden=${!isUploading}>
+              <u-icon lib="bootstrap" name="cloud-arrow-up"></u-icon>
+            </div>
+            <div class="thumbnail-overlay" ?hidden=${!isError}>
+              <u-icon lib="bootstrap" name="exclamation-circle-fill"></u-icon>
+            </div>
+            <u-button class="download-btn"
+              ?hidden=${!f.downloadUrl || isUploading}
+              data-index=${i}
+              title="Download"
+              variant="borderless"
+              @click=${this.handleDownloadClick}>
+              <u-icon lib="bootstrap" name="download"></u-icon>
+            </u-button>
           </div>
           <div class="info">
             <div class="name" title=${f.name}>${f.name}</div>
             <div class="meta">
-              ${f.mimeType ? html`<span class="type-badge">${this.resolveExt(f.name, f.mimeType)}</span>` : nothing}
-              ${f.size != null ? html`<span class="size">${this.formatSize(f.size)}</span>` : nothing}
+              <span class="type" ?hidden=${!f.type || isError}>
+                ${this.resolveExt(f.name, f.type)}
+              </span>
+              <span class="size" ?hidden=${f.size == null || isError}>
+                ${this.formatSize(f.size || 0)}
+              </span>
+              <span class="error-msg" ?hidden=${!isError}>
+                <u-icon lib="bootstrap" name="exclamation-triangle"></u-icon>
+                ${(f.upload as { phase: "error"; message?: string } | undefined)?.message ?? "File upload failed"}
+              </span>
             </div>
           </div>
-          ${this.removable ? html`
-            <u-button class="remove-btn" variant="borderless" title="삭제"
-              @click=${(e: Event) => this.handleRemoveClick(e, i, f)}>
-              <u-icon lib="bootstrap" name="x-lg"></u-icon>
-            </u-button>
-          ` : nothing}
+          <u-progress-bar class="upload-progress"
+            ?hidden=${!isUploading}
+            ?indeterminate=${(f.upload as { phase: "uploading"; progress?: number } | undefined)?.progress == null}
+            value=${(f.upload as { phase: "uploading"; progress?: number } | undefined)?.progress ?? 0}
+          ></u-progress-bar>
+          <u-button class="remove-btn"
+            ?hidden=${!this.removable}
+            data-index=${i}
+            title="Remove"
+            variant="borderless"
+            @click=${this.handleRemoveClick}>
+            <u-icon lib="bootstrap" name="x-lg"></u-icon>
+          </u-button>
         </div>
-      `
-    );
+      `;
+    });
   }
 
-  private handleDownloadClick = (e: Event, file: FileItem) => {
+  private handleDownloadClick = (e: Event) => {
     e.stopPropagation();
-    if (!file.url) return;
+    const index = (e.currentTarget as HTMLElement).dataset.index;
+    if (index == null) return;
+    const file = this.files.at(Number(index));
+    if (!file?.downloadUrl) return;
     const a = document.createElement("a");
-    a.href = file.url;
+    a.href = file.downloadUrl;
     a.download = file.name;
     a.target = "_blank";
     a.rel = "noopener noreferrer";
     document.body.appendChild(a);
     a.click();
-    document.body.removeChild(a);
+    a.remove();
   }
 
-  private handleRemoveClick = (e: Event, index: number, file: FileItem) => {
+  private handleRemoveClick = (e: Event) => {
     e.stopPropagation();
-    this.emit("remove-file", { index, file });
+    const index = (e.currentTarget as HTMLElement).dataset.index;
+    if (index == null) return;
+    const file = this.files.at(Number(index));
+    if (!file) return;
+    this.emit("u-remove", { index, file });
   }
 
   /** MIME 타입 → Bootstrap Icon 이름 */
@@ -122,9 +159,12 @@ export class UFilesBlock extends UElement {
 
   /** bytes → 읽기 좋은 크기 문자열 */
   private formatSize(bytes: number): string {
-    if (bytes < 1024)             return `${bytes} B`;
-    if (bytes < 1024 ** 2)       return `${(bytes / 1024).toFixed(1)} KB`;
-    if (bytes < 1024 ** 3)       return `${(bytes / 1024 ** 2).toFixed(1)} MB`;
+    if (bytes < 1024)        
+      return `${bytes} B`;
+    if (bytes < 1024 ** 2)
+      return `${(bytes / 1024).toFixed(1)} KB`;
+    if (bytes < 1024 ** 3)
+      return `${(bytes / 1024 ** 2).toFixed(1)} MB`;
     return `${(bytes / 1024 ** 3).toFixed(2)} GB`;
   }
 }

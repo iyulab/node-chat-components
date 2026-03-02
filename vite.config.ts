@@ -29,6 +29,7 @@ export default defineConfig({
       external: [
         /^@iyulab.*/,
         /^lit.*/,
+        /^chart.js.*/,
         /^marked.*/,
         /^highlight.js.*/,
       ],

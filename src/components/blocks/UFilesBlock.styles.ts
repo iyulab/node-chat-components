@@ -1,7 +1,6 @@
 ﻿import { css } from "lit";
 
 export const styles = css`
-  /* ── 호스트가 곧 그리드 컨테이너 ───────────────────────────── */
   :host {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -10,27 +9,56 @@ export const styles = css`
     width: 100%;
   }
 
-  /* ── 아이템 ─────────────────────────────────────────────────── */
   .item {
     position: relative;
     display: flex;
+    flex-direction: row;
     align-items: center;
+    min-width: 0;
     gap: 10px;
     padding: 8px 10px;
     border: 1px solid var(--u-border-color);
     border-radius: 8px;
     background-color: var(--u-neutral-50);
     overflow: visible;
+    cursor: pointer;
     transition: background-color 0.12s ease, border-color 0.12s ease;
-    min-width: 0;
   }
   .item:hover {
     background-color: var(--u-neutral-100);
     border-color: var(--u-border-color-strong);
   }
 
-  /* ── 아이콘 영역 (다운로드 버튼 overlay 기준) ──────────────── */
-  .icon-wrap {
+  /* uploading */
+  .item[phase="uploading"] {
+    border-color: var(--u-blue-400);
+    background-color: var(--u-blue-0);
+    cursor: default;
+  }
+  .item[phase="uploading"] .thumbnail {
+    background-color: var(--u-blue-100);
+    color: var(--u-blue-600);
+  }
+  .item[phase="uploading"]:hover {
+    background-color: var(--u-blue-0);
+    border-color: var(--u-blue-400);
+  }
+
+  /* error */
+  .item[phase="error"] {
+    border-color: var(--u-red-400);
+    background-color: var(--u-red-0);
+  }
+  .item[phase="error"] .thumbnail {
+    background-color: var(--u-red-100);
+    color: var(--u-red-600);
+  }
+  .item[phase="error"]:hover {
+    background-color: var(--u-red-0);
+    border-color: var(--u-red-500);
+  }
+
+  .thumbnail {
     position: relative;
     flex-shrink: 0;
     width: 36px;
@@ -38,13 +66,26 @@ export const styles = css`
     display: flex;
     align-items: center;
     justify-content: center;
+    color: var(--u-icon-color);
+    font-size: 16px;
     border-radius: 6px;
     background-color: var(--u-neutral-200);
-    font-size: 16px;
-    color: var(--u-icon-color);
   }
 
-  /* ── 파일 정보 ──────────────────────────────────────────────── */
+  .thumbnail-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    font-size: 14px;
+    background-color: color-mix(in srgb, currentColor 15%, transparent);
+  }
+  .item[phase="uploading"] .thumbnail-overlay {
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+
   .info {
     flex: 1;
     min-width: 0;
@@ -64,18 +105,17 @@ export const styles = css`
 
   .meta {
     display: flex;
+    flex-direction: row;
     align-items: center;
     gap: 6px;
-    font-size: 11px;
     color: var(--u-txt-color-weak);
+    font-size: 10px;
   }
 
-  .type-badge {
+  .type {
     padding: 1px 5px;
     border-radius: 4px;
     background-color: var(--u-neutral-200);
-    color: var(--u-txt-color-weak);
-    font-size: 10px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.04em;
@@ -85,18 +125,42 @@ export const styles = css`
     font-variant-numeric: tabular-nums;
   }
 
-  /* ── 다운로드 버튼: 아이콘 위에 overlay, hover 시 등장 ──────── */
+  .error-msg {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    color: var(--u-red-600);
+    font-size: 10px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .upload-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    border-radius: 0 0 8px 8px;
+    border: none;
+    overflow: hidden;
+  }
+  .upload-progress::part(indicator) {
+    background-color: var(--u-blue-500);
+    border-radius: 0 0 8px 8px;
+  }
+
   .download-btn {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
-    padding: 0;
-    border-radius: 6px;
-    border-color: transparent !important;
-    background-color: color-mix(in srgb, var(--u-neutral-900) 70%, transparent) !important;
-    color: var(--u-neutral-0) !important;
+    color: var(--u-neutral-0);
     font-size: 14px;
+    border-radius: 6px;
+    background-color: color-mix(in srgb, var(--u-neutral-900) 70%, transparent);
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.15s ease;
@@ -106,25 +170,18 @@ export const styles = css`
     pointer-events: auto;
   }
   .download-btn:hover {
-    background-color: color-mix(in srgb, var(--u-neutral-900) 85%, transparent) !important;
+    background-color: color-mix(in srgb, var(--u-neutral-900) 85%, transparent);
   }
 
-  /* ── 삭제 버튼: 아이템 오른쪽 위 절대 배치, hover 시 등장 ───── */
   .remove-btn {
     position: absolute;
-    top: -9px;
-    right: -9px;
-    width: 20px;
-    height: 20px;
-    min-width: 20px;
-    padding: 0;
+    z-index: 10;
+    top: -8px;
+    right: -8px;
     border-radius: 50%;
     font-size: 10px;
-    line-height: 1;
-    background-color: var(--u-neutral-600) !important;
-    border-color: transparent !important;
-    color: var(--u-neutral-0) !important;
-    z-index: 1;
+    background-color: var(--u-neutral-600);
+    color: var(--u-neutral-0);
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.12s ease, background-color 0.12s ease;
@@ -134,9 +191,14 @@ export const styles = css`
     pointer-events: auto;
   }
   .remove-btn:hover {
-    background-color: var(--u-red-600) !important;
+    background-color: var(--u-red-600);
   }
   .remove-btn:active {
-    background-color: var(--u-red-700) !important;
+    background-color: var(--u-red-700);
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.4; }
   }
 `;

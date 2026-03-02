@@ -1,4 +1,5 @@
-﻿import { UElement } from '@iyulab/components/dist/components/UElement.js';
+﻿import template from '../assets/widget-prompt.md?raw';
+import { UElement } from '@iyulab/components/dist/components/UElement.js';
 import {
   PresetWidget, PRESET_WIDGET_LIST, PRESET_WIDGET_DEFINITIONS,
   type WidgetDefinition
@@ -74,11 +75,10 @@ export class WidgetPromptBuilder {
   public build(): string {
     if (this.widgets.size === 0) return '';
 
-    const widgets = Array.from(this.widgets.values())
+    const widgets = Array.from(this.widgets.values());
 
-    const widgetList = widgets.map(w => {
-        return `- \`${w.tag}\`: ${w.description}`; 
-      })
+    const widgetList = widgets
+      .map(w => `- \`${w.tag}\`: ${w.description}`)
       .join('\n');
 
     const widgetDocs = widgets.map(w => {
@@ -88,16 +88,15 @@ export class WidgetPromptBuilder {
           `**Tag:** \`${w.tag}\``,
         ];
         if (w.properties) {
-          const schema = {
-            type: 'object',
-            properties: w.properties,
-            ...(w.required ? { required: w.required } : {}),
-          };
           lines.push(
             '',
             '**Properties (JSON Schema):**',
             '```json',
-            JSON.stringify(schema, null, 2),
+            JSON.stringify({
+              type: 'object',
+              properties: w.properties,
+              ...(w.required ? { required: w.required } : {}),
+            }, null, 2),
             '```',
           );
         }
@@ -105,35 +104,8 @@ export class WidgetPromptBuilder {
       })
       .join('\n\n---\n\n');
 
-    return [
-      '## Renderable Widgets',
-      '',
-      'You can render interactive visual widgets inside your response.',
-      'When a widget would make your answer clearer or more useful, output a `widget-json` fenced code block.',
-      '',
-      '**Output format (the fence language must be `widget-json`):**',
-      '```widget-json',
-      '{',
-      '  "tag": "exact-widget-tag-here",',
-      '  "properties": {',
-      '    "key": "value"',
-      '  }',
-      '}',
-      '```',
-      '',
-      '**Rules — follow these strictly:**',
-      '1. The fenced block language identifier must be `widget-json`, not `json` or anything else.',
-      '2. `tag` must be one of the exact strings listed below. Never invent a tag.',
-      '3. Include every property listed under `required`. Omit optional properties only if not needed.',
-      '4. For schema-less `object` fields (e.g., Chart.js `data` / `options`), output a complete, realistic configuration using your knowledge.',
-      '5. Output valid JSON — no comments, no trailing commas.',
-      '',
-      '**Available widgets:**',
-      widgetList,
-      '',
-      '---',
-      '',
-      widgetDocs,
-    ].join('\n');
+    return template
+      .replace('{{WIDGET_LIST}}', widgetList)
+      .replace('{{WIDGET_DOCS}}', widgetDocs);
   }
 }

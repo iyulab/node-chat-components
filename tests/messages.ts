@@ -435,8 +435,8 @@ interface Weather {
       {
         type: 'files',
         files: [
-          { name: 'report-2026.pdf', size: 2_457_600, mimeType: 'application/pdf' },
-          { name: 'data.csv', size: 84_320, mimeType: 'text/csv', url: 'https://example.com/data.csv' },
+          { name: 'report-2026.pdf', size: 2_457_600, type: 'application/pdf' },
+          { name: 'data.csv', size: 84_320, type: 'text/csv', downloadUrl: 'https://example.com/data.csv' },
         ]
       }
     ]

@@ -42,16 +42,26 @@ export interface ReferenceBlockItem {
   sources: ReferenceSource[];
 }
 
+/** 파일 첨부 블록입니다. */
+export type FileUploadStatus =
+  | { phase: "uploading"; progress?: number }   // 0~100
+  | { phase: "done" }
+  | { phase: "error"; message?: string };
+
 /** 파일 하나의 데이터 구조입니다. */
 export interface FileItem {
+  /** 파일 ID (옵션) */
+  fileId?: string;
   /** 파일 이름 */
   name: string;
+  /** MIME 타입 (예: "image/png", "application/pdf") */
+  type?: string;
   /** 파일 크기 (bytes) */
   size?: number;
-  /** MIME 타입 (예: "image/png", "application/pdf") */
-  mimeType?: string;
+  /** 파일 업로드 상태 */
+  upload?: FileUploadStatus;
   /** 다운로드 URL */
-  url?: string;
+  downloadUrl?: string;
 }
 
 /** 복수 파일 첨부 블록입니다. */
@@ -59,8 +69,6 @@ export interface FilesBlockItem {
   type: "files";
   /** 파일 목록 */
   files: FileItem[];
-  /** 삭제 버튼 표시 여부 */
-  removable?: boolean;
 }
 
 /**
