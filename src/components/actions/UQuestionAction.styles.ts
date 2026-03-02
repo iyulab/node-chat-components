@@ -4,31 +4,40 @@ export const styles = css`
   :host {
     display: flex;
     flex-direction: column;
-    gap: 0.4em;
+    gap: 0.5em;
     margin: 0.75em 0;
   }
 
-  button {
+  .question {
+    margin: 0 0 0.25em;
+    font-size: 0.9em;
+    color: var(--u-txt-color-weak);
+    line-height: 1.5;
+  }
+
+  .choices {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4em;
+  }
+
+  u-button {
     display: block;
     width: fit-content;
     padding: 0.5em 0.75em;
     font-size: 0.875em;
-    text-align: left;
+    justify-content: flex-start;
     line-height: 1.4;
-    color: var(--u-txt-color);
-    border: 1px solid var(--u-border-color);
     border-radius: 10px;
-    background: var(--u-bg-color);
     box-shadow: 0 1px 2px var(--u-shadow-color-weaker);
     transition: all 0.15s ease;
-    cursor: pointer;
   }
-  button:hover {
-    background: var(--u-blue-0);
+  u-button:hover {
+    background-color: var(--u-blue-0);
     border-color: var(--u-blue-400);
     transform: translateY(-1px);
   }
-  button:active {
+  u-button:active {
     transform: translateY(0);
   }
 `;

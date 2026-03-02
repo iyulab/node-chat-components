@@ -1,16 +1,16 @@
-import { html, nothing, PropertyValues } from "lit";
+﻿import { html, nothing, PropertyValues } from "lit";
 import { property } from "lit/decorators.js";
 import { ifDefined } from "lit/directives/if-defined.js";
 
-import { BaseElement } from "@iyulab/components/dist/components/BaseElement.js";
+import { UElement } from "@iyulab/components/dist/components/UElement.js";
 import { styles } from "./UVideoWidget.styles.js";
 
 /**
  * 비디오 플레이어 위젯 컴포넌트
  */
-export class UVideoWidget extends BaseElement {
+export class UVideoWidget extends UElement {
   static styles = [super.styles, styles];
-  static dependencies: Record<string, typeof BaseElement> = {};
+  static dependencies: Record<string, typeof UElement> = {};
 
   /** 비디오 URL (YouTube, Vimeo, 직접 파일) */
   @property({ type: String }) src?: string;

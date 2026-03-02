@@ -13,33 +13,48 @@ export const styles = css`
   .toolbar {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: space-between;
     padding: 6px 12px;
     background-color: var(--u-neutral-100);
     border-bottom: 1px solid var(--u-border-color);
     gap: 8px;
   }
 
-  .toolbar button {
-    display: inline-flex;
+  .toolbar-left {
+    display: flex;
     align-items: center;
-    gap: 4px;
-    padding: 4px 10px;
-    font-size: 12px;
-    color: var(--u-text-secondary, #666);
-    background: transparent;
-    border: 1px solid var(--u-border-color);
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background 0.15s;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
   }
 
-  .toolbar button:hover {
-    background-color: var(--u-neutral-200);
+  .toolbar-search {
+    flex: 1;
+    max-width: 200px;
+    font-size: 12px;
+  }
+
+  .toolbar-count {
+    font-size: 12px;
+    color: var(--u-txt-color-weak);
+  }
+
+  .toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .toolbar-right u-button {
+    font-size: 12px;
+    padding: 0.25em 0.5em;
   }
 
   .table-wrapper {
     overflow-x: auto;
+    overflow-y: auto;
+    max-height: 480px;
     width: 100%;
   }
 
@@ -47,6 +62,12 @@ export const styles = css`
     width: 100%;
     border-collapse: collapse;
     font-size: 14px;
+  }
+
+  thead {
+    position: sticky;
+    z-index: 10;
+    top: 0;
   }
 
   thead tr {
@@ -61,55 +82,51 @@ export const styles = css`
     white-space: nowrap;
     cursor: pointer;
     user-select: none;
-    color: var(--u-text-primary);
   }
-
   th:hover {
     background-color: var(--u-neutral-200);
   }
+  th:hover .sort-icon {
+    opacity: 0.7;
+  }
+  th[active] {
+    color: var(--u-primary, #4a90e2);
+  }
+  th[active] .sort-icon {
+    opacity: 1;
+  }
 
   th .sort-icon {
-    display: inline-block;
+    display: inline-flex;
     margin-left: 4px;
-    opacity: 0.4;
-    font-size: 10px;
+    font-size: 12px;
+    opacity: 0.3;
+    transition: opacity 0.15s;
   }
 
-  th.sorted-asc .sort-icon::after {
-    content: "▲";
-    opacity: 1;
+  tbody tr {
+    background-color: var(--u-neutral-0);
   }
-
-  th.sorted-desc .sort-icon::after {
-    content: "▼";
-    opacity: 1;
+  tbody tr:hover td {
+    background-color: var(--u-neutral-50, rgba(0,0,0,0.02));
   }
-
-  th:not(.sorted-asc):not(.sorted-desc) .sort-icon::after {
-    content: "⇅";
+  tbody tr:last-child td {
+    border-bottom: none;
   }
 
   td {
     padding: 8px 12px;
     border-bottom: 1px solid var(--u-border-color);
-    color: var(--u-text-primary);
     vertical-align: top;
   }
 
-  tbody tr:last-child td {
-    border-bottom: none;
+  th[align="left"], td[align="left"] {
+    text-align: left; 
   }
-
-  tbody tr:hover td {
-    background-color: var(--u-neutral-50, rgba(0,0,0,0.02));
+  th[align="center"], td[align="center"] { 
+    text-align: center; 
   }
-
-  .align-left   { text-align: left; }
-  .align-center { text-align: center; }
-  .align-right  { text-align: right; }
-
-  .row-count {
-    font-size: 12px;
-    color: var(--u-text-secondary, #888);
+  th[align="right"], td[align="right"] { 
+    text-align: right; 
   }
 `;

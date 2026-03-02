@@ -1,9 +1,10 @@
-import { html } from 'lit';
+﻿import { html } from 'lit';
 import { property } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 
 import { arrayAttrConverter } from '@iyulab/components/dist/utilities/converters.js';
-import { BaseElement } from '@iyulab/components/dist/components/BaseElement.js';
+import { UElement } from '@iyulab/components/dist/components/UElement.js';
+import { UJsonElement } from '@iyulab/components/dist/components/UJsonElement.js';
 import { UIcon } from '@iyulab/components/dist/components/icon/UIcon.component.js';
 import { styles } from './URefCard.styles.js';
 
@@ -11,32 +12,34 @@ import { styles } from './URefCard.styles.js';
  * 참조 소스를 카드 형태로 표시하는 공통 컴포넌트입니다.
  * Web과 Document 타입 모두 지원합니다.
  */
-export class URefCard extends BaseElement {
+export class URefCard extends UJsonElement {
   static styles = [ super.styles, styles ];
-  static dependencies: Record<string, typeof BaseElement> = {
+  static dependencies: Record<string, typeof UElement> = {
     'u-icon': UIcon,
   };
 
   /** 카드 타입 (web 또는 document) */
   @property({ type: String, reflect: true }) type: 'web' | 'document' = 'web';
   /** 외부 링크 URL */
-  @property({ type: String }) href?: string;
+  @property({ type: String }) url?: string;
   /** 카드 타이틀 */
-  @property({ type: String }) heading?: string;
+  @property({ type: String }) override title: string = '';
+  /** 카드 본문 스니펫 */
+  @property({ type: String }) snippet?: string;
   /** 태그 목록 */
   @property({ type: Array, converter: arrayAttrConverter(v => v) }) tags?: string[];
 
   render() {
     return html`
-      <a href="${ifDefined(this.href)}" target="_blank" rel="noopener noreferrer"
+      <a href="${ifDefined(this.url)}" target="_blank" rel="noopener noreferrer"
         @click=${this.handleAnchorClick}>
         <div class="header">
           <img class="favicon" 
-            src="${this.getFaviconUrl(this.href)}" 
+            src="${this.getFaviconUrl(this.url)}" 
             alt="favicon"
           />
-          <div class="title" title="${ifDefined(this.heading)}">
-            ${this.heading || this.getDomainName(this.href)}
+          <div class="title">
+            ${this.title || this.getDomainName(this.url)}
           </div>
 
           <div style="flex: 1;"></div>
@@ -51,7 +54,7 @@ export class URefCard extends BaseElement {
         </div>
 
         <div class="body">
-          <slot></slot>
+          ${this.snippet}
         </div>
         
         <div class="footer" ?hidden=${!this.tags || this.tags.length === 0}>
@@ -64,7 +67,7 @@ export class URefCard extends BaseElement {
   /** 링크 클릭 핸들러 */
   private handleAnchorClick(e: Event) {
     // 기본 동작 방지: href가 없을 때
-    if (!this.href) {
+    if (!this.url) {
       e.preventDefault();
       e.stopPropagation();
     }

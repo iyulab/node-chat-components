@@ -1,14 +1,15 @@
-import { html, nothing } from "lit";
+﻿import { html, nothing } from "lit";
 import { property } from "lit/decorators.js";
 
-import { BaseElement } from "@iyulab/components/dist/components/BaseElement.js";
+import { UElement } from "@iyulab/components/dist/components/UElement.js";
 import { styles } from "./UMapWidget.styles.js";
 
 /**
  * 지도 위젯 컴포넌트 (OpenStreetMap embed)
  */
-export class UMapWidget extends BaseElement {
+export class UMapWidget extends UElement {
   static styles = [super.styles, styles];
+  static dependencies: Record<string, typeof UElement> = {};
 
   /** 위도 (latitude) */
   @property({ type: Number }) lat?: number;

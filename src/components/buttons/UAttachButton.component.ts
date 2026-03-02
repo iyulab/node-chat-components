@@ -1,7 +1,7 @@
-import { html } from "lit";
+﻿import { html } from "lit";
 import { property, query } from "lit/decorators.js";
 
-import { BaseElement } from "@iyulab/components/dist/components/BaseElement.js";
+import { UElement } from "@iyulab/components/dist/components/UElement.js";
 import { UIcon } from "@iyulab/components/dist/components/icon/UIcon.component.js";
 import { UButton } from "@iyulab/components/dist/components/button/UButton.component.js";
 import { UTooltip } from "@iyulab/components/dist/components/tooltip/UTooltip.component.js";
@@ -10,9 +10,9 @@ import { styles } from "./UAttachButton.styles.js";
 /**
  * 파일 첨부 버튼 컴포넌트입니다.
  */
-export class UAttachButton extends BaseElement {
+export class UAttachButton extends UElement {
   static styles = [ super.styles, styles ];
-  static dependencies: Record<string, typeof BaseElement> = {
+  static dependencies: Record<string, typeof UElement> = {
     'u-icon': UIcon,
     'u-button': UButton,
     'u-tooltip': UTooltip

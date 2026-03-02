@@ -1,7 +1,7 @@
-import { PropertyValues, html } from "lit";
+﻿import { PropertyValues, html } from "lit";
 import { property, query } from "lit/decorators.js";
 
-import { BaseElement } from "@iyulab/components/dist/components/BaseElement.js";
+import { UElement } from "@iyulab/components/dist/components/UElement.js";
 import { UIcon } from "@iyulab/components/dist/components/icon/UIcon.component.js";
 import { UMarkedBlock } from "./UMarkedBlock.component.js";
 import { styles } from "./UThinkBlock.styles.js";
@@ -10,9 +10,9 @@ import { styles } from "./UThinkBlock.styles.js";
  * 추론 내용을 표시하는 블록입니다.
  * 로딩 중일 때는 "Thinking..." 메시지를 표시하고, 내용 펼치기/접기 기능을 제공합니다.
  */
-export class UThinkBlock extends BaseElement {
+export class UThinkBlock extends UElement {
   static styles = [ super.styles, styles ];
-  static dependencies: Record<string, typeof BaseElement> = {
+  static dependencies: Record<string, typeof UElement> = {
     "u-icon": UIcon,
     "u-marked-block": UMarkedBlock
   };

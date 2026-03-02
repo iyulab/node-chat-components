@@ -1,7 +1,7 @@
-import { html } from 'lit';
+﻿import { html } from 'lit';
 import { property } from 'lit/decorators.js';
 
-import { BaseElement } from '@iyulab/components/dist/components/BaseElement.js';
+import { UElement } from '@iyulab/components/dist/components/UElement.js';
 import { UIcon } from '@iyulab/components/dist/components/icon/UIcon.component.js';
 import { UButton } from '@iyulab/components/dist/components/button/UButton.component.js';
 import { UTooltip } from '@iyulab/components/dist/components/tooltip/UTooltip.component.js';
@@ -13,9 +13,9 @@ export type VoteValue = 'none' | 'up' | 'down';
 /**
  * 투표 버튼 컴포넌트입니다.
  */
-export class UVoteButton extends BaseElement {
+export class UVoteButton extends UElement {
   static styles = [ super.styles, styles ];
-  static dependencies: Record<string, typeof BaseElement> = {
+  static dependencies: Record<string, typeof UElement> = {
     'u-icon': UIcon,
     'u-button': UButton,
     'u-tooltip': UTooltip
@@ -43,8 +43,11 @@ export class UVoteButton extends BaseElement {
         ></u-icon>
       </u-button>
 
-      <u-tooltip for="u-button" placement="bottom" distance="8">
-        <slot></slot>
+      <u-tooltip for=".up-btn" placement="bottom" distance="8">
+        <slot name="up"></slot>
+      </u-tooltip>
+      <u-tooltip for=".down-btn" placement="bottom" distance="8">
+        <slot name="down"></slot>
       </u-tooltip>
     `;
   }

@@ -1,18 +1,19 @@
-import { html, nothing, PropertyValues } from "lit";
+﻿import { html, nothing, PropertyValues } from "lit";
 import { property, query } from "lit/decorators.js";
 
 import { Chart } from "chart.js/auto";
 import type { ChartType, ChartData, ChartOptions } from "chart.js/auto";
-import { BaseElement } from "@iyulab/components/dist/components/BaseElement.js";
+
+import { UElement } from "@iyulab/components/dist/components/UElement.js";
 import { styles } from "./UChartWidget.styles.js";
 
 /**
  * 차트 위젯 컴포넌트
  * Chart.js를 사용하여 다양한 차트를 렌더링
  */
-export class UChartWidget extends BaseElement {
+export class UChartWidget extends UElement {
   static styles = [super.styles, styles];
-  static dependencies: Record<string, typeof BaseElement> = {};
+  static dependencies: Record<string, typeof UElement> = {};
 
   /** 차트 유형 (bar, line, pie 등) */
   @property({ type: String }) type?: ChartType;

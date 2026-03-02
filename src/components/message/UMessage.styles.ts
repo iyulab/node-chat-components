@@ -2,16 +2,10 @@ import { css } from "lit";
 
 export const styles = css`
   :host {
+    width: auto;
+    max-width: 100%;
     display: flex;
     flex-direction: column;
-  }
-  :host([variant="default"]) {
-    width: 100%;
-  }
-  :host([variant="bubble"]) {
-    width: auto;
-    min-width: 40px;
-    max-width: 80%;
   }
   :host([position="left"]) {
     align-self: flex-start;

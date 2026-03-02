@@ -1,19 +1,22 @@
-import { nothing } from "lit";
+﻿import { nothing } from "lit";
 import { property } from "lit/decorators.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 
-import { Marked } from "marked";
+import { Marked, type Tokens } from "marked";
 import markedKatex from "marked-katex-extension";
 
-import { BaseElement } from "@iyulab/components/dist/components/BaseElement.js";
+import { UElement } from "@iyulab/components/dist/components/UElement.js";
+import { UJsonElement } from "@iyulab/components/dist/components/UJsonElement.js";
+import { escapeHtmlText, stripZeroWidth } from "@iyulab/components/dist/utilities/sanitizers.js";
+import { buildElementHTML } from "@iyulab/components/dist/utilities/elements.js";
 import { UTooltip } from "@iyulab/components/dist/components/tooltip/UTooltip.component.js";
 import { UCodeBlock } from "./UCodeBlock.component.js";
 import { UTableBlock } from "./UTableBlock.component.js";
 import { URefTag } from "../references/URefTag.component.js";
 import { URefCard } from "../references/URefCard.component.js";
 import { URefCardGroup } from "../references/URefCardGroup.component.js";
-import type { ReferenceSource, ReferenceCitation } from "../../types/References.js";
-import { WidgetRegistry } from "../../utilities/WidgetRegistry.js";
+import { UWidget } from "../widgets/UWidget.component.js";
+import type { ReferenceCitation } from "../../types/References.js";
 import { styles } from "./UMarkedBlock.styles.js";
 
 /**
@@ -22,167 +25,159 @@ import { styles } from "./UMarkedBlock.styles.js";
  * 주의:
  * - refs로 삽입되는 커스텀 태그(u-ref-*)는 속성/내용을 모두 escape하여 XSS를 방지합니다.
  * - 코드블록 내부는 HTML을 전부 텍스트로 취급(escape)하며, refs 태그는 통째 제거합니다.
- * - 인덱스 기반 삽입(ref.endIndex)이 깨지지 않도록 "normalize(제로폭 제거)"를 insert 전에 1회 수행합니다.
+ * - 인덱스 기반 삽입(ref.endIndex)이 깨지지 않도록 "normalize(제로폭 제거)"를 insertRefs 전에 1회 수행합니다.
  */
-export class UMarkedBlock extends BaseElement {
+export class UMarkedBlock extends UElement {
   static styles = [super.styles, styles];
-  static dependencies: Record<string, typeof BaseElement> = {
+  static dependencies: Record<string, typeof UElement> = {
     "u-tooltip": UTooltip,
     "u-code-block": UCodeBlock,
     "u-table-block": UTableBlock,
     "u-ref-tag": URefTag,
     "u-ref-card": URefCard,
-    "u-ref-card-group": URefCardGroup
+    "u-ref-card-group": URefCardGroup,
+    "u-widget": UWidget,
   };
 
+  /** 마크다운 컨텐츠를 렌더링할 때 사용할 값입니다. */
+  @property({ type: String }) value?: string;
+  /** 컨텐츠의 인용 출처들입니다. */
+  @property({ type: Array }) refs?: ReferenceCitation[];
+  
+  /** Marked 인스턴스: 커스텀 렌더러와 KaTeX 확장 포함 */
   private parser = new Marked({
     pedantic: false,
     gfm: true,
     breaks: true,
     silent: true,
     renderer: {
-      code: ({ text, lang }) => {
-        lang ||= "plaintext";
-
-        // Widget 코드블록 감지
-        if (lang === 'widget-json') {
-          try {
-            const json = JSON.parse(text);
-            return WidgetRegistry.buildHTML(json) || '';
-          } catch (e) {
-            const errorMsg = e instanceof Error ? e.message : 'Unknown error';
-            return `<u-code-block lang="plaintext">Invalid format: ${this.escapeHTML(errorMsg)}</u-code-block>`;
-          }
-        }
-
-        // 코드블록은 "보여주기"가 목적이므로: refs 태그 제거 + HTML escape
-        const safeLang = this.escapeHTML(lang);
-        const safeText = this.sanitizeText(text);
-
-        return `<u-code-block lang="${safeLang}">${safeText}</u-code-block>`;
-      },
-      table: (token) => {
-        const headers = token.header.map((h: { text: string; align: string | null }) => ({
-          text: h.text,
-          align: h.align as "left" | "center" | "right" | null,
-        }));
-        const rows = token.rows.map((row: Array<{ text: string }>) =>
-          row.map((cell) => cell.text)
-        );
-        const data = JSON.stringify({ headers, rows })
-          .replace(/<\/script>/gi, "<\\/script>");
-        return `<u-table-block><script type="application/json">${data}</script></u-table-block>`;
-      },
+      code: (token) => this.renderCode(token),
+      table: (token) => this.renderTable(token),
     },
   }).use(markedKatex({ output: "mathml" }));
 
-  /** 마크다운 컨텐츠를 렌더링할 때 사용할 값입니다. */
-  @property({ type: String }) value?: string;
-  /** 컨텐츠의 인용 출처들입니다. */
-  @property({ type: Array }) refs?: ReferenceCitation[];
+  /** Marked 파싱 중 ref HTML을 임시 보관하는 플레이스홀더 */
+  private placeholder = new HtmlPlaceholder();
 
   render() {
     if (!this.value) return nothing;
 
-    // 1) 제로폭 제거 -> refs 인덱스 기준 통일
-    let value = this.normalizeText(this.value);
+    this.placeholder.reset();
+    let value = stripZeroWidth(this.value);
 
-    // 2) refs 삽입 (삽입되는 HTML은 내부에서 escape)
-    if (this.refs && this.refs.length > 0) {
-      value = this.insert(value, this.refs);
+    // 참조객체가 있을 때만 refs 태그를 삽입하여 파싱 안정성 확보
+    if (this.refs?.length) {
+      value = this.insertRefs(value, this.refs);
     }
 
-    // 3) 마크다운 파싱
-    const html = this.parser.parse(value, { async: false });
-    return unsafeHTML(html);
+    let html = this.parser.parse(value, { async: false }) as string;
+    return unsafeHTML(this.placeholder.restore(html));
+  }
+
+  /** 
+   * 코드블록은 별도의 컴포넌트로 렌더링 합니다.
+   */
+  private renderCode(token: Tokens.Code): string {
+    const lang = token.lang ?? "plaintext";
+    const trimmed = token.raw.trimEnd();
+    const isClosed = trimmed.endsWith("```") || trimmed.endsWith("~~~");
+
+    // Widget 코드블록 감지
+    if (lang === 'widget-json') {
+      return UJsonElement.buildHTML("u-widget", token.text, { loading: !isClosed });
+    }
+
+    // Action 코드블록 감지
+    if (lang === 'action-json') {
+      return ''; // 출력 X
+    }
+
+    // 코드블록은 refs 태그 제거 + HTML escape
+    const safeText = this.removeRefs(token.text);
+
+    return buildElementHTML("u-code-block", { lang: lang, loading: !isClosed }, safeText);
+  }
+
+  /** 
+   * 테이블은 JSON 데이터로 변환하여 별도의 컴포넌트로 렌더링합니다. 
+   */
+  private renderTable(token: Tokens.Table): string {
+    const headers = token.header.map((h: Tokens.TableCell) => ({
+      text: h.text,
+      align: h.align
+    }));
+    const rows = token.rows.map((row: Tokens.TableCell[]) =>
+      row.map((cell) => ({ 
+        text: cell.text, 
+        align: cell.align
+      }))
+    );
+    return UJsonElement.buildHTML("u-table-block", { headers, rows });
   }
 
   /**
-   * 인용/출처 참조객체가 있을때 문자열에 출처태그를 삽입합니다.
-   * @param value 삽입할 마크다운 문자열
-   * @return 삽입된 마크다운 문자열
+   * 인용/출처 참조객체가 있을때 ref 태그 HTML을 this.placeholder에 보관하고
+   * 마크다운 문자열의 해당 위치에 주석 플레이스홀더를 삽입합니다.
    */
-  private insert(value: string, refs: ReferenceCitation[]) {
-    // endIndex 기준 역순 삽입 (앞 인덱스가 변하지 않게)
-    const reversed = [...refs].sort((a, b) => b.endIndex - a.endIndex);
+  private insertRefs(value: string, refs: ReferenceCitation[]): string {
+    // 참조객체를 endIndex 기준 내림차순으로 정렬하여 뒤에서부터 삽입
+    const sorted = [...refs].sort((a, b) => b.endIndex - a.endIndex);
 
-    reversed.forEach((ref) => {
+    for (const ref of sorted) {
       const sources = ref.sources ?? [];
-      const firstSource = sources.at(0);
-
-      // 텍스트/속성 안전 처리
-      const tagName = this.escapeHTML(ref.label ?? `[${refs.indexOf(ref) + 1}]`);
-      const tagLink = this.escapeHTML(firstSource?.url ?? "");
+      const label = escapeHtmlText(ref.label ?? `[${refs.indexOf(ref) + 1}]`);
+      const link = sources.at(0)?.url;
 
       let tooltip = "";
-
-      // 참고 자료 1개
-      if (firstSource && sources.length === 1) {
-        tooltip = this.buildCard(firstSource, true);
+      if (sources.length > 0) {
+        const cards = sources.map((s) => UJsonElement.buildHTML("u-ref-card", s)).join("");
+        tooltip = buildElementHTML("u-ref-card-group", { slot: "tooltip" }, cards);
       }
 
-      // 참고 자료 2개 이상
-      if (sources.length > 1) {
-        const cards = sources.map((s) => this.buildCard(s, false)).join("");
-        tooltip = `<u-ref-card-group slot="tooltip">${cards}</u-ref-card-group>`;
-      }
-
-      const tag =
-        `<u-ref-tag href="${tagLink}" title="${tagName}">` +
-        `${tagName}${tooltip}</u-ref-tag>`;
-
-      // endIndex에 삽입
-      value = value.slice(0, ref.endIndex) + tag + value.slice(ref.endIndex);
-    });
+      const html = buildElementHTML("u-ref-tag", { href: link }, label + tooltip);
+      const key = this.placeholder.store(html);
+      value = value.slice(0, ref.endIndex) + key + value.slice(ref.endIndex);
+    }
 
     return value;
   }
 
   /**
-   * 참조 카드 엘리먼트를 안전하게 빌드합니다.
+   * 코드블록 내부의 <!--ref:idx--> 플레이스홀더와 그 외 refs 태그를 모두 제거하여 HTML이 코드로 렌더링되도록 합니다.   
    */
-  private buildCard(source: ReferenceSource, slot: boolean) {
-    const type = this.escapeHTML(source.type || "web");
-    const href = this.escapeHTML(source.url ?? "");
-    const heading = this.escapeHTML(source.title ?? "");
-    const tags = this.escapeHTML((source.tags ?? []).join(","));
-    const snippet = this.escapeHTML(source.snippet ?? "");
-
-    const slotAttr = slot ? ` slot="tooltip"` : "";
-    return `<u-ref-card${slotAttr} type="${type}" href="${href}" heading="${heading}" tags="${tags}">${snippet}</u-ref-card>`;
-  }
-
-  /**
-   * Zero Width Space, LTR/RTL marks, BOM 등 특수 제어 문자를 제거합니다.
-   * (ref.endIndex 기준을 흔들지 않게 insert 전에 1회 수행)
-   */
-  private normalizeText(value: string): string {
-    return value.replace(/\u200B|\u200C|\u200D|\u200E|\u200F|\uFEFF/g, "");
-  }
-
-  /**
-   * 코드블록 내부 텍스트를 안전하게 처리합니다.
-   * - u-ref-tag는 통째로 제거(코드블록 안에서 UI 태그가 살아남는 것 방지)
-   * - 나머지는 전부 HTML escape
-   */
-  private sanitizeText(value: string): string {
+  private removeRefs(value: string): string {
     // u-ref-tag 전체 블록 제거(내부 카드/그룹 포함)
     value = value.replace(/<u-ref-tag\b[^>]*>[\s\S]*?<\/u-ref-tag>/gi, "");
-
+    // <!--ref:idx--> 플레이스홀더 제거
+    value = value.replace(/<!--ref:\d+-->/g, "");
     // 그 외 HTML은 모두 텍스트로
-    return this.escapeHTML(value);
+    return value;
+  }
+}
+
+/**
+ * Marked 파싱 중 HTML이 GFM에 의해 오염되는 것을 방지하기 위해
+ * HTML을 주석 플레이스홀더로 치환하고, 나중에 원래 HTML로 복원하는 유틸입니다.
+ */
+class HtmlPlaceholder {
+  private map: Record<string, string> = {};
+  private idx = 0;
+
+  reset() {
+    this.map = {};
+    this.idx = 0;
   }
 
-  /**
-   * HTML 텍스트 노드로 안전하게 삽입하기 위해 escape 합니다.
-   */
-  private escapeHTML(value: string): string {
-    return value
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#39;");
+  /** html을 저장하고 대응하는 플레이스홀더 키를 반환합니다. */
+  store(html: string): string {
+    const key = `<!--ref:${this.idx++}-->`;
+    this.map[key] = html;
+    return key;
   }
 
+  /** html 안의 등록된 모든 플레이스홀더를 원래 HTML로 복원합니다. */
+  restore(html: string): string {
+    if (this.idx === 0) return html;
+    return html.replace(/<!--ref:\d+-->/g, (key) => this.map[key] ?? "");
+  }
 }

@@ -1,30 +1,17 @@
-import { BaseElement } from "@iyulab/components/dist/components/BaseElement.js";
+﻿import { type JsonSchema } from "./JsonSchema.js";
 import { UImagesWidget } from "../components/widgets/UImagesWidget.component.js";
 import { UVideoWidget } from "../components/widgets/UVideoWidget.component.js";
 import { UMapWidget } from "../components/widgets/UMapWidget.component.js";
 import { UChartWidget } from "../components/widgets/UChartWidget.component.js";
-import { type JsonSchema } from "./JsonSchema.js";
-
-/**
- * widget-json 코드블록에서 파싱된 위젯 데이터 구조
- */
-export interface WidgetSchema {
-  /** 위젯 태그명 */
-  tag: string;
-  /** 위젯 속성 */
-  properties?: Record<string, unknown>;
-}
 
 /**
  * 위젯을 정의하는 구조체
  */
 export interface WidgetDefinition {
-  /** 위젯 식별자 */
-  name: string;
+  /** 등록할 커스텀 엘리먼트 클래스 */
+  element: CustomElementConstructor;
   /** 등록할 커스텀 엘리먼트 태그명 */
   tag: string;
-  /** 등록할 커스텀 엘리먼트 클래스 */
-  element: CustomElementConstructor | typeof BaseElement;
   /** LLM용 설명 */
   description: string;
   /** LLM용 속성 스키마 */
@@ -57,13 +44,12 @@ export const PRESET_WIDGET_LIST = [
 /** 
  * 프리셋 위젯 정의 
  */
-export const PRESET_DEFINITIONS = new Map<PresetWidget, WidgetDefinition>([
+export const PRESET_WIDGET_DEFINITIONS = new Map<PresetWidget, WidgetDefinition>([
   [
     PresetWidget.Images, 
     {
-      name: 'images',
-      tag: 'u-images-widget',
       element: UImagesWidget,
+      tag: 'u-images-widget',
       description: 'Display multiple images in a scrollable gallery',
       properties: {
         items: {
@@ -87,9 +73,8 @@ export const PRESET_DEFINITIONS = new Map<PresetWidget, WidgetDefinition>([
   [
     PresetWidget.Video, 
     {
-      name: 'video',
-      tag: 'u-video-widget',
       element: UVideoWidget,
+      tag: 'u-video-widget',
       description: 'Embed video from YouTube, Vimeo, or Others. Provide a direct video file URL or a platform URL.',
       properties: {
         src: { type: "string", description: "Video URL (YouTube, Vimeo, or direct video file URL)" },
@@ -107,9 +92,8 @@ export const PRESET_DEFINITIONS = new Map<PresetWidget, WidgetDefinition>([
   [
     PresetWidget.Map, 
     {
-      name: 'map',
-      tag: 'u-map-widget',
       element: UMapWidget,
+      tag: 'u-map-widget',
       description: 'Display a map showing a single location',
       properties: {
         lat: { type: "number", description: "Latitude coordinate" },
@@ -130,9 +114,8 @@ export const PRESET_DEFINITIONS = new Map<PresetWidget, WidgetDefinition>([
   [
     PresetWidget.Chart, 
     {
-      name: 'chart',
-      tag: 'u-chart-widget',
       element: UChartWidget,
+      tag: 'u-chart-widget',
       description: 'Display charts using Chart.js v4 format. Use standard Chart.js configuration (type, data, options). The widget accepts the exact same structure as Chart.js - no conversion needed.',
       properties: {
         type: { 

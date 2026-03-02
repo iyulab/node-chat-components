@@ -1,139 +1,257 @@
-import { html, nothing } from "lit";
+﻿import { html } from "lit";
 import { property, state } from "lit/decorators.js";
+import { repeat } from "lit/directives/repeat.js";
 
-import { BaseElement } from "@iyulab/components/dist/components/BaseElement.js";
+import { UElement } from "@iyulab/components/dist/components/UElement.js";
+import { UJsonElement } from "@iyulab/components/dist/components/UJsonElement.js";
+import { UIcon } from "@iyulab/components/dist/components/icon/UIcon.component.js";
+import { UInput } from "@iyulab/components/dist/components/input/UInput.component.js";
+import { UButton } from "@iyulab/components/dist/components/button/UButton.component.js";
+import { USkeleton } from "@iyulab/components/dist/components/skeleton/USkeleton.component.js";
 import { styles } from "./UTableBlock.styles.js";
+
+/** 테이블 셀 데이터 타입 */
+export interface TableCell {
+  /** 셀에 표시할 텍스트 내용 */
+  text: string;
+  /** 셀 내용의 정렬 방식. 기본값은 "left" */
+  align: "left" | "center" | "right" | null;
+}
+
+/** 테이블 정렬 상태 */
+export interface SortState {
+  /** 현재 정렬 기준이 되는 컬럼 인덱스. -1이면 정렬 안 된 상태 */
+  index: number;
+  /** 정렬 방향. "asc"는 오름차순, "desc"는 내림차순 */
+  dir: "asc" | "desc";
+}
 
 /**
  * 마크다운 테이블 데이터를 렌더링하는 컴포넌트입니다.
  * 컬럼 정렬, CSV 다운로드 기능을 지원합니다.
+ * light DOM 내 `<script type="application/json">` 에서 데이터를 자동으로 읽어냅니다.
  */
-export class UTableBlock extends BaseElement {
+export class UTableBlock extends UJsonElement {
   static styles = [super.styles, styles];
+  static dependencies: Record<string, typeof UElement> = {
+    'u-icon': UIcon,
+    'u-input': UInput,
+    'u-button': UButton,
+    'u-skeleton': USkeleton,
+  };
 
   /** 테이블 헤더 목록. 각 헤더는 { text, align } 형식입니다. */
-  @property({ type: Array }) headers: TableHeader[] = [];
-  /** 테이블 행 목록. 각 행은 셀 텍스트 배열입니다. */
-  @property({ type: Array }) rows: string[][] = [];
+  @property({ type: Array }) headers: TableCell[] = [];
+  /** 테이블 행 목록. 각 행은 셀 배열입니다. */
+  @property({ type: Array }) rows: TableCell[][] = [];
 
-  @state() private sortColIndex: number = -1;
-  @state() private sortDir: "asc" | "desc" = "asc";
-
-  connectedCallback() {
-    super.connectedCallback();
-    this._readScriptData();
-  }
-
-  /** light DOM 내 <script type="application/json"> 에서 데이터를 읽어냅니다. */
-  private _readScriptData() {
-    const script = this.querySelector('script[type="application/json"]');
-    if (!script) return;
-    try {
-      const data: TableData = JSON.parse(script.textContent ?? "{}");
-      this.headers = data.headers ?? [];
-      this.rows = data.rows ?? [];
-    } catch {
-      // 파싱 실패 시 빈 상태 유지
-    }
-  }
-
-  private get _sortedRows(): string[][] {
-    if (this.sortColIndex < 0) return this.rows;
-
-    return [...this.rows].sort((a, b) => {
-      const av = a[this.sortColIndex] ?? "";
-      const bv = b[this.sortColIndex] ?? "";
-      // 숫자면 숫자 비교, 아니면 문자 비교
-      const an = Number(av), bn = Number(bv);
-      const cmp = (!isNaN(an) && !isNaN(bn))
-        ? an - bn
-        : av.localeCompare(bv, undefined, { sensitivity: "base" });
-      return this.sortDir === "asc" ? cmp : -cmp;
-    });
-  }
-
-  private _onSortClick(colIndex: number) {
-    if (this.sortColIndex === colIndex) {
-      this.sortDir = this.sortDir === "asc" ? "desc" : "asc";
-    } else {
-      this.sortColIndex = colIndex;
-      this.sortDir = "asc";
-    }
-  }
-
-  private _downloadCSV() {
-    const escape = (v: string) => `"${(v ?? "").replace(/"/g, '""')}"`;
-    const lines = [
-      this.headers.map(h => escape(h.text)).join(","),
-      ...this.rows.map(row => row.map(escape).join(","))
-    ];
-    const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "table.csv";
-    a.click();
-    URL.revokeObjectURL(url);
-  }
+  @state() private loading: boolean = false;
+  @state() private sort: SortState = { index: -1, dir: "asc" };
+  @state() private search: string = "";
+  
+  private searchCache: string = "";
+  private searchTimer: number | null = null;
 
   render() {
-    if (!this.headers.length) return nothing;
-
-    const sorted = this._sortedRows;
+    const rows = this.getFilteredSortedRows();
 
     return html`
       <div class="toolbar">
-        <span class="row-count">${this.rows.length}개 행</span>
-        <button @click=${this._downloadCSV} title="CSV 다운로드">
-          ↓ CSV
-        </button>
+        <div class="toolbar-left">
+          <u-input
+            class="toolbar-search"
+            type="search"
+            placeholder="Search..."
+            .value=${this.search}
+            @input=${this.handleSearchInput}
+          >
+            <u-icon slot="prefix" lib="internal" name="search"></u-icon>
+          </u-input>
+          <span class="toolbar-count">
+            ${rows.length} / ${this.rows.length} Rows
+          </span>
+        </div>
+        <div class="toolbar-right">
+          <u-button @click=${this.handleDownloadXLS} title="Excel Download">
+            XLS
+            <u-icon slot="suffix" lib="internal" name="download"></u-icon>
+          </u-button>
+          <u-button @click=${this.handleDownloadCSV} title="CSV Download">
+            CSV
+            <u-icon slot="suffix" lib="internal" name="download"></u-icon>
+          </u-button>
+        </div>
       </div>
-      <div class="table-wrapper">
+      <div class="table-wrapper" scrollable>
         <table>
-          <thead>
+          <thead ?hidden=${!this.headers.length}>
             <tr>
-              ${this.headers.map((h, i) => {
-                const sortClass =
-                  this.sortColIndex === i
-                    ? (this.sortDir === "asc" ? "sorted-asc" : "sorted-desc")
-                    : "";
-                const alignClass = h.align ? `align-${h.align}` : "align-left";
+              ${repeat(this.headers, (_, i) => i, (h, i) => {
+                const isActive = this.sort.index === i;
                 return html`
                   <th
-                    class="${sortClass} ${alignClass}"
-                    @click=${() => this._onSortClick(i)}
+                    ?active=${isActive}
+                    align=${h.align ?? "left"}
+                    @click=${() => this.handleSortColumn(i)}
                   >
-                    ${h.text}<span class="sort-icon"></span>
+                    ${h.text}
+                    <u-icon
+                      class="sort-icon"
+                      lib="internal"
+                      name=${isActive ? (this.sort.dir === "asc" ? "sort-alpha-up" : "sort-alpha-down") : "arrow-down-up"}
+                    ></u-icon>
                   </th>
                 `;
               })}
             </tr>
           </thead>
           <tbody>
-            ${sorted.map(row => html`
-              <tr>
-                ${row.map((cell, i) => {
-                  const align = this.headers[i]?.align;
-                  const alignClass = align ? `align-${align}` : "align-left";
-                  return html`<td class="${alignClass}">${cell}</td>`;
-                })}
-              </tr>
+            ${this.loading 
+              ? html`
+                <tr>
+                  <td colspan=${this.headers.length || 1}>
+                    <u-skeleton width="80%" height="1.2em"></u-skeleton>
+                    <u-skeleton width="60%" height="1.2em"></u-skeleton>
+                    <u-skeleton width="70%" height="1.2em"></u-skeleton>
+                    <u-skeleton width="50%" height="1.2em"></u-skeleton>
+                  </td>
+                </tr>
+              `
+              : repeat(rows, (_, i) => i, row => html`
+                <tr>
+                  ${repeat(row, (_, j) => j, cell => html`
+                    <td align=${cell.align ?? "left"}>
+                      ${this.renderHighlightedText(cell.text)}
+                    </td>
+                  `)}
+                </tr>
             `)}
           </tbody>
         </table>
       </div>
-      <slot hidden></slot>
     `;
   }
-}
 
-// 내부 타입 정의
-interface TableHeader {
-  text: string;
-  align: "left" | "center" | "right" | null;
-}
+  /**
+   * 하이라이트 렌더링: search 기준으로 매칭되는 부분을 <mark>로 감쌉니다.
+   * 내부적으로 안전하게 escape한 뒤 매칭을 위해 RegExp를 사용합니다.
+   */
+  private renderHighlightedText(text: string) {
+    const q = this.search.trim();
+    if (!q) return text;
 
-interface TableData {
-  headers: TableHeader[];
-  rows: string[][];
+    // 대소문자 무시 하이라이트
+    const escaped = q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const re = new RegExp(`(${escaped})`, "gi");
+
+    // split에 캡처 그룹을 쓰면 매칭 문자열도 배열에 포함됩니다.
+    const parts = String(text).split(re);
+    if (parts.length === 1) return text;
+
+    return html`${parts.map((p, idx) =>
+      idx % 2 === 1 ? html`<mark>${p}</mark>` : p
+    )}`;
+  }
+
+  /**
+   * 현재 검색어와 정렬 상태에 따라 필터링 및 정렬된 행 목록을 반환합니다.
+   */
+  private getFilteredSortedRows(): TableCell[][] {
+    let rows = this.rows;
+
+    // 검색어가 있으면 필터링 적용
+    const q = this.search.trim();
+    if (q) {
+      const qLower = q.toLowerCase();
+      rows = rows.filter(row => row.some(cell => cell.text.toLowerCase().includes(qLower)));
+    }
+
+    // 정렬 적용, 숫자면 숫자 비교, 아니면 문자 비교
+    const { index, dir } = this.sort;
+    if (index < 0) return rows;
+
+    return [...rows].sort((a, b) => {
+      const av = a[index]?.text ?? "";
+      const bv = b[index]?.text ?? ""; 
+      const an = Number(av);
+      const bn = Number(bv);
+      const cmp = (!isNaN(an) && !isNaN(bn))
+        ? an - bn
+        : av.localeCompare(bv, undefined, { sensitivity: "base" });
+      return dir === "asc" ? cmp : -cmp;
+    });
+  }
+
+  /* 250ms 디바운스되어 검색어가 업데이트되는 핸들러. */
+  private handleSearchInput(e: Event) {
+    const input = e.target as UInput;
+    this.searchCache = input.value;
+
+    if (this.searchTimer !== null) window.clearTimeout(this.searchTimer);
+    this.loading = true;
+
+    this.searchTimer = window.setTimeout(() => {
+      this.search = this.searchCache;
+      this.loading = false;
+      this.searchTimer = null;
+    }, 250);
+  }
+
+  /* 컬럼 헤더 클릭 시 정렬 상태를 토글하는 핸들러 */
+  private handleSortColumn(index: number) {
+    if (this.sort.index === index) {
+      this.sort = { ...this.sort, dir: this.sort.dir === "asc" ? "desc" : "asc" };
+    } else {
+      this.sort = { index, dir: "asc" };
+    }
+  }
+
+  /* CSV 다운로드 핸들러 */
+  private handleDownloadCSV() {
+    // CSV에서 쉼표, 큰따옴표, 줄바꿈이 포함된 값을 올바르게 처리하기 위한 이스케이프 함수
+    const escCsv = (v: string) => (v.includes(",") || v.includes('"') || v.includes("\n"))
+      ? `"${v.replace(/"/g, '""')}"`
+      : v;
+    const lines = [
+      this.headers.map(h => escCsv(h.text)).join(","),
+      ...this.rows.map(row => row.map(cell => escCsv(cell.text)).join(","))
+    ];
+    const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8;" });
+    this.triggerDownload("table.csv", blob);
+  }
+
+  /* XLS 다운로드 핸들러 */
+  private handleDownloadXLS() {
+    // XML에서 &, <, > 문자를 올바르게 처리하기 위한 이스케이프 함수
+    const escXml = (v: string) => v
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+    const cell = (v: string) => `<Cell><Data ss:Type="String">${escXml(v)}</Data></Cell>`;
+    const row = (cells: string[]) => `<Row>${cells.map(cell).join("")}</Row>`;
+
+    const xml = [
+      `<?xml version="1.0" encoding="UTF-8"?>`,
+      `<?mso-application progid="Excel.Sheet"?>`,
+      `<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"`,
+      ` xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">`,
+      `<Worksheet ss:Name="Sheet1"><Table>`,
+      row(this.headers.map(h => h.text)),
+      ...this.rows.map(r => row(r.map(c => c.text))),
+      `</Table></Worksheet></Workbook>`
+    ].join("\n");
+
+    const blob = new Blob([xml], { type: "application/vnd.ms-excel;charset=utf-8;" });
+    this.triggerDownload("table.xls", blob);
+  }
+
+  /* 파일 다운로드 트리거 */
+  private triggerDownload(filename: string, blob: Blob) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
 }

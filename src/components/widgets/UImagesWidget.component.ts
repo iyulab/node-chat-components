@@ -1,8 +1,8 @@
-import { html, nothing } from "lit";
+﻿import { html, nothing } from "lit";
 import { property, state } from "lit/decorators.js";
 import { repeat } from "lit/directives/repeat.js";
 
-import { BaseElement } from "@iyulab/components/dist/components/BaseElement.js";
+import { UElement } from "@iyulab/components/dist/components/UElement.js";
 import { UCarousel } from "@iyulab/components/dist/components/carousel/UCarousel.component.js";
 import { UIcon } from "@iyulab/components/dist/components/icon/UIcon.component.js";
 import { styles } from "./UImagesWidget.styles.js";
@@ -17,17 +17,18 @@ export interface ImageSlide {
  * 이미지 갤러리 위젯 컴포넌트
  * u-carousel 기반 가로 슬라이드 + 슬라이딩 라이트박스
  */
-export class UImagesWidget extends BaseElement {
+export class UImagesWidget extends UElement {
   static styles = [super.styles, styles];
-  static dependencies: Record<string, typeof BaseElement> = {
+  static dependencies: Record<string, typeof UElement> = {
     'u-carousel': UCarousel,
-    'u-icon': UIcon
+    'u-icon': UIcon,
   };
 
   /** 이미지 슬라이드 배열 */
   @property({ type: Array }) items: ImageSlide[] = [];
 
-  @state() private _lightboxIndex: number | null = null;
+  /** 라이트박스에서 현재 열려있는 이미지 인덱스, null이면 라이트박스 닫힘 */
+  @state() private index: number | null = null;
 
   connectedCallback() {
     super.connectedCallback();
@@ -45,16 +46,16 @@ export class UImagesWidget extends BaseElement {
 
     return html`
       <u-carousel
-        draggable
-        ?navigation=${count > 2}
-        ?pagination=${false}
+        .loop=${false}
+        .navigation=${false}
+        .pagination=${true}
+        .draggable=${true}
         .slidesPerView=${Math.min(count, 3)}
         .gap=${8}
-        ?loop=${false}
       >
         ${repeat(this.items, (item, i) => html`
           <div class="slide" 
-            @click=${() => this.openLightBox(i)}>
+            @click=${() => this.open(i)}>
             <img 
               src=${item.src} 
               alt=${item.alt || ''} 
@@ -68,12 +69,12 @@ export class UImagesWidget extends BaseElement {
         `)}
       </u-carousel>
 
-      ${this._renderLightbox()}
+      ${this.renderLightbox()}
     `;
   }
 
-  private _renderLightbox() {
-    const idx = this._lightboxIndex;
+  private renderLightbox() {
+    const idx = this.index;
     if (idx === null) return nothing;
     if (idx < 0 || idx >= this.items.length) return nothing;
     const item = this.items[idx];
@@ -86,69 +87,86 @@ export class UImagesWidget extends BaseElement {
     const translateX = `calc(15vw - ${idx} * (70vw + 16px))`;
 
     return html`
-      <div class="lb-overlay" @click=${this.closeLightbox}>
+      <div class="lb-overlay">
 
-        <div class="lb-viewport">
-          <div class="lb-track" style="transform:translateX(${translateX})">
-            ${repeat(this.items, (img, i) => html`
-              <div class="lb-slide ${i === idx ? 'active' : ''}">
-                <img src=${img.src} alt=${img.alt || ''} />
-              </div>
-            `)}
+        <!-- 상단: 카운터(중앙) + 닫기 버튼(우측) -->
+        <header class="lb-header">
+          <div class="lb-counter" ?hidden=${total <= 1}>
+            ${idx + 1} / ${total}
           </div>
+          <button class="lb-close" @click=${this.close}>
+            <u-icon lib="internal" name="x-lg"></u-icon>
+          </button>
+        </header>
+
+        <!-- 중앙: 뷰포트 + 이전/다음 버튼(absolute 오버레이) -->
+        <div class="lb-body">
+          <div class="lb-viewport">
+            <div class="lb-track" style="transform:translateX(${translateX})">
+              ${repeat(this.items, (img, i) => html`
+                <div class="lb-slide" ?active=${i === idx}>
+                  <img src=${img.src} alt=${img.alt || ''} />
+                </div>
+              `)}
+            </div>
+          </div>
+
+          <button class="lb-nav prev"
+            ?hidden=${idx <= 0}
+            @click=${this.handlePrevClick}>
+            <u-icon lib="internal" name="chevron-left"></u-icon>
+          </button>
+
+          <button class="lb-nav next"
+            ?hidden=${idx >= total - 1}
+            @click=${this.handleNextClick}>
+            <u-icon lib="internal" name="chevron-right"></u-icon>
+          </button>
         </div>
 
-        <button class="lb-close" @click=${this.closeLightbox}>
-          <u-icon lib="internal" name="x-lg"></u-icon>
-        </button>
+        <!-- 하단: 캡션 -->
+        <footer class="lb-footer" ?hidden=${!item.caption}>
+          <p class="lb-caption">${item.caption}</p>
+        </footer>
 
-        <button class="lb-nav prev"
-          ?hidden=${idx <= 0}
-          @click=${(e: Event) => { e.stopPropagation(); this._prev(); }}>
-          <u-icon lib="internal" name="chevron-left"></u-icon>
-        </button>
-
-        <button class="lb-nav next"
-          ?hidden=${idx >= total - 1}
-          @click=${(e: Event) => { e.stopPropagation(); this._next(); }}>
-          <u-icon lib="internal" name="chevron-right"></u-icon>
-        </button>
-
-        <div class="lb-caption"
-          ?hidden=${!item.caption}>
-          ${item.caption}
-        </div>
-        
-        <div class="lb-counter"
-          ?hidden=${total <= 1}>
-          ${idx + 1} / ${total}
-        </div>
       </div>
     `;
   }
 
-  private openLightBox = (i: number) => { 
-    this._lightboxIndex = i; 
+  public open = (i: number) => { 
+    this.index = i; 
   }
 
-  private closeLightbox = () => { 
-    this._lightboxIndex = null; 
+  public close = () => { 
+    this.index = null; 
   }
 
-  private _prev() {
-    if (this._lightboxIndex !== null && this._lightboxIndex > 0)
-      this._lightboxIndex--;
+  public prev = () => {
+    if (this.index !== null && this.index > 0) {
+      this.index--;
+    }
   }
 
-  private _next() {
-    if (this._lightboxIndex !== null && this._lightboxIndex < this.items.length - 1)
-      this._lightboxIndex++;
+  public next = () => {
+    if (this.index !== null && this.index < this.items.length - 1) {
+      this.index++;
+    }
+  }
+
+  private handlePrevClick = (e: Event) => {
+    e.stopPropagation();
+    this.prev();
+  }
+
+  private handleNextClick = (e: Event) => {
+    e.stopPropagation();
+    this.next();
   }
 
   private handleKeyDown = (e: KeyboardEvent) => {
-    if (this._lightboxIndex === null) return;
-    if (e.key === 'Escape') this.closeLightbox();
-    else if (e.key === 'ArrowLeft') this._prev();
-    else if (e.key === 'ArrowRight') this._next();
+    if (this.index === null) return;
+    if (e.key === 'Escape') this.close();
+    else if (e.key === 'ArrowLeft') this.prev();
+    else if (e.key === 'ArrowRight') this.next();
   };
 }

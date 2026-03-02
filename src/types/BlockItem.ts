@@ -42,18 +42,26 @@ export interface ReferenceBlockItem {
   sources: ReferenceSource[];
 }
 
-/** 질문 제안 액션 블록입니다. */
-export interface QuestionsActionBlockItem {
-  type: "questions";
-  /** 표시할 질문 목록 */
-  values: string[];
+/** 파일 하나의 데이터 구조입니다. */
+export interface FileItem {
+  /** 파일 이름 */
+  name: string;
+  /** 파일 크기 (bytes) */
+  size?: number;
+  /** MIME 타입 (예: "image/png", "application/pdf") */
+  mimeType?: string;
+  /** 다운로드 URL */
+  url?: string;
 }
 
-/**
- * Action 메시지에 포함될 수 있는 아이템 타입
- * 향후 dom-click 등 다른 action 타입 추가 가능
- */
-export type ActionBlockItem = QuestionsActionBlockItem;
+/** 복수 파일 첨부 블록입니다. */
+export interface FilesBlockItem {
+  type: "files";
+  /** 파일 목록 */
+  files: FileItem[];
+  /** 삭제 버튼 표시 여부 */
+  removable?: boolean;
+}
 
 /**
  * 타입별 메시지 컨텐츠 아이템
@@ -62,7 +70,7 @@ export type BlockItem = (
   ThinkingBlockItem |
   TextBlockItem |
   MarkdownBlockItem |
-  ToolBlockItem | 
+  ToolBlockItem |
   ReferenceBlockItem |
-  QuestionsActionBlockItem
+  FilesBlockItem
 );

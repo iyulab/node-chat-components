@@ -2,6 +2,7 @@ import { css } from "lit";
 
 export const styles = css`
   :host {
+    position: relative;
     display: flex;
     flex-direction: column;
     padding: 12px;
@@ -13,6 +14,28 @@ export const styles = css`
     outline: none;
     border-color: var(--u-neutral-400, #9ca3af);
     box-shadow: 0 0 0 1px var(--u-neutral-200, #9ca3af);
+  }
+  :host([loading])::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 10px;
+    padding: 2px;
+    background: linear-gradient(90deg,
+      transparent 0%,
+      transparent 25%,
+      #f9a8d4 45%,
+      #fbbf24 55%,
+      transparent 75%,
+      transparent 100%
+    );
+    background-size: 300% 100%;
+    animation: border-shimmer 2s linear infinite;
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
   }
 
   u-text-block {
@@ -36,5 +59,10 @@ export const styles = css`
   .send-btn[disabled] {
     opacity: 0.5;
     cursor: not-allowed;
+  }
+
+  @keyframes border-shimmer {
+    0%   { background-position: 100% 0; }
+    100% { background-position: 0% 0; }
   }
 `;

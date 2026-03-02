@@ -1,9 +1,9 @@
-import { html, PropertyValues, TemplateResult } from 'lit';
+﻿import { html, PropertyValues, TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import { map } from 'lit/directives/map.js';
 import { when } from 'lit/directives/when.js';
 
-import { BaseElement } from '@iyulab/components/dist/components/BaseElement.js';
+import { UElement } from '@iyulab/components/dist/components/UElement.js';
 import { jsonAttrConverter } from '../../utilities/converters.js';
 import type { JsonNode, JsonArray, JsonObject, JsonValue } from '../../types/JsonNode.js';
 import { styles } from './UJsonBlock.styles.js';
@@ -11,9 +11,9 @@ import { styles } from './UJsonBlock.styles.js';
 /**
  * json 데이터를 트리 형태로 시각화하는 컴포넌트입니다.
  */
-export class UJsonBlock extends BaseElement {
+export class UJsonBlock extends UElement {
   static styles = [ super.styles, styles ];
-  static dependencies: Record<string, typeof BaseElement> = {};
+  static dependencies: Record<string, typeof UElement> = {};
 
   @state() state: Record<string, boolean> = {};
 

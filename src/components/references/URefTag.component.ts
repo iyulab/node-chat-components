@@ -1,8 +1,8 @@
-import { html } from 'lit';
+﻿import { html } from 'lit';
 import { property } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 
-import { BaseElement } from '@iyulab/components/dist/components/BaseElement.js';
+import { UElement } from '@iyulab/components/dist/components/UElement.js';
 import { UTooltip } from '@iyulab/components/dist/components/tooltip/UTooltip.component.js';
 import { UIcon } from '@iyulab/components/dist/components/icon/UIcon.component.js';
 import { styles } from './URefTag.styles.js';
@@ -10,9 +10,9 @@ import { styles } from './URefTag.styles.js';
 /**
  * 인용 태그 컴포넌트입니다.
  */
-export class URefTag extends BaseElement {
+export class URefTag extends UElement {
   static styles = [ super.styles, styles ];
-  static dependencies: Record<string, typeof BaseElement> = {
+  static dependencies: Record<string, typeof UElement> = {
     'u-icon': UIcon,
     'u-tooltip': UTooltip
   };

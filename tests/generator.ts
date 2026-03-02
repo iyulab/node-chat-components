@@ -1,19 +1,18 @@
 import OpenAI from 'openai';
 import type { ResponseInput } from 'openai/resources/responses/responses.mjs';
-import type { Message } from "./messages";
+import type { AssistantMessage, Message } from "./messages";
 import type { BlockItem } from '../src/types/BlockItem';
-import { WidgetRegistry } from '../src/utilities/WidgetRegistry.js';
-import { ActionRegistry } from '../src/utilities/ActionRegistry.js';
 
 const openai = new OpenAI({
   apiKey: import.meta.env.VITE_OPENAI_API_KEY,
   dangerouslyAllowBrowser: true, // 브라우저에서 사용하기 위해 필요
 });
 
-export async function* generateMessageStream(
-  messages: Message[], 
-  signal: AbortSignal
-): AsyncGenerator<Message, void, unknown> {
+export async function* generateStreamingMessage(
+  messages: Message[],
+  instructions?: string,
+  signal?: AbortSignal
+): AsyncGenerator<AssistantMessage, void, unknown> {
   // Message 배열을 입력 텍스트로 변환
   const input = messages.reduce<ResponseInput>((acc, msg) => {
     if (msg.role !== 'user' && msg.role !== 'assistant') {
@@ -28,24 +27,15 @@ export async function* generateMessageStream(
     acc.push({
       type: 'message',
       role: msg.role,
-      content
+      content: content,
     });
 
     return acc;
   }, []);
 
-  // 시스템 메시지로 widget/action instruction 추가
-  const widgetPrompt = WidgetRegistry.buildPrompt();
-  const actionPrompt = ActionRegistry.buildPrompt();
-  const instructions = [widgetPrompt, actionPrompt].filter(Boolean).join('\n\n');
-  input.unshift({
-    type: 'message',
-    role: 'system',
-    content: `You are a helpful AI assistant that can use various widgets and actions to enhance your responses.${instructions ? '\n\n' + instructions : ''}`
-  });
-
   const stream = await openai.responses.create({
     model: 'gpt-5-mini',
+    instructions: `You are a helpful AI assistant that can use various widgets and actions to enhance your responses.${instructions ? '\n\n' + instructions : ''}`,
     include: [
       'reasoning.encrypted_content',
       'web_search_call.action.sources',
@@ -53,7 +43,7 @@ export async function* generateMessageStream(
     ],
     input: input,
     reasoning: {
-      effort: 'medium', 
+      effort: 'low', 
       summary: 'detailed' 
     },
     tools: [
@@ -71,6 +61,7 @@ export async function* generateMessageStream(
 
   try {
     for await (const event of stream) {
+      console.log(event);
       const eventType = (event as any).type;
       if (!eventType) continue;
 
@@ -171,7 +162,7 @@ export async function* generateMessageStream(
       }
     }
   } catch (error) {
-    if (signal.aborted) {
+    if (signal?.aborted) {
       throw new Error('Request was aborted.');
     }
     throw error;

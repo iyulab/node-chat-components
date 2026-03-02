@@ -1,7 +1,7 @@
-import { html } from "lit";
+﻿import { html } from "lit";
 import { property } from "lit/decorators.js";
 
-import { BaseElement } from "@iyulab/components/dist/components/BaseElement.js";
+import { UElement } from "@iyulab/components/dist/components/UElement.js";
 import { UIcon } from "@iyulab/components/dist/components/icon/UIcon.component.js";
 import { UButton } from "@iyulab/components/dist/components/button/UButton.component.js";
 import { UTextBlock } from "../blocks/UTextBlock.component.js";
@@ -11,9 +11,9 @@ import { styles } from "./UPrompt.styles.js";
  * 채팅 입력 컴포넌트입니다.
  * 텍스트 입력 영역과 우측에 액션 버튼을 배치할 수 있는 슬롯을 제공합니다.
  */
-export class UPrompt extends BaseElement {
+export class UPrompt extends UElement {
   static styles = [ super.styles, styles ];
-  static dependencies: Record<string, typeof BaseElement> = {
+  static dependencies: Record<string, typeof UElement> = {
     'u-icon': UIcon,
     'u-button': UButton,
     'u-text-block': UTextBlock,

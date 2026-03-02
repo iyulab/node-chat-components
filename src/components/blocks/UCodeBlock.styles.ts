@@ -51,8 +51,14 @@ export const styles = css`
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+    gap: 12px;
     margin-bottom: 12px;
     user-select: none;
+  }
+  .header .status {
+    display: inline-flex;
+    font-size: 12px;
+    color: var(--u-txt-color-strong);
   }
   .header .lang {
     font-family: Arial, Helvetica, sans-serif;

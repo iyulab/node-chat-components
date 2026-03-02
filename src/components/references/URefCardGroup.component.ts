@@ -1,7 +1,7 @@
-import { html } from 'lit';
+﻿import { html } from 'lit';
 import { state } from 'lit/decorators.js';
 
-import { BaseElement } from '@iyulab/components/dist/components/BaseElement.js';
+import { UElement } from '@iyulab/components/dist/components/UElement.js';
 import { UIcon } from '@iyulab/components/dist/components/icon/UIcon.component.js';
 import { URefCard } from './URefCard.component.js';
 import { styles } from './URefCardGroup.styles.js';
@@ -9,10 +9,11 @@ import { styles } from './URefCardGroup.styles.js';
 /**
  * 여러 참조 카드를 그룹으로 표시하는 컴포넌트입니다.
  * 페이지네이션 기능을 제공하여 각 카드를 하나씩 탐색할 수 있습니다.
+ * 카드가 1개 이하인 경우 페이지네이션 UI는 자동으로 숨겨집니다.
  */
-export class URefCardGroup extends BaseElement {
+export class URefCardGroup extends UElement {
   static styles = [ super.styles, styles ];
-  static dependencies: Record<string, typeof BaseElement> = {
+  static dependencies: Record<string, typeof UElement> = {
     'u-icon': UIcon,
     'u-ref-card': URefCard,
   };
@@ -24,7 +25,7 @@ export class URefCardGroup extends BaseElement {
 
   render() {
     return html`
-      <div class="header">
+      <div class="header" ?hidden=${this.cards.length <= 1}>
         <button class="nav-button"
           @click=${this.handlePreviousButtonClick}>
           <u-icon lib="internal" name="chevron-left"></u-icon>

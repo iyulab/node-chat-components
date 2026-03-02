@@ -1,7 +1,7 @@
-import { html } from "lit";
+﻿import { html } from "lit";
 import { property } from "lit/decorators.js";
 
-import { BaseElement } from "@iyulab/components/dist/components/BaseElement.js";
+import { UElement } from "@iyulab/components/dist/components/UElement.js";
 import { UIcon } from "@iyulab/components/dist/components/icon/UIcon.component.js";
 import { USpinner } from "@iyulab/components/dist/components/spinner/USpinner.component.js";
 import { UJsonBlock } from "./UJsonBlock.component.js";
@@ -12,9 +12,9 @@ import { styles } from "./UToolBlock.styles.js";
 /**
  * 툴 사용 블록 컴포넌트입니다.
  */
-export class UToolBlock extends BaseElement {
+export class UToolBlock extends UElement {
   static styles = [ super.styles, styles ];
-  static dependencies: Record<string, typeof BaseElement> = {
+  static dependencies: Record<string, typeof UElement> = {
     'u-icon': UIcon,
     'u-spinner': USpinner,
     'u-json-block': UJsonBlock,
