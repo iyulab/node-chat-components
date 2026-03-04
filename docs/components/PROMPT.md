@@ -47,10 +47,10 @@
 ### Usage
 
 ```html
-<u-prompt 
+<u-prompt
   placeholder="메시지를 입력하세요..."
-  minRows="1"
-  maxRows="10"
+  .minRows=${1}
+  .maxRows=${10}
   @u-submit=${(e) => handleSubmit(e.detail.value)}
   @u-cancel=${() => handleCancel()}
 >

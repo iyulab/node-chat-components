@@ -16,16 +16,33 @@ import '@iyulab/chat-components';
 
 ## Components
 
-- `u-message` - 메시지 컴포넌트
-- `u-code-block` - 코드 블록
-- `u-marked-block` - 마크다운 렌더링
-- `u-text-block` - 텍스트 블록
-- `u-think-block` - 추론 과정 표시
-- `u-tool-block` - 도구 호출 표시
+### Message
+- `u-message` - 채팅 메시지 컨테이너 (slot 기반)
+
+### Blocks
+- `u-code-block` - 코드 블록 (syntax highlighting)
+- `u-json-block` - JSON 트리 시각화
+- `u-marked-block` - 마크다운 렌더링 (인용 refs 지원)
+- `u-text-block` - 텍스트 표시/편집
+- `u-think-block` - AI 추론 과정 표시
+- `u-tool-block` - 도구 호출 입출력 표시
+- `u-ref-block` - 참조 출처 목록 블록
+
+### Buttons
 - `u-attach-button` - 파일 첨부
-- `u-copy-button` - 복사 버튼
-- `u-send-button` - 전송 버튼
-- `u-think-button` - 추론 레벨 설정
+- `u-copy-button` - 클립보드 복사
+- `u-vote-button` - 투표(좋아요/싫어요)
+- `u-retry-button` - 메시지 재시도
+- `u-share-button` - 메시지 공유
+- `u-report-button` - 메시지 신고
+
+### Prompt
+- `u-prompt` - 채팅 입력 컴포넌트 (전송/취소 내장)
+
+### References
+- `u-ref-tag` - 본문 내 인용 태그
+- `u-ref-card` - 출처 카드
+- `u-ref-card-group` - 출처 카드 그룹
 
 ## Documentation
 

@@ -42,7 +42,7 @@ const current = Theme.get();
 ## Components
 
 ### Message
-- `u-message` - 채팅 메시지 컴포넌트
+- `u-message` - 채팅 메시지 컨테이너 (slot 기반, `items` property 없음)
 
 ### Blocks
 - `u-code-block` - 코드 블록 (syntax highlighting)
@@ -60,6 +60,9 @@ const current = Theme.get();
 - `u-retry-button` - 메시지 재시도 버튼
 - `u-share-button` - 메시지 공유 버튼
 - `u-report-button` - 메시지 신고 버튼
+
+### Prompt
+- `u-prompt` - 채팅 입력 컴포넌트 (전송/취소 내장)
 
 ### Loaders
 - `u-dot-loader` - 점 애니메이션 로더

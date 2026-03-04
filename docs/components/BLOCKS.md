@@ -60,7 +60,14 @@ JSON 데이터를 트리 형태로 시각화합니다.
 | `maxRows` | `number` | - | 최대 행 수 |
 
 ```html
-<u-text-block editable placeholder="입력하세요" minRows="3"></u-text-block>
+<!-- Lit 템플릿: JS property 바인딩 -->
+<u-text-block editable placeholder="입력하세요" .minRows=${3}></u-text-block>
+
+<!-- 명령형: JS property 직접 설정 -->
+<u-text-block id="input" editable placeholder="입력하세요"></u-text-block>
+<script>
+  document.getElementById('input').minRows = 3;
+</script>
 ```
 
 ---

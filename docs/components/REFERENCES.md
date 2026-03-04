@@ -11,19 +11,19 @@
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
 | `type` | `'web' \| 'document'` | `'web'` | 카드 타입 |
-| `href` | `string` | - | 외부 링크 URL |
-| `heading` | `string` | - | 카드 제목 |
-| `tags` | `string[]` | - | 태그 목록 |
+| `url` | `string` | - | 외부 링크 URL |
+| `title` | `string` | `''` | 카드 제목 |
+| `snippet` | `string` | - | 본문 발췌 내용 |
+| `tags` | `string[]` | - | 태그 목록 (JS property) |
 
 ```html
-<u-ref-card 
+<u-ref-card
   type="web"
-  href="https://example.com"
-  heading="Example Website"
+  url="https://example.com"
+  title="Example Website"
+  snippet="발췌 내용을 여기에 표시합니다."
   .tags=${['documentation', 'API']}
->
-  발췌 내용을 여기에 표시합니다.
-</u-ref-card>
+></u-ref-card>
 ```
 
 ---
@@ -34,8 +34,8 @@
 
 ```html
 <u-ref-card-group>
-  <u-ref-card type="web" href="https://example1.com" heading="Source 1"></u-ref-card>
-  <u-ref-card type="web" href="https://example2.com" heading="Source 2"></u-ref-card>
+  <u-ref-card type="web" url="https://example1.com" title="Source 1"></u-ref-card>
+  <u-ref-card type="web" url="https://example2.com" title="Source 2"></u-ref-card>
 </u-ref-card-group>
 ```
 
@@ -43,7 +43,7 @@
 
 ## u-ref-tag
 
-본문 내 인용 참조를 태그 형태로 표시합니다.
+본문 내 인용 참조를 태그 형태로 표시합니다. `u-marked-block`의 `refs` 프로퍼티로 자동 생성되므로 직접 사용할 일은 드뭅니다.
 
 | Property | Type | Description |
 |----------|------|-------------|
