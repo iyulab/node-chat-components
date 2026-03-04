@@ -1,4 +1,4 @@
-﻿import { nothing } from "lit";
+﻿import { nothing, PropertyValues } from "lit";
 import { property } from "lit/decorators.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 
@@ -44,7 +44,7 @@ export class UMarkedBlock extends UElement {
   /** 컨텐츠의 인용 출처들입니다. */
   @property({ type: Array }) refs?: ReferenceCitation[];
   
-  /** Marked 인스턴스: 커스텀 렌더러와 KaTeX 확장 포함 */
+  // Marked 인스턴스: 커스텀 렌더러와 KaTeX 확장 포함
   private parser = new Marked({
     pedantic: false,
     gfm: true,
@@ -56,14 +56,43 @@ export class UMarkedBlock extends UElement {
     },
   }).use(markedKatex({ output: "mathml" }));
 
-  /** Marked 파싱 중 ref HTML을 임시 보관하는 플레이스홀더 */
+  // Marked 파싱 중 HTML을 임시 보관하는 플레이스홀더
   private placeholder = new HtmlPlaceholder();
+  // 렌더링 지연 플래그
+  private queued: boolean = false;
+  private timer?: number;
+
+  disconnectedCallback(): void {
+    clearTimeout(this.timer);
+    super.disconnectedCallback();
+  }
+
+  protected override shouldUpdate(_changedProperties: PropertyValues): boolean {
+    // 대기 중이면 렌더링 건너뛰기
+    if (this.queued) return false; 
+    return true;
+  }
+
+  protected override willUpdate(changedProperties: PropertyValues): void {
+    super.willUpdate(changedProperties);
+
+    if (changedProperties.has("value")) {
+      if (this.queued) return;
+      this.queued = true;
+
+      this.timer = window.setTimeout(() => {
+        this.queued = false;
+        this.requestUpdate();
+      }, 80);
+    }
+  }
 
   render() {
-    if (!this.value) return nothing;
+    let value = this.value;
+    if (!value) return nothing;
 
     this.placeholder.reset();
-    let value = stripZeroWidth(this.value);
+    value = stripZeroWidth(value);
 
     // 참조객체가 있을 때만 refs 태그를 삽입하여 파싱 안정성 확보
     if (this.refs?.length) {

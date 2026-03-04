@@ -1,10 +1,13 @@
 ﻿import { html } from "lit";
 import { property } from "lit/decorators.js";
+import { repeat } from "lit/directives/repeat.js";
 
 import { UElement } from "@iyulab/components/dist/components/UElement.js";
 import { UIcon } from "@iyulab/components/dist/components/icon/UIcon.component.js";
 import { UButton } from "@iyulab/components/dist/components/button/UButton.component.js";
 import { UTextBlock } from "../blocks/UTextBlock.component.js";
+import { UFileBlock } from "../blocks/UFileBlock.component.js";
+import type { FileBlockItem } from "../../types/BlockItem.js";
 import { styles } from "./UPrompt.styles.js";
 
 /**
@@ -17,6 +20,7 @@ export class UPrompt extends UElement {
     'u-icon': UIcon,
     'u-button': UButton,
     'u-text-block': UTextBlock,
+    'u-file-block': UFileBlock,
   };
 
   /** 로딩 상태 여부 */
@@ -29,6 +33,8 @@ export class UPrompt extends UElement {
   @property({ type: String }) placeholder?: string;
   /** 입력 필드의 값 */
   @property({ type: String }) value?: string;
+  /** 입력 첨부 파일 목록 */
+  @property({ type: Array }) files?: FileBlockItem[];
 
   connectedCallback(): void {
     super.connectedCallback();
@@ -39,8 +45,23 @@ export class UPrompt extends UElement {
     return html`
       <slot name="header"></slot>
 
-      <u-text-block part="input"
-        editable
+      <div class="files" part="files"
+        ?hidden=${!this.files || this.files.length === 0}>
+        ${repeat(this.files || [], (_, i) => i, (file, index) => html`
+          <u-file-block
+            data-index=${index}
+            .removable=${true}
+            .status=${file.status}
+            .name=${file.name}
+            .type=${file.mimeType}
+            .size=${file.size}
+            @u-remove=${this.handleRemoveFile}
+          ></u-file-block>
+        `)}
+      </div>
+
+      <u-text-block class="input" part="input"
+        .editable=${true}
         .minRows=${this.minRows}
         .maxRows=${this.maxRows}
         .value=${this.value}
@@ -68,16 +89,34 @@ export class UPrompt extends UElement {
     `;
   }
 
+  /**
+   * 입력된 텍스트와 첨부 파일을 제출하거나, 로딩 중인 경우 취소 이벤트를 발생시킵니다.
+   * 텍스트 또는 첨부 파일이 없는 경우에는 아무런 동작도 하지 않습니다.
+   */
   public send() {
-    const value = this.value?.trim();
-
     if (this.loading) {
       this.emit('u-cancel');
-    } else if (value) {
-      this.emit('u-submit', { value: this.value });
+      return;
+    }
+
+    const hasValue = this.value && this.value.trim() !== '';
+    const hasFiles = this.files && this.files.length > 0;
+    
+    if (hasValue || hasFiles) {
+      this.emit('u-submit', { value: this.value, files: this.files });
       this.value = '';
-    } else {
-      // nothing to do
+      this.files = [];
+    }
+  }
+
+  private handleRemoveFile(e: CustomEvent) {
+    e.stopPropagation();
+    const index = (e.target as HTMLElement).dataset.index;
+    
+    if (index !== undefined && this.files) {
+      const removedFile = this.files[Number(index)];
+      this.files = this.files.filter((_, i) => i !== Number(index));
+      this.emit('u-remove', { file: removedFile });
     }
   }
 

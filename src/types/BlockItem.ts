@@ -4,6 +4,8 @@ import type { JsonNode } from "./JsonNode";
 /** LLM 추론 텍스트 블록입니다. */
 export interface ThinkingBlockItem {
   type: "thinking";
+  /** 추론 중 로딩 상태 여부 */
+  loading?: boolean;
   /** 추론 텍스트 내용 */
   value?: string;
 }
@@ -24,9 +26,28 @@ export interface MarkdownBlockItem {
   refs?: ReferenceCitation[];
 }
 
+/** 파일 하나의 데이터 구조입니다. */
+export interface FileBlockItem {
+  type: "file";
+  /** 파일 상태 */
+  status?: "idle" | "uploading" | "error";
+  /** 파일 이름 */
+  name?: string;
+  /** 파일 크기 (bytes) */
+  size?: number;
+  /** MIME 타입 (예: "image/png", "application/pdf") */
+  mimeType?: string;
+  /** 다운로드 URL */
+  url?: string;
+  /** 실제 파일 데이터 (선택적, 필요에 따라 사용) */
+  data?: any;
+}
+
 /** 툴 사용 블록입니다. */
 export interface ToolBlockItem {
   type: "tool";
+  /** 툴 사용 중 로딩 상태 여부 */
+  loading?: boolean;
   /** 도구 블록 제목 */
   title?: string;
   /** 도구 블록 입력값(json) */
@@ -42,35 +63,6 @@ export interface ReferenceBlockItem {
   sources: ReferenceSource[];
 }
 
-/** 파일 첨부 블록입니다. */
-export type FileUploadStatus =
-  | { phase: "uploading"; progress?: number }   // 0~100
-  | { phase: "done" }
-  | { phase: "error"; message?: string };
-
-/** 파일 하나의 데이터 구조입니다. */
-export interface FileItem {
-  /** 파일 ID (옵션) */
-  fileId?: string;
-  /** 파일 이름 */
-  name: string;
-  /** MIME 타입 (예: "image/png", "application/pdf") */
-  type?: string;
-  /** 파일 크기 (bytes) */
-  size?: number;
-  /** 파일 업로드 상태 */
-  upload?: FileUploadStatus;
-  /** 다운로드 URL */
-  downloadUrl?: string;
-}
-
-/** 복수 파일 첨부 블록입니다. */
-export interface FilesBlockItem {
-  type: "files";
-  /** 파일 목록 */
-  files: FileItem[];
-}
-
 /**
  * 타입별 메시지 컨텐츠 아이템
  */
@@ -78,7 +70,7 @@ export type BlockItem = (
   ThinkingBlockItem |
   TextBlockItem |
   MarkdownBlockItem |
+  FileBlockItem |
   ToolBlockItem |
-  ReferenceBlockItem |
-  FilesBlockItem
+  ReferenceBlockItem
 );

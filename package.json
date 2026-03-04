@@ -42,11 +42,18 @@
   },
   "dependencies": {
     "@iyulab/components": "^0.4.0",
-    "chart.js": "^4.5.1",
     "highlight.js": "^11.11.1",
     "lit": "^3.3.2",
     "marked": "^17.0.3",
     "marked-katex-extension": "^5.1.7"
+  },
+  "peerDependencies": {
+    "chart.js": "^4.5.1"
+  },
+  "peerDependenciesMeta": {
+    "chart.js": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@eslint/js": "^9.39.3",

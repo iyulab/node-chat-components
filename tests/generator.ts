@@ -1,7 +1,17 @@
 import OpenAI from 'openai';
-import type { ResponseInput } from 'openai/resources/responses/responses.mjs';
+import type { ResponseInput, ResponseInputContent, ResponseOutputMessage, ResponseOutputText } from 'openai/resources/responses/responses.mjs';
 import type { AssistantMessage, Message } from "./messages";
 import type { BlockItem } from '../src/types/BlockItem';
+import { ReferenceCitation } from '../src';
+
+export interface ResponseOptions {
+  model?: string;
+  reasoningEffort?: string;
+  reasoningSummary?: 'auto' | 'concise' | 'detailed';
+  toolChoice?: 'auto' | 'required' | 'none';
+  truncation?: 'auto' | 'disabled';
+  webSearch?: boolean;
+}
 
 const openai = new OpenAI({
   apiKey: import.meta.env.VITE_OPENAI_API_KEY,
@@ -11,31 +21,64 @@ const openai = new OpenAI({
 export async function* generateStreamingMessage(
   messages: Message[],
   instructions?: string,
-  signal?: AbortSignal
+  signal?: AbortSignal,
+  options?: ResponseOptions,
 ): AsyncGenerator<AssistantMessage, void, unknown> {
   // Message 배열을 입력 텍스트로 변환
   const input = messages.reduce<ResponseInput>((acc, msg) => {
-    if (msg.role !== 'user' && msg.role !== 'assistant') {
-      return acc; // skip
+    if (msg.role === 'user') {
+      acc.push({
+        type: 'message',
+        role: msg.role,
+        content: msg.items.map(item => {
+          if (item.type === 'text') {
+            return {
+              type: 'input_text',
+              text: item.value,
+            };
+          }
+          if (item.type === 'file') {
+            if (item.mimeType?.startsWith('image/')) {
+              return {
+                type: 'input_image',
+                image_url: item.data,
+              };
+            } else {
+              return {
+                type: 'input_file',
+                filename: item.name,
+                file_data: item.data,
+              };
+            }
+          }
+          return null; // skip non-text items
+        }).filter(Boolean) as ResponseInputContent[],
+      });
+    } else if (msg.role === 'assistant') {
+      acc.push({
+        type: 'message',
+        role: msg.role,
+        content: msg.items.map(item => {
+          if (item.type === 'markdown') {
+            return {
+              type: 'output_text',
+              text: item.value,
+            };
+          }
+          return null; // skip non-markdown items
+        }).filter(Boolean) as ResponseOutputText[],
+      }as ResponseOutputMessage);
     }
-
-    const content = msg.items
-      .filter(item => item.type === 'text' || item.type === 'markdown')
-      .map((item: any) => item.value)
-      .join('\n\n');
-
-    acc.push({
-      type: 'message',
-      role: msg.role,
-      content: content,
-    });
-
     return acc;
   }, []);
 
+  const tools = options?.webSearch !== false
+    ? [{ type: 'web_search' as const }]
+    : [];
+
   const stream = await openai.responses.create({
-    model: 'gpt-5-mini',
-    instructions: `You are a helpful AI assistant that can use various widgets and actions to enhance your responses.${instructions ? '\n\n' + instructions : ''}`,
+    model: options?.model ?? 'gpt-5-nano',
+    instructions: instructions,
     include: [
       'reasoning.encrypted_content',
       'web_search_call.action.sources',
@@ -43,14 +86,12 @@ export async function* generateStreamingMessage(
     ],
     input: input,
     reasoning: {
-      effort: 'low', 
-      summary: 'detailed' 
+      effort: options?.reasoningEffort as any ?? 'none',
+      summary: options?.reasoningSummary ?? 'detailed',
     },
-    tools: [
-      { type: 'web_search' },
-    ],
-    tool_choice: 'auto',
-    truncation: 'auto',
+    tools: tools,
+    tool_choice: options?.toolChoice ?? 'auto',
+    truncation: options?.truncation ?? 'auto',
     stream: true,
   }, {
     signal: signal
@@ -61,94 +102,108 @@ export async function* generateStreamingMessage(
 
   try {
     for await (const event of stream) {
-      console.log(event);
-      const eventType = (event as any).type;
-      if (!eventType) continue;
+      console.log('event:', event);
 
       let shouldYield = false;
 
-      // delta 이벤트 처리 (텍스트 스트리밍)
-      if (eventType === 'response.output_text.delta' || eventType === 'response.reasoning_summary_text.delta') {
-        const deltaText = (event as any).delta;
-        
-        if (deltaText && typeof deltaText === 'string') {
-          // reasoning delta
-          if (eventType === 'response.reasoning_summary_text.delta') {
-            const existing = blocks.find(b => b.type === 'thinking');
-            if (existing) {
-              existing.value += deltaText;
-            } else {
-              blocks.push({ type: 'thinking', value: deltaText });
-            }
-          }
-          // output text delta  
-          else if (eventType === 'response.output_text.delta') {
-            const existing = blocks.find(b => b.type === 'markdown');
-            if (existing) {
-              existing.value += deltaText;
-            } else {
-              blocks.push({ type: 'markdown', value: deltaText, refs: [] });
-            }
-          }
-          
-          // delta는 즉시 yield
-          yield {
-            id: messageId,
-            role: 'assistant',
-            items: [...blocks]
-          };
-          continue;
+      // output_item 추가 이벤트 처리
+      if (event.type === 'response.output_item.added') {
+        const item = event.item;
+        if (item.type === 'reasoning') {
+          // reasoning 블록 추가
+          blocks.push({ 
+            type: 'thinking',
+            loading: true, 
+            value: '' 
+          });
+          shouldYield = true;
+        } else if (item.type === 'message') {
+          // message 블록 추가
+          blocks.push({ 
+            type: 'markdown', 
+            value: '', refs: [] 
+          });
+          shouldYield = true;
+        } else if (item.type === 'web_search_call') {
+          // 웹 검색 시작 시 블록 추가
+          blocks.push({
+            type: 'tool',
+            loading: true,
+            title: `Web Search`,
+          });
+          shouldYield = true;
         }
       }
 
-      // output_item 관련 이벤트 처리
-      if (eventType.includes('output_item') && !eventType.includes('delta')) {
-        const item = (event as any).item || (event as any).output_item;
-        if (!item) continue;
-
-        // done 이벤트는 무시 (delta로 이미 처리됨)
-        if (eventType === 'response.output_item.done') {
-          continue;
-        }
-
-        // reasoning 블록 초기화
-        if (eventType === 'response.output_item.added' && item.type === 'reasoning') {
-          if (!blocks.find(b => b.type === 'thinking')) {
-            blocks.push({ type: 'thinking', value: '' });
-          }
-        }
-        // message 블록 초기화
-        else if (eventType === 'response.output_item.added' && item.type === 'message') {
-          if (!blocks.find(b => b.type === 'markdown')) {
-            blocks.push({ type: 'markdown', value: '', refs: [] });
-          }
-        }
-        // web_search_call 블록 처리
-        else if (item.type === 'web_search_call') {
-          const action = (item as any).action;
-          if (action) {
-            if (action.type === 'search') {
-              blocks.push({
-                type: 'tool',
-                title: 'Web Search',
-                input: { queries: action.queries },
-                output: { sources: action.sources },
-              });
-            } else if (action.type === 'open_page') {
-              blocks.push({
-                type: 'tool',
-                title: 'Web Page Open',
-                input: { url: action.url },
-              });
-            } else {
-              blocks.push({
-                type: 'tool',
-                title: 'Web Search Action',
-                input: action,
-              });
+      // output_item 완료 이벤트 처리
+      if (event.type === 'response.output_item.done') {
+        const item = event.item;
+        if (item.type === 'reasoning') {
+          // reasoning 블록 완료
+          const lastBlock = blocks[blocks.length - 1];
+          if (lastBlock && lastBlock.type === 'thinking') {
+            let text = '';
+            for (const part of item.summary || []) {
+              if (part.type === 'summary_text') {
+                text += part.text;
+              }
             }
+            lastBlock.loading = false;
+            lastBlock.value = text;
             shouldYield = true;
           }
+        } else if (item.type === 'message') {
+          // message 블록 완료
+          const lastBlock = blocks[blocks.length - 1];
+          if (lastBlock && lastBlock.type === 'markdown') {
+            let text = '';
+            let refs: ReferenceCitation[] = [];
+            for (const part of item.content) {
+              if (part.type === 'output_text') {
+                text += part.text;
+                for (const ann of part.annotations) {
+                  if (ann.type === 'url_citation') {
+                    refs.push({
+                      startIndex: ann.start_index,
+                      endIndex: ann.end_index,
+                      label: ann.title,
+                      sources: [{
+                        type: 'web',
+                        url: ann.url,
+                        title: ann.title,
+                      }],
+                    });
+                  }
+                }
+              }
+            }
+            lastBlock.value = text;
+            lastBlock.refs = refs;
+            shouldYield = true;
+          }
+        } else if (item.type === 'web_search_call') {
+          // 웹 검색 결과 완료 시 블록 업데이트
+          const lastBlock = blocks[blocks.length - 1];
+          if (lastBlock && lastBlock.type === 'tool') {
+            lastBlock.loading = false;
+            lastBlock.input = { ...item.action } as any;
+            shouldYield = true;
+          }
+        }
+      }
+
+      // delta 이벤트 처리 (텍스트 스트리밍)
+      if (event.type === 'response.reasoning_summary_text.delta') {
+        const lastBlock = blocks[blocks.length - 1];
+        if (lastBlock && lastBlock.type === 'thinking') {
+          lastBlock.value += event.delta;
+          shouldYield = true;
+        }
+      } else if (event.type === 'response.output_text.delta') {
+        const lastBlock = blocks[blocks.length - 1];
+        if (lastBlock && lastBlock.type === 'markdown') {
+          lastBlock.value += event.delta;
+          shouldYield = true;
         }
       }
       

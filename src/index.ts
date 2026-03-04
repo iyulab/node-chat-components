@@ -1,6 +1,6 @@
 // components exports
 export * from './components/blocks/UCodeBlock.js';
-export * from './components/blocks/UFilesBlock.js';
+export * from './components/blocks/UFileBlock.js';
 export * from './components/blocks/UJsonBlock.js';
 export * from './components/blocks/UMarkedBlock.js';
 export * from './components/blocks/UTextBlock.js';

@@ -217,7 +217,7 @@ export class UTableBlock extends UJsonElement {
       ...this.rows.map(row => row.map(cell => escCsv(cell.text)).join(","))
     ];
     const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8;" });
-    this.triggerDownload("table.csv", blob);
+    this.triggerDownload(`table-${Date.now()}.csv`, blob);
   }
 
   /* XLS 다운로드 핸들러 */
@@ -242,7 +242,7 @@ export class UTableBlock extends UJsonElement {
     ].join("\n");
 
     const blob = new Blob([xml], { type: "application/vnd.ms-excel;charset=utf-8;" });
-    this.triggerDownload("table.xls", blob);
+    this.triggerDownload(`table-${Date.now()}.xls`, blob);
   }
 
   /* 파일 다운로드 트리거 */

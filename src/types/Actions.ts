@@ -14,6 +14,8 @@ export interface ActionDefinition {
   description: string;
   /** LLM용 속성 스키마 */
   properties?: Record<string, JsonSchema>;
+  /** LLM용 필수 속성 이름 목록 */
+  required?: string[];
 }
 
 /** 프리셋 Action 비트 플래그 */
@@ -38,17 +40,16 @@ export const PRESET_ACTION_DEFINITIONS = new Map<PresetAction, ActionDefinition>
         question: {
           type: 'string',
           description: 'Optional question text displayed above the choices (e.g. "What would you like to explore?")',
-          examples: ['What would you like to do next?'],
         } as any,
         choices: {
           type: 'array',
           items: { type: 'string' },
           minItems: 1,
           maxItems: 5,
-          description: 'Clickable choice buttons (1–5 items)',
-          examples: [['What are the main differences?', 'Can you show me an example?', 'What should I learn next?']],
+          description: 'Clickable choice buttons (1–5 items)'
         } as any,
       },
+      required: ['choices'],
     }
   ],
 ]);

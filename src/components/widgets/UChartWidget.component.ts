@@ -1,13 +1,22 @@
 ﻿import { html, nothing, PropertyValues } from "lit";
 import { property, query, state } from "lit/decorators.js";
 
-import { Chart } from "chart.js/auto";
-import type { ChartType, ChartData, ChartOptions } from "chart.js/auto";
+import type { Chart as ChartInstance, ChartType, ChartData, ChartOptions } from "chart.js/auto";
 
 import { UElement } from "@iyulab/components/dist/components/UElement.js";
 import { UIcon } from "@iyulab/components/dist/components/icon/UIcon.component.js";
 import { UButton } from "@iyulab/components/dist/components/button/UButton.component.js";
 import { styles } from "./UChartWidget.styles.js";
+
+/** chart.js lazy load */
+let ChartCtor: typeof ChartInstance | undefined;
+async function loadChartJS(): Promise<typeof ChartInstance> {
+  if (!ChartCtor) {
+    const mod = await import("chart.js/auto");
+    ChartCtor = mod.Chart;
+  }
+  return ChartCtor;
+}
 
 /**
  * 차트 위젯 컴포넌트
@@ -33,14 +42,13 @@ export class UChartWidget extends UElement {
   /** 차트 생성 에러 메시지 */
   @state() private error: string | null = null;
 
-  private chartjs: Chart | null = null;
+  private chartjs: ChartInstance | null = null;
   private observer?: MutationObserver;
 
   connectedCallback() {
     super.connectedCallback();
-    // 다크/라이트 테마 전환 감지 → defaults 갱신 후 차트 재생성
+    // 다크/라이트 테마 전환 감지 → 차트 재생성 (내부에서 테마 적용)
     this.observer = new MutationObserver(() => {
-      this.applyTheme();
       this.createChart();
     });
     this.observer.observe(document.documentElement, {
@@ -96,12 +104,20 @@ export class UChartWidget extends UElement {
   }
 
   /** Chart.js로 차트 생성 */
-  private createChart() {
+  private async createChart() {
     if (!this.canvas) return;
     if (!this.type || !this.data) return;
 
     this.destroyChart();
     this.error = null;
+
+    let Chart: typeof ChartInstance;
+    try {
+      Chart = await loadChartJS();
+    } catch {
+      this.error = 'chart.js를 로드할 수 없습니다. chart.js 패키지가 설치되어 있는지 확인하세요.';
+      return;
+    }
 
     const ctx = this.canvas.getContext('2d');
     if (!ctx) {
@@ -110,7 +126,7 @@ export class UChartWidget extends UElement {
     }
 
     try {
-      this.applyTheme();
+      this.applyTheme(Chart);
       this.chartjs = new Chart(ctx, {
         type: this.type,
         data: this.data,
@@ -134,7 +150,7 @@ export class UChartWidget extends UElement {
   }
 
   /** 현재 테마의 CSS 변수를 읽어 Chart.defaults에 전역 적용 */
-  private applyTheme() {
+  private applyTheme(Chart: typeof ChartInstance) {
     const css = (v: string) => getComputedStyle(this).getPropertyValue(v).trim();
     const textColor   = css('--u-txt-color');
     const weakColor   = css('--u-txt-color-weak');
@@ -159,7 +175,7 @@ export class UChartWidget extends UElement {
     const url = this.chartjs.toBase64Image('image/png', 1);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'chart-image.png';
+    a.download = `chart-image-${Date.now()}.png`;
     a.click();
   }
 
@@ -170,7 +186,7 @@ export class UChartWidget extends UElement {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'chart-data.json';
+    a.download = `chart-data-${Date.now()}.json`;
     a.click();
     URL.revokeObjectURL(url);
   }

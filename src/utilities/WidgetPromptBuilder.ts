@@ -75,37 +75,35 @@ export class WidgetPromptBuilder {
   public build(): string {
     if (this.widgets.size === 0) return '';
 
-    const widgets = Array.from(this.widgets.values());
-
-    const widgetList = widgets
-      .map(w => `- \`${w.tag}\`: ${w.description}`)
-      .join('\n');
-
-    const widgetDocs = widgets.map(w => {
+    const defs = Array.from(this.widgets.values());
+    const docs = defs.map(def => {
         const lines: string[] = [
-          `### ${w.tag}`,
+          `### ${def.tag}`,
           '',
-          `**Tag:** \`${w.tag}\``,
+          '**JSON Schema:**',
+          '```widget-json',
+          JSON.stringify({
+            type: 'object',
+            description: def.description,
+            properties: {
+              tag: {
+                type: 'string',
+                enum: [def.tag]
+              },
+              properties: {
+                type: 'object',
+                properties: def.properties || {},
+                required: def.required || []
+              }
+            },
+            required: ['tag'],
+          }, null, 2),
+          '```',
         ];
-        if (w.properties) {
-          lines.push(
-            '',
-            '**Properties (JSON Schema):**',
-            '```json',
-            JSON.stringify({
-              type: 'object',
-              properties: w.properties,
-              ...(w.required ? { required: w.required } : {}),
-            }, null, 2),
-            '```',
-          );
-        }
         return lines.join('\n');
       })
       .join('\n\n---\n\n');
 
-    return template
-      .replace('{{WIDGET_LIST}}', widgetList)
-      .replace('{{WIDGET_DOCS}}', widgetDocs);
+    return template.replace('{{WIDGET_DOCS}}', docs);
   }
 }

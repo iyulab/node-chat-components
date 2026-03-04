@@ -38,7 +38,17 @@ export const styles = css`
     mask-composite: exclude;
   }
 
-  u-text-block {
+  .files {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .files u-file-block {
+    flex: 0 1 auto;
+  }
+
+  .input {
     flex: 1;
     padding: 8px;
   }

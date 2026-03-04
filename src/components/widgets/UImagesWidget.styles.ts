@@ -20,9 +20,10 @@ export const styles = css`
     height: 100%;
     object-fit: cover;
     pointer-events: none;
-    transition: filter 0.2s ease;
+    transition: transform 0.3s ease, filter 0.3s ease;
   }
   .slide:hover img {
+    transform: scale(1.05);
     filter: brightness(0.92);
   }
 

@@ -64,34 +64,34 @@ export class ActionPromptBuilder {
     if (this.actions.size === 0) return '';
 
     const defs = Array.from(this.actions.values());
-
-    const actionList = defs
-      .map(d => `- \`${d.type}\`: ${d.description}`)
-      .join('\n');
-
-    const actionDocs = defs.map(def => {
+    const docs = defs.map(def => {
       const lines: string[] = [
         `### ${def.type}`,
         '',
-        def.description,
-        '',
-        `**Type:** \`${def.type}\``,
+        '**JSON Schema:**',
+        '```action-json',
+        JSON.stringify({
+          type: 'object',
+          description: def.description,
+          properties: {
+            type: {
+              type: 'string',
+              enum: [def.type]
+            },
+            properties: {
+              type: 'object',
+              properties: def.properties || {},
+              required: def.required || []
+            }
+          },
+          required: ['type'],
+        }, null, 2),
+        '```',
       ];
-      if (def.properties) {
-        lines.push(
-          '',
-          '**Properties (JSON Schema):**',
-          '```json',
-          JSON.stringify({ type: 'object', properties: def.properties }, null, 2),
-          '```',
-        );
-      }
       return lines.join('\n');
     }).join('\n\n---\n\n');
 
-    return template
-      .replace('{{ACTION_LIST}}', actionList)
-      .replace('{{ACTION_DOCS}}', actionDocs);
+    return template.replace('{{ACTION_DOCS}}', docs);
   }
 
   /**

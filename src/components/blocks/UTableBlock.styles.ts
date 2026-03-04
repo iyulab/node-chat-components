@@ -66,7 +66,6 @@ export const styles = css`
 
   thead {
     position: sticky;
-    z-index: 10;
     top: 0;
   }
 
