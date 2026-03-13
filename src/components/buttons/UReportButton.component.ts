@@ -20,7 +20,7 @@ export class UReportButton extends UElement {
   render() {
     return html`
       <u-button part="base" 
-        variant="borderless">
+        variant="ghost">
         <u-icon part="icon"
           lib="internal"
           name="flag"

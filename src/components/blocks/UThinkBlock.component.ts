@@ -23,13 +23,15 @@ export class UThinkBlock extends UElement {
   @property({ type: Boolean, reflect: true }) loading: boolean = false;
   /** 컨텐츠가 접혀있는지 여부 */
   @property({ type: Boolean, reflect: true }) collapsed: boolean = true;
+  /** 컨텐츠 업데이트 시 자동으로 스크롤할지 여부 */
+  @property({ type: Boolean, attribute: 'auto-scroll' }) autoScroll: boolean = false;
   /** 추론 컨텐츠의 내용 */
   @property({ type: String }) value?: string;
 
   protected updated(changedProperties: PropertyValues) {
     super.updated(changedProperties);
 
-    if (changedProperties.has('value') && this.value) {
+    if (changedProperties.has('value') && this.autoScroll) {
       this.scrollToBottom();
     }
   }
@@ -53,7 +55,9 @@ export class UThinkBlock extends UElement {
       </div>
       
       <div class="body" part="body" scrollable 
-        ?hidden=${this.collapsed}>
+        ?hidden=${this.collapsed}
+        @wheel=${this.handleUserInterrupt}
+        @touchstart=${this.handleUserInterrupt}>
         <u-marked-block
           .value=${this.value}
         ></u-marked-block>
@@ -62,10 +66,11 @@ export class UThinkBlock extends UElement {
   }
 
   /**
-   * 컨텐츠가 로딩 중일 때, 스크롤을 맨 아래로 이동
+   * 컨텐츠 스크롤을 맨 아래로 이동
+   * @returns 스크롤 작업이 시작되었는지 여부 (bodyEl이 존재할 때만 true)
    */
-  private scrollToBottom = () => {
-    if (!this.bodyEl) return;
+  public scrollToBottom(): boolean {
+    if (!this.bodyEl) return false;
 
     requestAnimationFrame(() => {
       this.bodyEl.scrollTo({ 
@@ -73,5 +78,16 @@ export class UThinkBlock extends UElement {
         behavior: 'smooth'
       });
     });
+    return true;
+  }
+
+  /**
+   * 사용자의 스크롤 인터럽트 처리
+   * 휠이나 터치 입력 시 자동 스크롤 중지
+   */
+  private handleUserInterrupt = () => {
+    if (this.autoScroll) {
+      this.autoScroll = false;
+    }
   }
 }

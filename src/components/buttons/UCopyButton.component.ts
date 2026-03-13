@@ -29,7 +29,7 @@ export class UCopyButton extends UElement {
   render() {
     return html`
       <u-button part="base" 
-        variant="borderless"
+        variant="ghost"
         ?disabled=${this.isCopied}
         @click=${this.copyToClipboard}>
         <u-icon part="icon"

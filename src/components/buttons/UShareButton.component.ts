@@ -19,8 +19,7 @@ export class UShareButton extends UElement {
 
   render() {
     return html`
-      <u-button part="base" 
-        variant="borderless">
+      <u-button part="base" variant="ghost">
         <u-icon part="icon"
           lib="internal"
           name="share"

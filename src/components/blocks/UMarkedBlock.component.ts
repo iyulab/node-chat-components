@@ -9,7 +9,6 @@ import { UElement } from "@iyulab/components/dist/components/UElement.js";
 import { UJsonElement } from "@iyulab/components/dist/components/UJsonElement.js";
 import { escapeHtmlText, stripZeroWidth } from "@iyulab/components/dist/utilities/sanitizers.js";
 import { buildElementHTML } from "@iyulab/components/dist/utilities/elements.js";
-import { UTooltip } from "@iyulab/components/dist/components/tooltip/UTooltip.component.js";
 import { UCodeBlock } from "./UCodeBlock.component.js";
 import { UTableBlock } from "./UTableBlock.component.js";
 import { URefTag } from "../references/URefTag.component.js";
@@ -30,7 +29,6 @@ import { styles } from "./UMarkedBlock.styles.js";
 export class UMarkedBlock extends UElement {
   static styles = [super.styles, styles];
   static dependencies: Record<string, typeof UElement> = {
-    "u-tooltip": UTooltip,
     "u-code-block": UCodeBlock,
     "u-table-block": UTableBlock,
     "u-ref-tag": URefTag,

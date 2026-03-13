@@ -27,8 +27,8 @@ export class UAttachButton extends UElement {
 
   render() {
     return html`
-      <u-button part="base" 
-        variant="borderless"
+      <u-button part="base"
+        variant="ghost"
         @click=${this.handleButtonClick}>
         <u-icon part="icon" 
           lib="internal" 

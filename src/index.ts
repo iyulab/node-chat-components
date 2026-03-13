@@ -45,3 +45,4 @@ export type * from './events/USubmitEvent';
 // utilities exports
 export * from './utilities/ActionPromptBuilder.js';
 export * from './utilities/WidgetPromptBuilder.js';
+export * from './utilities/dom-interaction/index.js';

@@ -50,7 +50,6 @@ export class UFileBlock extends UElement {
         <u-button class="download-btn"
           ?hidden=${!this.url || this.status === 'uploading' || this.status === 'error'}
           title="Download"
-          variant="borderless"
           @click=${this.handleDownloadClick}>
           <u-icon lib="internal" name="download"></u-icon>
         </u-button>
@@ -71,7 +70,6 @@ export class UFileBlock extends UElement {
       <u-button class="remove-btn"
         ?hidden=${!this.removable}
         title="Remove"
-        variant="borderless"
         @click=${this.handleRemoveClick}>
         <u-icon lib="internal" name="x-lg"></u-icon>
       </u-button>

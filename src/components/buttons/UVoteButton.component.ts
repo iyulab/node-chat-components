@@ -27,7 +27,7 @@ export class UVoteButton extends UElement {
   render() {
     return html`
       <u-button class="up-btn" part="up-btn"
-        variant="borderless"
+        variant="ghost"
         @click=${this.handleUpButtonClick}>
         <u-icon part="icon"
           lib="internal"
@@ -35,7 +35,7 @@ export class UVoteButton extends UElement {
         ></u-icon>
       </u-button>
       <u-button class="down-btn" part="down-btn"
-        variant="borderless"
+        variant="ghost"
         @click=${this.handleDownButtonClick}>
         <u-icon part="icon"
           lib="internal"
