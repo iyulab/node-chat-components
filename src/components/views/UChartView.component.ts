@@ -6,7 +6,7 @@ import type { Chart as ChartInstance, ChartType, ChartData, ChartOptions } from 
 import { UElement } from "@iyulab/components/dist/components/UElement.js";
 import { UIcon } from "@iyulab/components/dist/components/icon/UIcon.component.js";
 import { UButton } from "@iyulab/components/dist/components/button/UButton.component.js";
-import { styles } from "./UChartWidget.styles.js";
+import { styles } from "./UChartView.styles.js";
 
 /** chart.js lazy load */
 let ChartCtor: typeof ChartInstance | undefined;
@@ -19,10 +19,9 @@ async function loadChartJS(): Promise<typeof ChartInstance> {
 }
 
 /**
- * 차트 위젯 컴포넌트
- * Chart.js를 사용하여 다양한 차트를 렌더링
+ * Chart.js를 사용하여 다양한 차트를 렌더링하는 뷰 컴포넌트입니다.
  */
-export class UChartWidget extends UElement {
+export class UChartView extends UElement {
   static styles = [super.styles, styles];
   static dependencies: Record<string, typeof UElement> = {
     'u-icon': UIcon,
@@ -82,21 +81,21 @@ export class UChartWidget extends UElement {
         <div class="toolbar-right">
           <u-button title="PNG Download" @click=${this.handleDownloadPNG}>
             PNG
-            <u-icon slot="suffix" lib="internal" name="download"></u-icon>
+            <u-icon slot="suffix" lib="bootstrap" name="download"></u-icon>
           </u-button>
           <u-button title="JSON Download" @click=${this.handleDownloadJSON}>
             JSON
-            <u-icon slot="suffix" lib="internal" name="download"></u-icon>
+            <u-icon slot="suffix" lib="bootstrap" name="download"></u-icon>
           </u-button>
           <u-button title="Full Screen" @click=${this.handleFullscreen}>
-            <u-icon lib="internal" name="box-arrow-up-right"></u-icon>
+            <u-icon lib="bootstrap" name="box-arrow-up-right"></u-icon>
           </u-button>
         </div>
       </div>
       <div class="viewport">
         <canvas></canvas>
         <div class="error-overlay" ?hidden=${!this.error}>
-          <u-icon lib="internal" name="exclamation-triangle-fill"></u-icon>
+          <u-icon lib="bootstrap" name="exclamation-triangle-fill"></u-icon>
           <span>${this.error}</span>
         </div>
       </div>

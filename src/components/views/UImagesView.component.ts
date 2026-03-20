@@ -5,7 +5,7 @@ import { repeat } from "lit/directives/repeat.js";
 import { UElement } from "@iyulab/components/dist/components/UElement.js";
 import { UCarousel } from "@iyulab/components/dist/components/carousel/UCarousel.component.js";
 import { UIcon } from "@iyulab/components/dist/components/icon/UIcon.component.js";
-import { styles } from "./UImagesWidget.styles.js";
+import { styles } from "./UImagesView.styles.js";
 
 export interface ImageSlide {
   src: string;
@@ -14,10 +14,9 @@ export interface ImageSlide {
 }
 
 /**
- * 이미지 갤러리 위젯 컴포넌트
- * u-carousel 기반 가로 슬라이드 + 슬라이딩 라이트박스
+ * u-carousel 기반 가로 슬라이드 + 슬라이딩 라이트박스 형태의 이미지 뷰어입니다.
  */
-export class UImagesWidget extends UElement {
+export class UImagesView extends UElement {
   static styles = [super.styles, styles];
   static dependencies: Record<string, typeof UElement> = {
     'u-carousel': UCarousel,

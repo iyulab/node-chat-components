@@ -22,7 +22,7 @@ export class UReportButton extends UElement {
       <u-button part="base" 
         variant="ghost">
         <u-icon part="icon"
-          lib="internal"
+          lib="bootstrap"
           name="flag"
         ></u-icon>
       </u-button>

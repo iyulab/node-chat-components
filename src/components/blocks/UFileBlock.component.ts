@@ -51,7 +51,7 @@ export class UFileBlock extends UElement {
           ?hidden=${!this.url || this.status === 'uploading' || this.status === 'error'}
           title="Download"
           @click=${this.handleDownloadClick}>
-          <u-icon lib="internal" name="download"></u-icon>
+          <u-icon lib="bootstrap" name="download"></u-icon>
         </u-button>
       </div>
 

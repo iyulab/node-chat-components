@@ -44,7 +44,7 @@ export class UCodeBlock extends UElement {
         <span class="status">
           ${this.loading 
             ? html`<u-spinner></u-spinner>` 
-            : html`<u-icon lib="internal" name="code-slash"></u-icon>`}
+            : html`<u-icon lib="bootstrap" name="code-slash"></u-icon>`}
         </span>
         <span class="lang">
           ${lang}

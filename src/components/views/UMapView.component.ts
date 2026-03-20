@@ -2,12 +2,12 @@
 import { property } from "lit/decorators.js";
 
 import { UElement } from "@iyulab/components/dist/components/UElement.js";
-import { styles } from "./UMapWidget.styles.js";
+import { styles } from "./UMapView.styles.js";
 
 /**
- * 지도 위젯 컴포넌트 (OpenStreetMap embed)
+ * 지도 뷰 컴포넌트 (OpenStreetMap embed)
  */
-export class UMapWidget extends UElement {
+export class UMapView extends UElement {
   static styles = [super.styles, styles];
   static dependencies: Record<string, typeof UElement> = {};
 

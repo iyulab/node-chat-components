@@ -42,7 +42,7 @@ export class UThinkBlock extends UElement {
         @click=${() => this.collapsed = !this.collapsed}>
         <u-icon class="prefix-icon"
           ?loading=${this.loading}
-          lib="internal"
+          lib="bootstrap"
           name="lightbulb-fill"
         ></u-icon>
         <span class="title">

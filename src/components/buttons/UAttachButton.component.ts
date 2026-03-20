@@ -31,7 +31,7 @@ export class UAttachButton extends UElement {
         variant="ghost"
         @click=${this.handleButtonClick}>
         <u-icon part="icon" 
-          lib="internal" 
+          lib="bootstrap" 
           name="paperclip"
         ></u-icon>
       </u-button>

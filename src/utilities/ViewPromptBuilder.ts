@@ -1,35 +1,35 @@
-﻿import template from '../assets/widget-prompt.md?raw';
+﻿import template from '../assets/view-prompt.md?raw';
 import { UElement } from '@iyulab/components/dist/components/UElement.js';
 import {
-  PresetWidget, PRESET_WIDGET_LIST, PRESET_WIDGET_DEFINITIONS,
-  type WidgetDefinition
-} from '../types/Widgets.js';
+  PresetView, PRESET_VIEW_LIST, PRESET_VIEW_DEFINITIONS,
+  type ViewDefinition
+} from '../types/Views.js';
 
 /**
- * 위젯 등록, LLM 인스트럭션 빌드, HTML 렌더링을 통합 제공하는 유틸리티
+ * 뷰 등록, LLM 인스트럭션 빌드, HTML 렌더링을 통합 제공하는 유틸리티
  */
-export class WidgetPromptBuilder {
-  private static _instance: WidgetPromptBuilder;
-  private widgets = new Map<string, WidgetDefinition>();
+export class ViewPromptBuilder {
+  private static _instance: ViewPromptBuilder;
+  private views = new Map<string, ViewDefinition>();
 
   /**
    * 싱글톤 인스턴스를 반환합니다. 최초 호출 시 인스턴스가 생성됩니다.
    */
-  public static get instance(): WidgetPromptBuilder {
+  public static get instance(): ViewPromptBuilder {
     if (!this._instance) {
-      this._instance = new WidgetPromptBuilder();
+      this._instance = new ViewPromptBuilder();
     }
     return this._instance;
   }
 
   /**
-   * 위젯 정의를 등록합니다. 같은 이름의 위젯이 이미 등록되어 있으면 에러를 던집니다.
-   * @throws {Error} 같은 이름의 위젯이 이미 등록된 경우 또는 같은 태그의 커스텀 요소가 다른 클래스에 의해 정의된 경우
+   * 뷰 정의를 등록합니다. 같은 이름의 뷰이 이미 등록되어 있으면 에러를 던집니다.
+   * @throws {Error} 같은 이름의 뷰이 이미 등록된 경우 또는 같은 태그의 커스텀 요소가 다른 클래스에 의해 정의된 경우
    */
-  public add(definition: WidgetDefinition): WidgetPromptBuilder {
-    // 같은 이름의 위젯이 이미 등록되어 있으면 에러를 던집니다.
-    if (this.widgets.has(definition.tag)) {
-      throw new Error(`Widget with tag "${definition.tag}" is already registered.`);
+  public add(definition: ViewDefinition): ViewPromptBuilder {
+    // 같은 이름의 뷰이 이미 등록되어 있으면 에러를 던집니다.
+    if (this.views.has(definition.tag)) {
+      throw new Error(`View with tag "${definition.tag}" is already registered.`);
     }
     
     // 커스텀 요소가 이미 정의되어 있으면, 같은 클래스인지 확인합니다. 다른 클래스라면 에러를 던집니다.
@@ -45,22 +45,22 @@ export class WidgetPromptBuilder {
       customElements.define(definition.tag, definition.element);
     }
 
-    // 등록된 위젯 정보를 저장합니다.
-    this.widgets.set(definition.tag, definition);
+    // 등록된 뷰 정보를 저장합니다.
+    this.views.set(definition.tag, definition);
     return this;
   }
 
   /**
-   * 미리 정의된 프리셋 위젯을 사용합니다.
+   * 미리 정의된 프리셋 뷰을 사용합니다.
    * @example
-   * WidgetRegistry.use(Widget.Images | Widget.Chart);
-   * WidgetRegistry.use(Widget.All);
+   * ViewRegistry.use(View.Images | View.Chart);
+   * ViewRegistry.use(View.All);
    */
-  public use(flags: PresetWidget): WidgetPromptBuilder {
-    for (const flag of PRESET_WIDGET_LIST) {
-      // 플래그가 포함되어 있으면 해당 위젯을 등록합니다.
+  public use(flags: PresetView): ViewPromptBuilder {
+    for (const flag of PRESET_VIEW_LIST) {
+      // 플래그가 포함되어 있으면 해당 뷰을 등록합니다.
       if (flags & flag) {
-        const definition = PRESET_WIDGET_DEFINITIONS.get(flag);
+        const definition = PRESET_VIEW_DEFINITIONS.get(flag);
         if (definition) {
           this.add(definition);
         }
@@ -70,18 +70,18 @@ export class WidgetPromptBuilder {
   }
 
   /**
-   * 등록된 위젯들에 대한 LLM 인스트럭션 문자열을 생성합니다.
+   * 등록된 뷰들에 대한 LLM 인스트럭션 문자열을 생성합니다.
    */
   public build(): string {
-    if (this.widgets.size === 0) return '';
+    if (this.views.size === 0) return '';
 
-    const defs = Array.from(this.widgets.values());
+    const defs = Array.from(this.views.values());
     const docs = defs.map(def => {
         const lines: string[] = [
           `### ${def.tag}`,
           '',
           '**JSON Schema:**',
-          '```widget-json',
+          '```view-json',
           JSON.stringify({
             type: 'object',
             description: def.description,
@@ -104,6 +104,6 @@ export class WidgetPromptBuilder {
       })
       .join('\n\n---\n\n');
 
-    return template.replace('{{WIDGET_DOCS}}', docs);
+    return template.replace('{{VIEW_DOCS}}', docs);
   }
 }

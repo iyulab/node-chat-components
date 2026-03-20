@@ -1,13 +1,13 @@
 ﻿import { type JsonSchema } from "./JsonSchema.js";
-import { UImagesWidget } from "../components/widgets/UImagesWidget.component.js";
-import { UVideoWidget } from "../components/widgets/UVideoWidget.component.js";
-import { UMapWidget } from "../components/widgets/UMapWidget.component.js";
-import { UChartWidget } from "../components/widgets/UChartWidget.component.js";
+import { UImagesView } from "../components/views/UImagesView.component.js";
+import { UVideoView } from "../components/views/UVideoView.component.js";
+import { UMapView } from "../components/views/UMapView.component.js";
+import { UChartView } from "../components/views/UChartView.component.js";
 
 /**
- * 위젯을 정의하는 구조체
+ * View를 정의하는 구조체
  */
-export interface WidgetDefinition {
+export interface ViewDefinition {
   /** 등록할 커스텀 엘리먼트 클래스 */
   element: CustomElementConstructor;
   /** 등록할 커스텀 엘리먼트 태그명 */
@@ -21,9 +21,9 @@ export interface WidgetDefinition {
 }
 
 /**
- * 프리셋 위젯 비트 플래그
+ * 프리셋 View 비트 플래그
  */
-export enum PresetWidget {
+export enum PresetView {
   Images   = 1 << 0,
   Video    = 1 << 1,
   Map      = 1 << 3,
@@ -32,24 +32,24 @@ export enum PresetWidget {
 }
 
 /** 
- * 전체 프리셋 위젯 플래그 목록 
+ * 전체 프리셋 View 플래그 목록 
  */
-export const PRESET_WIDGET_LIST = [
-  PresetWidget.Images, 
-  PresetWidget.Video, 
-  PresetWidget.Map, 
-  PresetWidget.Chart
+export const PRESET_VIEW_LIST = [
+  PresetView.Images,
+  PresetView.Video,
+  PresetView.Map,
+  PresetView.Chart
 ] as const;
 
 /** 
- * 프리셋 위젯 정의 
+ * 프리셋 View 정의 
  */
-export const PRESET_WIDGET_DEFINITIONS = new Map<PresetWidget, WidgetDefinition>([
+export const PRESET_VIEW_DEFINITIONS = new Map<PresetView, ViewDefinition>([
   [
-    PresetWidget.Images, 
+    PresetView.Images,
     {
-      element: UImagesWidget,
-      tag: 'u-images-widget',
+      element: UImagesView,
+      tag: 'u-images-view',
       description: 'Display multiple images in a scrollable gallery',
       properties: {
         items: {
@@ -71,10 +71,10 @@ export const PRESET_WIDGET_DEFINITIONS = new Map<PresetWidget, WidgetDefinition>
     }
   ],
   [
-    PresetWidget.Video, 
+    PresetView.Video,
     {
-      element: UVideoWidget,
-      tag: 'u-video-widget',
+      element: UVideoView,
+      tag: 'u-video-view',
       description: 'Embed video from YouTube, Vimeo, or Others. Provide a direct video file URL or a platform URL.',
       properties: {
         src: { type: "string", description: "Video URL (YouTube, Vimeo, or direct video file URL)" },
@@ -90,10 +90,10 @@ export const PRESET_WIDGET_DEFINITIONS = new Map<PresetWidget, WidgetDefinition>
     }
   ],
   [
-    PresetWidget.Map, 
+    PresetView.Map,
     {
-      element: UMapWidget,
-      tag: 'u-map-widget',
+      element: UMapView,
+      tag: 'u-map-view',
       description: 'Display a map showing a single location',
       properties: {
         lat: { type: "number", description: "Latitude coordinate" },
@@ -112,11 +112,11 @@ export const PRESET_WIDGET_DEFINITIONS = new Map<PresetWidget, WidgetDefinition>
     }
   ],
   [
-    PresetWidget.Chart, 
+    PresetView.Chart,
     {
-      element: UChartWidget,
-      tag: 'u-chart-widget',
-      description: 'Display charts using Chart.js v4 format. Use standard Chart.js configuration (type, data, options). The widget accepts the exact same structure as Chart.js - no conversion needed.',
+      element: UChartView,
+      tag: 'u-chart-view',
+      description: 'Display charts using Chart.js v4 format. Use standard Chart.js configuration (type, data, options). The View accepts the exact same structure as Chart.js - no conversion needed.',
       properties: {
         type: { 
           type: "string", 

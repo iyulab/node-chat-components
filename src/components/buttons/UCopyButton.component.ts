@@ -33,7 +33,7 @@ export class UCopyButton extends UElement {
         ?disabled=${this.isCopied}
         @click=${this.copyToClipboard}>
         <u-icon part="icon"
-          lib="internal"
+          lib="bootstrap"
           name=${this.isCopied ? 'check-lg' : 'copy'}
         ></u-icon>
       </u-button>

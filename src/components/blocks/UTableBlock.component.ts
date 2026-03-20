@@ -3,7 +3,7 @@ import { property, state } from "lit/decorators.js";
 import { repeat } from "lit/directives/repeat.js";
 
 import { UElement } from "@iyulab/components/dist/components/UElement.js";
-import { UJsonElement } from "@iyulab/components/dist/components/UJsonElement.js";
+import { UDataElement } from "@iyulab/components/dist/components/UDataElement.js";
 import { UIcon } from "@iyulab/components/dist/components/icon/UIcon.component.js";
 import { UInput } from "@iyulab/components/dist/components/input/UInput.component.js";
 import { UButton } from "@iyulab/components/dist/components/button/UButton.component.js";
@@ -31,7 +31,7 @@ export interface SortState {
  * 컬럼 정렬, CSV 다운로드 기능을 지원합니다.
  * light DOM 내 `<script type="application/json">` 에서 데이터를 자동으로 읽어냅니다.
  */
-export class UTableBlock extends UJsonElement {
+export class UTableBlock extends UDataElement {
   static styles = [super.styles, styles];
   static dependencies: Record<string, typeof UElement> = {
     'u-icon': UIcon,
@@ -74,11 +74,11 @@ export class UTableBlock extends UJsonElement {
         <div class="toolbar-right">
           <u-button @click=${this.handleDownloadXLS} title="Excel Download">
             XLS
-            <u-icon slot="suffix" lib="internal" name="download"></u-icon>
+            <u-icon slot="suffix" lib="bootstrap" name="download"></u-icon>
           </u-button>
           <u-button @click=${this.handleDownloadCSV} title="CSV Download">
             CSV
-            <u-icon slot="suffix" lib="internal" name="download"></u-icon>
+            <u-icon slot="suffix" lib="bootstrap" name="download"></u-icon>
           </u-button>
         </div>
       </div>
@@ -97,7 +97,7 @@ export class UTableBlock extends UJsonElement {
                     ${h.text}
                     <u-icon
                       class="sort-icon"
-                      lib="internal"
+                      lib="bootstrap"
                       name=${isActive ? (this.sort.dir === "asc" ? "sort-alpha-up" : "sort-alpha-down") : "arrow-down-up"}
                     ></u-icon>
                   </th>

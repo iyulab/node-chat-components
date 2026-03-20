@@ -1,5 +1,5 @@
 import { VoteValue } from "../src/components/buttons/UVoteButton.component.js";
-import { ActionSchema } from "../src/types/Actions.js";
+import { IntentSchema } from "../src/types/Intents.js";
 import { BlockItem } from "../src/types/BlockItem";
 import { generateRandomId } from "./generator.js";
 
@@ -17,15 +17,15 @@ export interface AssistantMessage {
 }
 
 /**
- * LLM 응답의 action-json 블록에서 추출되어 생성됩니다.
+ * LLM 응답의 intent-json 블록에서 추출되어 생성됩니다.
  */
-export interface ActionMessage {
-  role: 'action';
+export interface IntentMessage {
+  role: 'intent';
   id: string;
-  items: ActionSchema[];
+  items: IntentSchema[];
 }
 
-export type Message = UserMessage | AssistantMessage | ActionMessage;
+export type Message = UserMessage | AssistantMessage | IntentMessage;
 
 export const messages: Message[] = [
 
@@ -131,7 +131,7 @@ interface Weather {
 
 ### 1. 이미지 갤러리
 
-\`\`\`widget-json
+\`\`\`view-json
 {
   "tag": "u-images-widget",
   "properties": {
@@ -147,7 +147,7 @@ interface Weather {
 
 ### 2. 비디오 플레이어
 
-\`\`\`widget-json
+\`\`\`view-json
 {
   "tag": "u-video-widget",
   "properties": {
@@ -159,7 +159,7 @@ interface Weather {
 
 ### 3. 지도
 
-\`\`\`widget-json
+\`\`\`view-json
 {
   "tag": "u-map-widget",
   "properties": {
@@ -174,7 +174,7 @@ interface Weather {
 
 ### 4. 차트
 
-\`\`\`widget-json
+\`\`\`view-json
 {
   "tag": "u-chart-widget",
   "properties": {

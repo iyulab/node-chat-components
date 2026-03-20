@@ -2,16 +2,16 @@ import { html, nothing, PropertyValues } from "lit";
 import { property, state } from "lit/decorators.js";
 
 import { UElement } from "@iyulab/components/dist/components/UElement.js";
-import { UJsonElement } from "@iyulab/components/dist/components/UJsonElement.js";
+import { UDataElement } from "@iyulab/components/dist/components/UDataElement.js";
 import { USkeleton } from "@iyulab/components/dist/components/skeleton/USkeleton.component.js";
-import { styles } from "./UWidget.styles.js";
+import { styles } from "./UView.styles.js";
 
 const DEFAULT_BLACKLIST = ["innerHTML", "outerHTML", "textContent", "innerText", "outerText", "srcdoc"];
 
 /**
- * 위젯 파싱/렌더링 오류를 표시하는 컴포넌트입니다.
+ * 뷰 컴포넌트를 렌더링 또는 오류를 표시하는 컴포넌트입니다.
  */
-export class UWidget extends UJsonElement {
+export class UView extends UDataElement {
   static styles = [super.styles, styles];
   static dependencies: Record<string, typeof UElement> = {
     "u-skeleton": USkeleton,
@@ -48,7 +48,7 @@ export class UWidget extends UJsonElement {
       return html`
         <div class="sk-container">
           <div class="sk-card">
-            <u-skeleton effect="shimmer" width="100%" height="5em"   shape="default"></u-skeleton>
+            <u-skeleton effect="shimmer" width="100%" height="5em"   shape="rectangle"></u-skeleton>
             <u-skeleton effect="shimmer" width="80%"  height="0.8em" shape="rounded"></u-skeleton>
             <u-skeleton effect="shimmer" width="40%"  height="0.75em" shape="rounded"></u-skeleton>
           </div>

@@ -5,7 +5,7 @@ import { UElement } from "@iyulab/components/dist/components/UElement.js";
 import { UIcon } from "@iyulab/components/dist/components/icon/UIcon.component.js";
 import { USpinner } from "@iyulab/components/dist/components/spinner/USpinner.component.js";
 import { UJsonBlock } from "./UJsonBlock.component.js";
-import { jsonAttrConverter } from "../../utilities/converters.js";
+import { jsonAttrConverter } from "@iyulab/components/dist/utilities/converters.js";
 import type { JsonNode } from "../../types/JsonNode.js";
 import { styles } from "./UToolBlock.styles.js";
 
@@ -27,16 +27,16 @@ export class UToolBlock extends UElement {
   /** 헤딩 텍스트 */
   @property({ type: String }) heading?: string;
   /** 입력 데이터 (JSON Object) */
-  @property({ type: Object, converter: jsonAttrConverter }) input?: JsonNode;
+  @property({ type: Object, converter: jsonAttrConverter<JsonNode>() }) input?: JsonNode;
   /** 출력 데이터 (JSON Object) */
-  @property({ type: Object, converter: jsonAttrConverter }) output?: JsonNode;
+  @property({ type: Object, converter: jsonAttrConverter<JsonNode>() }) output?: JsonNode;
 
   render() {
     return html`
       <div class="header"  @click=${() => this.collapsed = !this.collapsed}>
         ${this.loading
           ? html`<u-spinner></u-spinner>`
-          : html`<u-icon lib="internal" name="tools"></u-icon>`}
+          : html`<u-icon lib="bootstrap" name="tools"></u-icon>`}
         <div class="title">
           ${this.heading || 'Tool Usage'}
         </div>

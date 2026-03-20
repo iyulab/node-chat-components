@@ -4,7 +4,7 @@ import { repeat } from "lit/directives/repeat.js";
 
 import { UElement } from "@iyulab/components/dist/components/UElement.js";
 import { UButton } from "@iyulab/components/dist/components/button/UButton.component.js";
-import { styles } from "./UQuestionAction.styles.js";
+import { styles } from "./UQuestionIntent.styles.js";
 
 /**
  * 질문/선택지 제안 블록 컴포넌트
@@ -12,7 +12,7 @@ import { styles } from "./UQuestionAction.styles.js";
  * LLM이 질문 텍스트(`question`)와 클릭 선택지(`choices`)를 제시하고,
  * `input: true`일 때는 사용자가 직접 텍스트를 입력할 수도 있습니다.
  */
-export class UQuestionAction extends UElement {
+export class UQuestionIntent extends UElement {
   static styles = [super.styles, styles];
   static dependencies: Record<string, typeof UElement> = {
     "u-button": UButton,

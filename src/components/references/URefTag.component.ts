@@ -27,7 +27,7 @@ export class URefTag extends UElement {
         <slot></slot>
       </a>
 
-      <u-icon lib="internal" name="box-arrow-up-right"></u-icon>
+      <u-icon lib="bootstrap" name="box-arrow-up-right"></u-icon>
 
       <u-tooltip interactive placement="bottom" distance="4">
         <slot name="tooltip"></slot>

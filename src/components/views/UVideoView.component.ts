@@ -3,12 +3,12 @@ import { property } from "lit/decorators.js";
 import { ifDefined } from "lit/directives/if-defined.js";
 
 import { UElement } from "@iyulab/components/dist/components/UElement.js";
-import { styles } from "./UVideoWidget.styles.js";
+import { styles } from "./UVideoView.styles.js";
 
 /**
- * 비디오 플레이어 위젯 컴포넌트
+ * 비디오 플레이어 뷰 컴포넌트
  */
-export class UVideoWidget extends UElement {
+export class UVideoView extends UElement {
   static styles = [super.styles, styles];
   static dependencies: Record<string, typeof UElement> = {};
 

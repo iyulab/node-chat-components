@@ -6,7 +6,6 @@ import { Marked, type Tokens } from "marked";
 import markedKatex from "marked-katex-extension";
 
 import { UElement } from "@iyulab/components/dist/components/UElement.js";
-import { UJsonElement } from "@iyulab/components/dist/components/UJsonElement.js";
 import { escapeHtmlText, stripZeroWidth } from "@iyulab/components/dist/utilities/sanitizers.js";
 import { buildElementHTML } from "@iyulab/components/dist/utilities/elements.js";
 import { UCodeBlock } from "./UCodeBlock.component.js";
@@ -14,7 +13,7 @@ import { UTableBlock } from "./UTableBlock.component.js";
 import { URefTag } from "../references/URefTag.component.js";
 import { URefCard } from "../references/URefCard.component.js";
 import { URefCardGroup } from "../references/URefCardGroup.component.js";
-import { UWidget } from "../widgets/UWidget.component.js";
+import { UView } from "../views/UView.component.js";
 import type { ReferenceCitation } from "../../types/References.js";
 import { styles } from "./UMarkedBlock.styles.js";
 
@@ -34,7 +33,7 @@ export class UMarkedBlock extends UElement {
     "u-ref-tag": URefTag,
     "u-ref-card": URefCard,
     "u-ref-card-group": URefCardGroup,
-    "u-widget": UWidget,
+    "u-view": UView,
   };
 
   /** 마크다운 컨텐츠를 렌더링할 때 사용할 값입니다. */
@@ -109,13 +108,13 @@ export class UMarkedBlock extends UElement {
     const trimmed = token.raw.trimEnd();
     const isClosed = trimmed.endsWith("```") || trimmed.endsWith("~~~");
 
-    // Widget 코드블록 감지
-    if (lang === 'widget-json') {
-      return UJsonElement.buildHTML("u-widget", token.text, { loading: !isClosed });
+    // View 코드블록 감지
+    if (lang === 'view-json') {
+      return UView.buildHTML(token.text, { loading: !isClosed });
     }
 
-    // Action 코드블록 감지
-    if (lang === 'action-json') {
+    // Intent 코드블록 감지
+    if (lang === 'intent-json') {
       return ''; // 출력 X
     }
 
@@ -139,7 +138,7 @@ export class UMarkedBlock extends UElement {
         align: cell.align
       }))
     );
-    return UJsonElement.buildHTML("u-table-block", { headers, rows });
+    return UTableBlock.buildHTML({ headers, rows });
   }
 
   /**
@@ -157,7 +156,7 @@ export class UMarkedBlock extends UElement {
 
       let tooltip = "";
       if (sources.length > 0) {
-        const cards = sources.map((s) => UJsonElement.buildHTML("u-ref-card", s)).join("");
+        const cards = sources.map((s) => URefCard.buildHTML(s)).join("");
         tooltip = buildElementHTML("u-ref-card-group", { slot: "tooltip" }, cards);
       }
 

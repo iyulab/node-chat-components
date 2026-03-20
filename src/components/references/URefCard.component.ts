@@ -4,7 +4,7 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 
 import { arrayAttrConverter } from '@iyulab/components/dist/utilities/converters.js';
 import { UElement } from '@iyulab/components/dist/components/UElement.js';
-import { UJsonElement } from '@iyulab/components/dist/components/UJsonElement.js';
+import { UDataElement } from '@iyulab/components/dist/components/UDataElement.js';
 import { UIcon } from '@iyulab/components/dist/components/icon/UIcon.component.js';
 import { styles } from './URefCard.styles.js';
 
@@ -12,7 +12,7 @@ import { styles } from './URefCard.styles.js';
  * 참조 소스를 카드 형태로 표시하는 공통 컴포넌트입니다.
  * Web과 Document 타입 모두 지원합니다.
  */
-export class URefCard extends UJsonElement {
+export class URefCard extends UDataElement {
   static styles = [ super.styles, styles ];
   static dependencies: Record<string, typeof UElement> = {
     'u-icon': UIcon,
@@ -46,7 +46,7 @@ export class URefCard extends UJsonElement {
 
           <div class="badge" type=${this.type}>
             <u-icon 
-              lib="internal" 
+              lib="bootstrap" 
               name=${this.type === 'web' ? 'globe' : 'file-earmark'}
             ></u-icon>
             ${this.type.toUpperCase()}

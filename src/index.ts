@@ -20,29 +20,29 @@ export * from './components/references/URefTag.js';
 export * from './components/references/URefCard.js';
 export * from './components/references/URefCardGroup.js';
 
-// action exports
-export * from './components/actions/UQuestionAction.js';
+// intent exports
+export * from './components/intents/UQuestionIntent.js';
 
-// widget exports
-export * from './components/widgets/UImagesWidget.js';
-export * from './components/widgets/UVideoWidget.js';
-export * from './components/widgets/UMapWidget.js';
-export * from './components/widgets/UChartWidget.js';
-export * from './components/widgets/UWidget.js';
+// view exports
+export * from './components/views/UImagesView.js';
+export * from './components/views/UVideoView.js';
+export * from './components/views/UMapView.js';
+export * from './components/views/UChartView.js';
+export * from './components/views/UView.js';
 
 // types exports
 export type * from './types/BlockItem';
 export type * from './types/JsonNode';
 export type * from './types/JsonSchema';
 export type * from './types/References';
-export * from './types/Actions';
-export * from './types/Widgets';
+export * from './types/Intents';
+export * from './types/Views';
 
 // event types exports
 export type * from './events/UCancelEvent';
 export type * from './events/USubmitEvent';
 
 // utilities exports
-export * from './utilities/ActionPromptBuilder.js';
-export * from './utilities/WidgetPromptBuilder.js';
+export * from './utilities/IntentPromptBuilder.js';
+export * from './utilities/ViewPromptBuilder.js';
 export * from './utilities/dom-interaction/index.js';

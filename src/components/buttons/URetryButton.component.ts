@@ -25,7 +25,7 @@ export class URetryButton extends UElement {
     return html`
       <u-button part="base" variant="ghost">
         <u-icon part="icon"
-          lib="internal"
+          lib="bootstrap"
           name="arrow-repeat"
         ></u-icon>
       </u-button>

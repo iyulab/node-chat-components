@@ -79,7 +79,7 @@ export class UPrompt extends UElement {
           ?disabled=${!this.loading && !this.value}
           @click=${this.handleSendButtonClick}>
           <u-icon
-            lib="internal"
+            lib="bootstrap"
             name=${this.loading ? 'stop-circle' : 'arrow-up'}
           ></u-icon>
         </u-button>

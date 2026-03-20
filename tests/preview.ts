@@ -3,11 +3,11 @@ import { customElement, state } from "lit/decorators.js";
 import { repeat } from "lit/directives/repeat.js";
 
 import '../src';
-import { Theme, Notifier } from '@iyulab/components';
-import { WidgetPromptBuilder } from '../src/utilities/WidgetPromptBuilder.js';
-import { ActionPromptBuilder } from '../src/utilities/ActionPromptBuilder.js';
-import { PresetWidget } from '../src/types/Widgets.js';
-import { PresetAction } from '../src/types/Actions.js';
+import { Theme, Toast } from '@iyulab/components';
+import { ViewPromptBuilder } from '../src/utilities/ViewPromptBuilder.js';
+import { IntentPromptBuilder } from '../src/utilities/IntentPromptBuilder.js';
+import { PresetView } from '../src/types/Views.js';
+import { PresetIntent } from '../src/types/Intents.js';
 import type { BlockItem, FileBlockItem } from '../src/types/BlockItem';
 import type { Message, AssistantMessage } from './messages';
 import { messages } from './messages';
@@ -20,8 +20,8 @@ import type { ScanResult, DOMCommand } from '../src/utilities/dom-interaction/in
 @customElement('preview-app')
 export class PreviewApp extends LitElement {
   private aborter: AbortController = new AbortController();
-  private wb = new WidgetPromptBuilder();
-  private ab = new ActionPromptBuilder();
+  private vb = new ViewPromptBuilder();
+  private ib = new IntentPromptBuilder();
   private domAgent = new DOMAgent();
   private promptBuilder = new DOMPromptBuilder();
 
@@ -53,9 +53,9 @@ export class PreviewApp extends LitElement {
 
     // 시스템 프롬프트에 사용할 instruction 빌드
     this.instructions = [
-      'You are a helpful AI assistant that can use various widgets and actions to enhance your responses.',
-      this.wb.use(PresetWidget.All).build(),
-      this.ab.use(PresetAction.All).build(),
+      'You are a helpful AI assistant that can use various views and intents to enhance your responses.',
+      this.vb.use(PresetView.All).build(),
+      this.ib.use(PresetIntent.All).build(),
     ].join('\n\n');
 
     // DOMAgent 이벤트 리스너
@@ -70,10 +70,8 @@ export class PreviewApp extends LitElement {
 
     this.domAgent.addEventListener('error', (e: any) => {
       console.error('DOM Error:', e.detail);
-      Notifier.toast({
-        type: 'error',
-        heading: 'DOM 조작 오류',
-        content: e.detail.message,
+      Toast.error(e.detail.message, {
+        title: 'DOM 조작 오류',
         position: 'top-center',
         duration: 5000,
       });
@@ -85,7 +83,7 @@ export class PreviewApp extends LitElement {
     if (changedProperties.has('messages')) {
       if (this.isUserScrolling) return;
       await this.updateComplete;
-      this.scrollToBottom();
+      this.scrollToLast();
     }
   }
 
@@ -95,29 +93,29 @@ export class PreviewApp extends LitElement {
       <div class="header">
         <span class="header-title">Chat Preview with DOM Agent</span>
         <div class="header-actions">
-          <u-button variant="borderless" @click=${() => this.showSandbox = !this.showSandbox}>
+          <u-button @click=${() => this.showSandbox = !this.showSandbox}>
             ${this.showSandbox ? 'Hide' : 'Show'} Sandbox
           </u-button>
-          <u-button variant="borderless" @click=${this.handleScanDOM}>
+          <u-button @click=${this.handleScanDOM}>
             Scan DOM
           </u-button>
-          <u-button variant="borderless" @click=${this.handleGeneratePrompt}>
+          <u-button @click=${this.handleGeneratePrompt}>
             Generate Prompt
           </u-button>
-          <u-button variant="borderless" @click=${this.handleStartAutomation} .disabled=${this.isAutomating}>
+          <u-button @click=${this.handleStartAutomation} .disabled=${this.isAutomating}>
             ${this.isAutomating ? 'Automating...' : 'Start Automation'}
           </u-button>
           <label style="display: flex; align-items: center; gap: 4px; font-size: 14px;">
             <input type="checkbox" .checked=${this.includeScreenshot} @change=${(e: Event) => this.includeScreenshot = (e.target as HTMLInputElement).checked}>
             Screenshot
           </label>
-          <u-button variant="borderless" @click=${() => this.showPanel = !this.showPanel}>
+          <u-button @click=${() => this.showPanel = !this.showPanel}>
             Settings
           </u-button>
-          <u-button variant="borderless" @click=${() => this.messages = []}>
+          <u-button @click=${() => this.messages = []}>
             Clear
           </u-button>
-          <u-button variant="borderless" @click=${() => Theme.set(Theme.get() === 'dark' ? 'light' : 'dark')}>
+          <u-button @click=${() => Theme.set(Theme.get() === 'dark' ? 'light' : 'dark')}>
             Theme
           </u-button>
         </div>
@@ -134,18 +132,18 @@ export class PreviewApp extends LitElement {
         <div class="main" @scroll=${this.handleScroll}>
           <div class="messages">
             ${repeat(this.messages || [], msg => msg.id, msg => 
-              msg.role === 'action'
+              msg.role === 'intent'
               ? html`
                 <u-message variant="default" position="right">
                   ${repeat(msg.items, (_, i) => i, (item: any) => {
                     const props = item.properties || {};
                     return item.type === 'question'
                     ? html`
-                      <u-question-action
+                      <u-question-intent
                         .question=${props.question}
                         .choices=${props.choices}
                         @u-submit=${this.handleSubmit}
-                      ></u-question-action>
+                      ></u-question-intent>
                     ` : nothing
                   })}
                 </u-message>`
@@ -334,29 +332,27 @@ export class PreviewApp extends LitElement {
         this.messages = [...this.messages.slice(0, -1), msg];
       }
 
-      // action-json 블록이 있는지 파싱하여 action 메시지로 추가
+      // intent-json 블록이 있는지 파싱하여 intent 메시지로 추가
       const markdown = msg?.items
         .filter(item => item.type === 'markdown')
         .map(item => item.value)
         .join('\n') ?? '';
       console.log('Generated markdown:', markdown);
-      const [actions, _] = this.ab.parse(markdown);
-      if (actions.length > 0) {
+      const [intents, _] = this.ib.parse(markdown);
+      if (intents.length > 0) {
         this.messages = [...this.messages, {
           id: generateRandomId(),
-          role: 'action' as const,
-          items: actions.map(a => ({
-            type: a.type,
-            properties: a.properties
+          role: 'intent' as const,
+          items: intents.map(intent => ({
+            type: intent.type,
+            properties: intent.properties
           })),
         }];
       }
     } catch (error) {
       if (!(error instanceof Error && error.message === 'Request was aborted.')) {
-        Notifier.toast({
-          type: 'error',
-          heading: '메시지 생성 실패',
-          content: `오류가 발생했습니다: ${(error as Error).message}`,
+        Toast.error(`오류가 발생했습니다: ${(error as Error).message}`, {
+          title: '메시지 생성 실패',
           position: 'top-center',
           duration: -1,
         });
@@ -419,8 +415,8 @@ export class PreviewApp extends LitElement {
       return;
     }
 
-    // 1. action 메시지 제거
-    const messages = this.messages.filter(msg => msg.role !== 'action');
+    // 1. intent 메시지 제거
+    const messages = this.messages.filter(msg => msg.role !== 'intent');
 
     // 2. user 메시지에 텍스트 + 파일 추가
     const items = [] as BlockItem[];
@@ -525,10 +521,8 @@ export class PreviewApp extends LitElement {
       // console.log('[DEBUG] 1. sandbox 엘리먼트:', sandbox);
       
       if (!sandbox) {
-        Notifier.toast({
-          type: 'warning',
-          heading: 'Sandbox not found',
-          content: '샌드박스를 먼저 표시해주세요.',
+        Toast.warning('샌드박스를 먼저 표시해주세요.', {
+          title: 'Sandbox not found',
           position: 'top-center',
           duration: 3000,
         });
@@ -578,19 +572,15 @@ export class PreviewApp extends LitElement {
         }]
       }];
 
-      Notifier.toast({
-        type: 'success',
-        heading: 'DOM Scan Complete',
-        content: `${scan.filteredElements}개의 요소를 찾았습니다.`,
+      Toast.success(`${scan.filteredElements}개의 요소를 찾았습니다.`, {
+        title: 'DOM Scan Complete',
         position: 'top-center',
         duration: 3000,
       });
     } catch (error) {
       console.error('DOM scan failed:', error);
-      Notifier.toast({
-        type: 'error',
-        heading: 'Scan failed',
-        content: (error as Error).message,
+      Toast.error((error as Error).message,{
+        title: 'Scan failed',
         position: 'top-center',
         duration: 5000,
       });
@@ -599,10 +589,8 @@ export class PreviewApp extends LitElement {
 
   private handleGeneratePrompt = () => {
     if (!this.domScanResult) {
-      Notifier.toast({
-        type: 'warning',
-        heading: 'No scan result',
-        content: 'Scan DOM을 먼저 실행해주세요.',
+      Toast.warning('Scan DOM을 먼저 실행해주세요.',{
+        title: 'No scan result',
         position: 'top-center',
         duration: 3000,
       });
@@ -646,19 +634,15 @@ export class PreviewApp extends LitElement {
         }]
       }];
 
-      Notifier.toast({
-        type: 'success',
-        heading: 'Prompt Generated',
-        content: '프롬프트가 생성되었습니다.',
+      Toast.success('프롬프트가 생성되었습니다.', {
+        title: 'Prompt Generated',
         position: 'top-center',
         duration: 3000,
       });
     } catch (error) {
       console.error('Prompt generation failed:', error);
-      Notifier.toast({
-        type: 'error',
-        heading: 'Generation failed',
-        content: (error as Error).message,
+      Toast.error((error as Error).message, {
+        title: 'Generation failed',
         position: 'top-center',
         duration: 5000,
       });
@@ -817,10 +801,9 @@ export class PreviewApp extends LitElement {
       }];
 
       const firstExec = result.execution[0];
-      Notifier.toast({
-        type: firstExec.success ? 'success' : 'error',
-        heading: firstExec.success ? 'Command Executed' : 'Command Failed',
-        content: firstExec.success ? `${firstExec.command.action} 실행됨` : firstExec.error || 'Unknown error',
+      Toast.show(firstExec.success ? 'success' : 'error', 
+        firstExec.success ? `${firstExec.command.action} 실행됨` : firstExec.error || 'Unknown error', {
+        title: firstExec.success ? 'Command Executed' : 'Command Failed',
         position: 'top-center',
         duration: 3000,
       });
@@ -837,10 +820,8 @@ export class PreviewApp extends LitElement {
         }]
       }];
 
-      Notifier.toast({
-        type: 'error',
-        heading: 'Execution failed',
-        content: (error as Error).message,
+      Toast.error((error as Error).message, {
+        title: 'Execution failed',
         position: 'top-center',
         duration: 5000,
       });
@@ -909,10 +890,8 @@ export class PreviewApp extends LitElement {
         }]
       }];
 
-      Notifier.toast({
-        type: 'success',
-        heading: 'Automation Completed',
-        content: `${this.automationIterations}번 반복 완료`,
+      Toast.success(`${this.automationIterations}번 반복 완료`, {
+        title: 'Automation Completed',
         position: 'top-center',
         duration: 3000,
       });
@@ -929,10 +908,8 @@ export class PreviewApp extends LitElement {
         }]
       }];
 
-      Notifier.toast({
-        type: 'error',
-        heading: 'Automation Failed',
-        content: (error as Error).message,
+      Toast.error((error as Error).message, {
+        title: 'Automation Failed',
         position: 'top-center',
         duration: 5000,
       });
@@ -1031,19 +1008,17 @@ ${elementsPrompt}`;
   // ── 유틸 ──
 
   private getTextValue(msg: Message): string {
-    if (msg.role === 'action') return '';
+    if (msg.role === 'intent') return '';
     return msg.items
       .filter(item => item.type === 'text' || item.type === 'markdown')
       .map((item: any) => item.value || '')
       .join('\n');
   }
 
-  private scrollToBottom() {
-    const main = this.shadowRoot?.querySelector('.main');
-    if (!main) return;
-    requestAnimationFrame(() => {
-      main.scrollTo({ top: main.scrollHeight, behavior: 'smooth' });
-    });
+  private scrollToLast() {
+    const lastMsg = this.shadowRoot?.querySelector('.messages > :last-child');
+    if (!lastMsg) return;
+    lastMsg.scrollIntoView({  behavior: 'smooth' });
   }
 
   static styles = css`
@@ -1118,12 +1093,15 @@ ${elementsPrompt}`;
       flex-direction: column;
       padding: 40px 0px;
     }
+    .messages > :last-child {
+      min-height: 100vh;
+    }
 
     u-message { 
       animation: slideIn 0.3s ease-out; 
     }
     u-message + u-message { 
-      margin-top: 12px; 
+      padding-top: 12px; 
     }
     u-message .msg-header {
       display: flex;

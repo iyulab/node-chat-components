@@ -30,7 +30,7 @@ export class UVoteButton extends UElement {
         variant="ghost"
         @click=${this.handleUpButtonClick}>
         <u-icon part="icon"
-          lib="internal"
+          lib="bootstrap"
           name=${this.value === 'up' ? 'hand-thumbs-up-fill' : 'hand-thumbs-up'}
         ></u-icon>
       </u-button>
@@ -38,7 +38,7 @@ export class UVoteButton extends UElement {
         variant="ghost"
         @click=${this.handleDownButtonClick}>
         <u-icon part="icon"
-          lib="internal"
+          lib="bootstrap"
           name=${this.value === 'down' ? 'hand-thumbs-down-fill' : 'hand-thumbs-down'}
         ></u-icon>
       </u-button>
