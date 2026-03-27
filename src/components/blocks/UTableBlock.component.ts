@@ -1,6 +1,7 @@
 ﻿import { html } from "lit";
 import { property, state } from "lit/decorators.js";
 import { repeat } from "lit/directives/repeat.js";
+import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 
 import { UElement } from "@iyulab/components/dist/components/UElement.js";
 import { UDataElement } from "@iyulab/components/dist/components/UDataElement.js";
@@ -94,7 +95,7 @@ export class UTableBlock extends UDataElement {
                     align=${h.align ?? "left"}
                     @click=${() => this.handleSortColumn(i)}
                   >
-                    ${h.text}
+                    ${unsafeHTML(h.text)}
                     <u-icon
                       class="sort-icon"
                       lib="bootstrap"
@@ -121,7 +122,7 @@ export class UTableBlock extends UDataElement {
                 <tr>
                   ${repeat(row, (_, j) => j, cell => html`
                     <td align=${cell.align ?? "left"}>
-                      ${this.renderHighlightedText(cell.text)}
+                      ${unsafeHTML(this.renderHighlightedText(cell.text))}
                     </td>
                   `)}
                 </tr>
@@ -148,9 +149,9 @@ export class UTableBlock extends UDataElement {
     const parts = String(text).split(re);
     if (parts.length === 1) return text;
 
-    return html`${parts.map((p, idx) =>
-      idx % 2 === 1 ? html`<mark>${p}</mark>` : p
-    )}`;
+    return parts.map((p, idx) =>
+      idx % 2 === 1 ? `<mark>${p}</mark>` : p
+    ).join("");
   }
 
   /**

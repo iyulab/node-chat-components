@@ -65,9 +65,7 @@ export class UChartView extends UElement {
   protected updated(changedProperties: PropertyValues) {
     super.updated(changedProperties);
 
-    if (changedProperties.has('data')
-      || changedProperties.has('type')
-      || changedProperties.has('options')) {
+    if (['data','type','options'].some(k => changedProperties.has(k))) {
       this.createChart();
     }
   }

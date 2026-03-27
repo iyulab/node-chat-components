@@ -45,7 +45,7 @@
     "highlight.js": "^11.11.1",
     "html2canvas": "^1.4.1",
     "lit": "^3.3.2",
-    "marked": "^17.0.3",
+    "marked": "^17.0.5",
     "marked-katex-extension": "^5.1.7"
   },
   "peerDependencies": {
@@ -57,17 +57,17 @@
     }
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.3",
+    "@eslint/js": "^9.39.4",
     "@lit/react": "^1.0.8",
-    "@types/node": "^25.3.2",
+    "@types/node": "^25.5.0",
     "chart.js": "^4.5.1",
-    "eslint": "^9.39.3",
+    "eslint": "^9.39.4",
     "eslint-plugin-lit": "^2.2.1",
-    "globals": "^17.3.0",
-    "openai": "^6.25.0",
+    "globals": "^17.4.0",
+    "openai": "^6.33.0",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.56.1",
-    "vite": "^7.3.1",
+    "typescript-eslint": "^8.57.2",
+    "vite": "^8.0.3",
     "vite-plugin-dts": "^4.5.4"
   }
 }
