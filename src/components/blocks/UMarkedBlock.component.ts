@@ -2,7 +2,7 @@
 import { property } from "lit/decorators.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 
-import { Marked, type Tokens } from "marked";
+import { Marked, Parser, type Tokens } from "marked";
 import markedKatex from "marked-katex-extension";
 
 import { UElement } from "@iyulab/components/dist/components/UElement.js";
@@ -124,17 +124,18 @@ export class UMarkedBlock extends UElement {
     return buildElementHTML("u-code-block", { lang: lang, loading: !isClosed }, safeText);
   }
 
-  /** 
-   * 테이블은 JSON 데이터로 변환하여 별도의 컴포넌트로 렌더링합니다. 
+  /**
+   * 테이블은 JSON 데이터로 변환하여 별도의 컴포넌트로 렌더링합니다.
+   * 셀 내부의 인라인 마크다운(볼드, 코드, br 등)도 HTML로 변환합니다.
    */
   private renderTable(token: Tokens.Table): string {
     const headers = token.header.map((h: Tokens.TableCell) => ({
-      text: h.text,
+      text: h.tokens ? Parser.parseInline(h.tokens) : h.text,
       align: h.align
     }));
     const rows = token.rows.map((row: Tokens.TableCell[]) =>
-      row.map((cell) => ({ 
-        text: cell.text, 
+      row.map((cell) => ({
+        text: cell.tokens ? Parser.parseInline(cell.tokens) : cell.text,
         align: cell.align
       }))
     );
