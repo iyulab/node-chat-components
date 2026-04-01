@@ -82,7 +82,7 @@ export async function* generateStreamingMessage(
     include: [
       'reasoning.encrypted_content',
       'web_search_call.action.sources',
-      'web_search_call.results',
+      // 'web_search_call.results',
     ],
     input: input,
     reasoning: {

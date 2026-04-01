@@ -11,9 +11,6 @@ export * from './components/blocks/UTableBlock.js';
 export * from './components/buttons/UAttachButton.js';
 export * from './components/buttons/UCopyButton.js';
 export * from './components/buttons/UVoteButton.js';
-export * from './components/buttons/UReportButton.js';
-export * from './components/buttons/URetryButton.js';
-export * from './components/buttons/UShareButton.js';
 export * from './components/message/UMessage.js';
 export * from './components/prompt/UPrompt.js';
 export * from './components/references/URefTag.js';
@@ -39,10 +36,10 @@ export * from './types/Intents';
 export * from './types/Views';
 
 // event types exports
-export type * from './events/UCancelEvent';
-export type * from './events/USubmitEvent';
+export type * from './events/SendEvent';
+export type * from './events/StopEvent';
 
 // utilities exports
 export * from './utilities/IntentPromptBuilder.js';
 export * from './utilities/ViewPromptBuilder.js';
-export * from './utilities/dom-interaction/index.js';
+// export * from './utilities/dom-agent/index.js';

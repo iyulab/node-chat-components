@@ -33,8 +33,6 @@ export const styles = css`
     transition: all 0.15s ease;
   }
   u-button:hover {
-    background-color: var(--u-blue-0);
-    border-color: var(--u-blue-400);
     transform: translateY(-1px);
   }
   u-button:active {

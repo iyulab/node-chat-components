@@ -1,5 +1,4 @@
 ﻿import template from '../assets/view-prompt.md?raw';
-import { UElement } from '@iyulab/components/dist/components/UElement.js';
 import {
   PresetView, PRESET_VIEW_LIST, PRESET_VIEW_DEFINITIONS,
   type ViewDefinition
@@ -36,13 +35,6 @@ export class ViewPromptBuilder {
     const constructor = customElements.get(definition.tag);
     if (constructor && constructor !== definition.element) {
       throw new Error(`Custom element with tag "${definition.tag}" is already defined to a different class.`);
-    }
-
-    // 요소가 UElement을 상속받는 경우, UElement 방식으로 정의합니다. 그렇지 않으면 일반 customElements.define을 사용합니다.
-    if (definition.element.prototype instanceof UElement) {
-      (definition.element as typeof UElement).define(definition.tag);
-    } else {
-      customElements.define(definition.tag, definition.element);
     }
 
     // 등록된 뷰 정보를 저장합니다.

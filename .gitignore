@@ -1,16 +1,24 @@
-# Node.js 관련 파일
-node_modules/
+# IDE
+.idea/
+.vscode/
+
+# env
+.env.local
+.env.development
+
+# npm
 npm-debug.log
 .npm
 
-# 환경 설정 파일
-.env.local
+# dependencies
+node_modules/
+package-lock.json
 
-# 빌드 결과물
+# build output
 /dist
 /build
 /out
 
-# 에디터 설정 파일
-.idea/
-.vscode/
+# ai
+.agents/
+.claude/

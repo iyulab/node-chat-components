@@ -1,8 +1,8 @@
 ﻿import { type JsonSchema } from "./JsonSchema.js";
-import { UImagesView } from "../components/views/UImagesView.component.js";
-import { UVideoView } from "../components/views/UVideoView.component.js";
-import { UMapView } from "../components/views/UMapView.component.js";
-import { UChartView } from "../components/views/UChartView.component.js";
+import { UImagesView } from "../components/views/UImagesView.js";
+import { UVideoView } from "../components/views/UVideoView.js";
+import { UMapView } from "../components/views/UMapView.js";
+import { UChartView } from "../components/views/UChartView.js";
 
 /**
  * View를 정의하는 구조체

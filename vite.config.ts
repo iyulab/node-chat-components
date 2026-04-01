@@ -1,6 +1,8 @@
+import { resolve } from 'path';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
-import { resolve } from 'path';
+import react from "@iyulab/components/plugins/vite-plugin-react-wrapper.js"
+import raw from '@iyulab/components/plugins/vite-plugin-glob-resolve.js';
 
 export default defineConfig({
   // 개발용 서버 설정
@@ -25,7 +27,7 @@ export default defineConfig({
         return format === 'es' ? `${entry}.js` : `${entry}.${format}.js`;
       }
     },
-    rollupOptions: {
+    rolldownOptions: {
       external: [
         /^@iyulab.*/,
         /^lit.*/,
@@ -44,6 +46,11 @@ export default defineConfig({
   plugins: [
     dts({
       include: ['src/**/*'],
-    })
+    }),
+    react({
+      input: 'src',
+      output: 'react',
+    }),
+    raw(),
   ]
 });

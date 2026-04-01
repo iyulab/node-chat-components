@@ -1,4 +1,4 @@
-import { VoteValue } from "../src/components/buttons/UVoteButton.component.js";
+import { VoteValue } from "../src/components/buttons/UVoteButton.js";
 import { IntentSchema } from "../src/types/Intents.js";
 import { BlockItem } from "../src/types/BlockItem";
 import { generateRandomId } from "./generator.js";
@@ -133,7 +133,7 @@ interface Weather {
 
 \`\`\`view-json
 {
-  "tag": "u-images-widget",
+  "tag": "u-images-view",
   "properties": {
     "items": [
       { "src": "https://picsum.photos/1600/1200?random=1", "alt": "Beautiful landscape", "caption": "Mountain view" },
@@ -149,7 +149,7 @@ interface Weather {
 
 \`\`\`view-json
 {
-  "tag": "u-video-widget",
+  "tag": "u-video-view",
   "properties": {
     "src": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     "ratio": "16:9"
@@ -161,7 +161,7 @@ interface Weather {
 
 \`\`\`view-json
 {
-  "tag": "u-map-widget",
+  "tag": "u-map-view",
   "properties": {
     "lat": 37.5665,
     "lng": 126.9780,
@@ -176,7 +176,7 @@ interface Weather {
 
 \`\`\`view-json
 {
-  "tag": "u-chart-widget",
+  "tag": "u-chart-view",
   "properties": {
     "type": "bar",
     "data": {
