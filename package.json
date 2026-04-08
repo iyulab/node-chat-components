@@ -41,7 +41,7 @@
     "build": "eslint && vite build"
   },
   "dependencies": {
-    "@iyulab/components": "^1.0.2",
+    "@iyulab/components": "^1.0.3",
     "highlight.js": "^11.11.1",
     "html2canvas": "^1.4.1",
     "lit": "^3.3.2",
