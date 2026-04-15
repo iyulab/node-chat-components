@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.5.1] - 2026-04-15
+
+### Added
+- `UPrompt`: 0.4.x 호환을 위해 `u-submit`/`u-cancel` legacy 이벤트가 `send`/`stop`과 **동시에** 발사됩니다. 0.6.0에서 제거 예정 (`@deprecated`).
+- `SendEventDetail`을 `{ value: string; files?: FileBlockItem[] }`로 타입 구체화. `UPrompt.submit()`이 detail에 실제 값을 채워 발행합니다.
+- `StopEventDetail`을 interface로 정의 (현재 빈 객체, 향후 확장 대비).
+- `MIGRATION.md` 추가: 0.4.x → 0.5.x 전환 가이드 및 Breaking Change 정책 문서화.
+
+### Fixed
+- 0.5.0에서 DOM 이벤트 문자열 (`u-submit`/`u-cancel` → `send`/`stop`)이 CHANGELOG에 타입 rename (`USubmitEvent` → `SendEvent`)으로만 표기되어 vanilla DOM 소비자가 silent failure로 깨지던 문제를 alias 도입으로 완화.
+
 ## [0.5.0] - 2026-04-01
 
 ### Added

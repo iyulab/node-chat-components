@@ -1,7 +1,7 @@
 {
   "name": "@iyulab/chat-components",
   "description": "llm chat components for building chat interfaces",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "author": "iyulab",
   "license": "MIT",
   "keywords": [

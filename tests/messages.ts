@@ -227,6 +227,20 @@ interface Weather {
 | Zig | 절차적 | 정적 | 시스템 프로그래밍 | 네이티브 | 상 | 최상 | X | Async | 2016 | 0.12 | MIT |`
       },
 
+      // ── markdown: 테이블 셀 내 인라인 마크다운 회귀 테스트 (v0.5.0 fix) ──
+      {
+        type: 'markdown',
+        value:
+`## 테이블 셀 인라인 마크다운
+
+| 단계 | 작업 | 명령어 |
+|------|------|--------|
+| 1 | **IKE 설정** | \`set security ike policy ike-1 mode main\`<br>\`set security ike policy ike-1 proposal set standard\` |
+| 2 | *강조* 및 ~~취소선~~ | \`cli --dry-run\` |
+| 3 | [링크](https://example.com) | \`run\` |
+`
+      },
+
       // ── markdown: JSON 파싱 에러 + 파일 분석 ──
       {
         type: 'markdown',
