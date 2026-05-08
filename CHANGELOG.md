@@ -1,15 +1,21 @@
 # Changelog
 
+## [0.5.2] - 2026-05-08
+
+### Changed
+- Updated runtime dependencies to newer patch/minor releases, including `@iyulab/components` (`^1.0.3` -> `^1.0.5`) and markdown stack updates (`marked` `^17.0.5` -> `^18.0.3`, `marked-katex-extension` `^5.1.7` -> `^5.1.8`).
+- Refactored markdown HTML placeholder logic by extracting it from `UMarkedBlock` into a dedicated utility (`HtmlPlaceholder`) without changing public API behavior.
+
 ## [0.5.1] - 2026-04-15
 
 ### Added
-- `UPrompt`: 0.4.x 호환을 위해 `u-submit`/`u-cancel` legacy 이벤트가 `send`/`stop`과 **동시에** 발사됩니다. 0.6.0에서 제거 예정 (`@deprecated`).
-- `SendEventDetail`을 `{ value: string; files?: FileBlockItem[] }`로 타입 구체화. `UPrompt.submit()`이 detail에 실제 값을 채워 발행합니다.
-- `StopEventDetail`을 interface로 정의 (현재 빈 객체, 향후 확장 대비).
-- `MIGRATION.md` 추가: 0.4.x → 0.5.x 전환 가이드 및 Breaking Change 정책 문서화.
+- `UPrompt`: restored 0.4.x compatibility by emitting legacy `u-submit`/`u-cancel` events **alongside** `send`/`stop`; scheduled for removal in 0.6.0 (`@deprecated`).
+- Refined `SendEventDetail` to `{ value: string; files?: FileBlockItem[] }`; `UPrompt.submit()` now emits the actual value in `detail`.
+- Added `StopEventDetail` as an interface (currently empty, reserved for future extension).
+- Added `MIGRATION.md` with a 0.4.x -> 0.5.x migration guide and documented breaking-change policy.
 
 ### Fixed
-- 0.5.0에서 DOM 이벤트 문자열 (`u-submit`/`u-cancel` → `send`/`stop`)이 CHANGELOG에 타입 rename (`USubmitEvent` → `SendEvent`)으로만 표기되어 vanilla DOM 소비자가 silent failure로 깨지던 문제를 alias 도입으로 완화.
+- Mitigated silent failures for vanilla DOM consumers in 0.5.0 by introducing aliases for event-name changes (`u-submit`/`u-cancel` -> `send`/`stop`), which had previously been documented only as type renames (`USubmitEvent` -> `SendEvent`).
 
 ## [0.5.0] - 2026-04-01
 

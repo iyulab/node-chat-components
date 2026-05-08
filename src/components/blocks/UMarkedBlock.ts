@@ -15,6 +15,7 @@ import { UElement } from "@iyulab/components/dist/components/UElement.js";
 import { escapeHtmlText, stripZeroWidth } from "@iyulab/components/dist/utilities/sanitizers.js";
 import { buildElementHTML } from "@iyulab/components/dist/utilities/elements.js";
 import type { ReferenceCitation } from "../../types/References.js";
+import { HtmlPlaceholder } from "../../utilities/HtmlPlaceholder.js";
 import { styles } from "./UMarkedBlock.styles.js";
 
 /**
@@ -172,33 +173,6 @@ export class UMarkedBlock extends UElement {
     value = value.replace(/<!--ref:\d+-->/g, "");
     // 그 외 HTML은 모두 텍스트로
     return value;
-  }
-}
-
-/**
- * Marked 파싱 중 HTML이 GFM에 의해 오염되는 것을 방지하기 위해
- * HTML을 주석 플레이스홀더로 치환하고, 나중에 원래 HTML로 복원하는 유틸입니다.
- */
-class HtmlPlaceholder {
-  private map: Record<string, string> = {};
-  private idx = 0;
-
-  reset() {
-    this.map = {};
-    this.idx = 0;
-  }
-
-  /** html을 저장하고 대응하는 플레이스홀더 키를 반환합니다. */
-  store(html: string): string {
-    const key = `<!--ref:${this.idx++}-->`;
-    this.map[key] = html;
-    return key;
-  }
-
-  /** html 안의 등록된 모든 플레이스홀더를 원래 HTML로 복원합니다. */
-  restore(html: string): string {
-    if (this.idx === 0) return html;
-    return html.replace(/<!--ref:\d+-->/g, (key) => this.map[key] ?? "");
   }
 }
 
