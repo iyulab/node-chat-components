@@ -51,6 +51,7 @@ export default defineConfig({
     react({
       input: 'src',
       output: 'react',
+      exclude: ['src/components/views/UChartView.ts'],
     }),
     raw(),
   ]
