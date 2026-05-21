@@ -1,7 +1,7 @@
 {
   "name": "@iyulab/chat-components",
   "description": "llm chat components for building chat interfaces",
-  "version": "0.5.2",
+  "version": "0.6.0",
   "author": "iyulab",
   "license": "MIT",
   "keywords": [
@@ -31,6 +31,10 @@
     ".": {
       "types": "./src/index.d.ts",
       "import": "./src/index.js"
+    },
+    "./chart": {
+      "types": "./src/chart.d.ts",
+      "import": "./src/chart.js"
     },
     "./dist/*": "./src/*",
     "./react": "./dist/react/index.js",

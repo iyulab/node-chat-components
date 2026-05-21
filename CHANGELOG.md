@@ -1,5 +1,31 @@
 # Changelog
 
+## [0.6.0] - 2026-05-21
+
+### Changed
+
+- **Breaking:** `UChartView` removed from main entrypoint. Consumers must now explicitly import from the `@iyulab/chat-components/chart` subpath.
+
+  **Migration:**
+  ```ts
+  // Before (0.5.x)
+  import { UChartView } from '@iyulab/chat-components';
+
+  // After (0.6.0)
+  import '@iyulab/chat-components/chart';              // element registration only
+  import { UChartView } from '@iyulab/chat-components/chart'; // + class export
+  ```
+
+  `PresetView.Chart` and `PRESET_VIEW_DEFINITIONS` remain in the main entrypoint — calling `ViewPromptBuilder.use(PresetView.Chart)` still works, but `UChartView` must be registered separately via the chart subpath.
+
+- `ViewDefinition.element` is now optional. Definitions without `element` (e.g. chart) skip the custom element conflict check in `ViewPromptBuilder.add()`.
+
+### Why
+
+Bundlers that perform static analysis of dynamic imports (e.g. Turbopack / Next.js 16+) would fail at build time with `Can't resolve 'chart.js/auto'` even when `chart.js` is declared as an optional peer dependency, because `UChartView` was reachable from the main `index.js` barrel. Moving it to a separate subpath eliminates the static-analysis path for projects that don't use charts.
+
+> **Note:** The `./react` subpath (`@iyulab/chat-components/react`) still re-exports `UChartView` due to a limitation in the react-wrapper build plugin. React consumers that don't use charts and target Turbopack should avoid the `./react` barrel import and import individual wrappers instead (e.g. `@iyulab/chat-components/react/UMarkedBlock`), or install `chart.js`.
+
 ## [0.5.2] - 2026-05-08
 
 ### Changed

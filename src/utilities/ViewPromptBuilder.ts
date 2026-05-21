@@ -31,10 +31,12 @@ export class ViewPromptBuilder {
       throw new Error(`View with tag "${definition.tag}" is already registered.`);
     }
     
-    // 커스텀 요소가 이미 정의되어 있으면, 같은 클래스인지 확인합니다. 다른 클래스라면 에러를 던집니다.
-    const constructor = customElements.get(definition.tag);
-    if (constructor && constructor !== definition.element) {
-      throw new Error(`Custom element with tag "${definition.tag}" is already defined to a different class.`);
+    // 커스텀 요소가 이미 정의되어 있고 element가 명시된 경우, 같은 클래스인지 확인합니다.
+    if (definition.element) {
+      const constructor = customElements.get(definition.tag);
+      if (constructor && constructor !== definition.element) {
+        throw new Error(`Custom element with tag "${definition.tag}" is already defined to a different class.`);
+      }
     }
 
     // 등록된 뷰 정보를 저장합니다.

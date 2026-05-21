@@ -2,14 +2,13 @@
 import { UImagesView } from "../components/views/UImagesView.js";
 import { UVideoView } from "../components/views/UVideoView.js";
 import { UMapView } from "../components/views/UMapView.js";
-import { UChartView } from "../components/views/UChartView.js";
 
 /**
  * View를 정의하는 구조체
  */
 export interface ViewDefinition {
-  /** 등록할 커스텀 엘리먼트 클래스 */
-  element: CustomElementConstructor;
+  /** 커스텀 엘리먼트 클래스 (optional: chart처럼 별도 서브패스로 분리된 경우 생략 가능) */
+  element?: CustomElementConstructor;
   /** 등록할 커스텀 엘리먼트 태그명 */
   tag: string;
   /** LLM용 설명 */
@@ -114,7 +113,6 @@ export const PRESET_VIEW_DEFINITIONS = new Map<PresetView, ViewDefinition>([
   [
     PresetView.Chart,
     {
-      element: UChartView,
       tag: 'u-chart-view',
       description: 'Display charts using Chart.js v4 format. Use standard Chart.js configuration (type, data, options). The View accepts the exact same structure as Chart.js - no conversion needed.',
       properties: {

@@ -24,7 +24,6 @@ export * from './components/intents/UQuestionIntent.js';
 export * from './components/views/UImagesView.js';
 export * from './components/views/UVideoView.js';
 export * from './components/views/UMapView.js';
-export * from './components/views/UChartView.js';
 export * from './components/views/UView.js';
 
 // types exports
