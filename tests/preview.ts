@@ -13,25 +13,18 @@ import { messages } from './messages';
 import { generateStreamingMessage, generateRandomId } from './generator';
 import type { ResponseOptions } from "./generator";
 import './sandbox.js';
-import { DOMAgent, DOMPromptBuilder } from '../src/utilities/dom-agent/index.js';
-import type { ScanResult } from '../src/utilities/dom-agent/index.js';
 import { SendEvent, UPrompt } from "../src";
 
 @customElement('preview-app')
 export class PreviewApp extends LitElement {
   private aborter: AbortController = new AbortController();
   private eb = new ExtraPromptBuilder();
-  private db = new DOMPromptBuilder();
-  private domAgent = new DOMAgent();
 
   @state() showPanel = false;
   @state() showSandbox = true;
   @state() instructions: string = '';
   @state() messages: Message[] = messages;
-  @state() domScanResult: ScanResult | null = null;
-  @state() includeScreenshot: boolean = false;
   @state() isAutomating: boolean = false;
-  @state() automationGoal: string = '';
 
   // Response API Options
   @state() model: string = 'gpt-5-mini';
@@ -54,25 +47,6 @@ export class PreviewApp extends LitElement {
       'You are a helpful AI assistant that can use various blocks to enhance your responses.',
       this.eb.use(PresetExtra.All).build(),
     ].join('\n\n');
-
-    // DOMAgent 이벤트 리스너
-    this.domAgent.addEventListener('scan', (e: any) => {
-      console.log('DOM Scan:', e.detail);
-      this.domScanResult = e.detail;
-    });
-
-    this.domAgent.addEventListener('execute', (e: any) => {
-      console.log('DOM Execute:', e.detail);
-    });
-
-    this.domAgent.addEventListener('error', (e: any) => {
-      console.error('DOM Error:', e.detail);
-      Toast.error(e.detail.message, {
-        title: 'DOM 조작 오류',
-        position: 'top-center',
-        duration: 5000,
-      });
-    });
   }
 
   protected async updated(changedProperties: PropertyValues) {
@@ -88,13 +62,10 @@ export class PreviewApp extends LitElement {
     return html`
       <!-- 헤더 -->
       <div class="header">
-        <span class="header-title">Chat Preview with DOM Agent</span>
+        <span class="header-title">Chat Preview</span>
         <div class="header-actions">
           <u-button @click=${() => this.showSandbox = !this.showSandbox}>
             ${this.showSandbox ? 'Hide' : 'Show'} Sandbox
-          </u-button>
-          <u-button @click=${this.handleScanDOM}>
-            Scan DOM
           </u-button>
           <u-button @click=${() => this.showPanel = !this.showPanel}>
             Settings
@@ -362,84 +333,6 @@ export class PreviewApp extends LitElement {
     } else {
       this.isUserScrolling = false;
     }
-  }
-
-  private handleScanDOM = async () => {
-    try {
-      // 샌드박스 엘리먼트 찾기
-      const sandbox = this.shadowRoot?.querySelector('sandbox-app');
-      // console.log('[DEBUG] 1. sandbox 엘리먼트:', sandbox);
-      
-      if (!sandbox) {
-        Toast.warning('샌드박스를 먼저 표시해주세요.', {
-          title: 'Sandbox not found',
-          position: 'top-center',
-          duration: 3000,
-        });
-        return;
-      }
-
-      // 샌드박스의 Shadow DOM 내부를 스캔
-      const scanRoot = sandbox.shadowRoot || sandbox;
-
-      // DOM 스캔 (샌드박스 Shadow DOM을 루트로 지정)
-      const scan = await this.domAgent.start(scanRoot, {
-        maxElements: 50,
-        filterStrategy: 'described',
-        includeScreenshot: this.includeScreenshot,
-        debug: false  // 디버그 로그 활성화하려면 true로 변경
-      });
-
-      // 스캔 결과를 콘솔에 추가
-      const scanMessage = this.formatScanResults(scan);
-      console.log('[DEBUG] Scan Message:', scanMessage);
-
-      Toast.success(`${scan.filteredElements}개의 요소를 찾았습니다.`, {
-        title: 'DOM Scan Complete',
-        position: 'top-center',
-        duration: 3000,
-      });
-    } catch (error) {
-      console.error('DOM scan failed:', error);
-      Toast.error((error as Error).message,{
-        title: 'Scan failed',
-        position: 'top-center',
-        duration: 5000,
-      });
-    }
-  }
-
-  private formatScanResults(scan: ScanResult): string {
-    let md = '# DOM 스캔 결과\n\n';
-    md += `**URL**: ${scan.url}\n`;
-    md += `**제목**: ${scan.title}\n`;
-    md += `**전체 요소**: ${scan.totalElements}개\n`;
-    md += `**필터링된 요소**: ${scan.filteredElements}개\n\n`;
-    md += '## 인터랙티브 요소\n\n';
-
-    scan.elements.forEach((el, idx) => {
-      md += `${idx + 1}. **[${el.id}]** ${el.type} - ${el.tag}\n`;
-      if (el.description) md += `   - 설명: ${el.description}\n`;
-      if (el.label) md += `   - 레이블: ${el.label}\n`;
-      if (el.text) md += `   - 텍스트: ${el.text}\n`;
-      if (el.value !== undefined) md += `   - 값: ${el.value}\n`;
-      if (el.placeholder) md += `   - Placeholder: ${el.placeholder}\n`;
-      md += `   - 위치: (${Math.round(el.x)}, ${Math.round(el.y)})\n`;
-      md += `   - 크기: ${Math.round(el.width)}x${Math.round(el.height)}\n`;
-      if (el.inShadowDom) md += `   - **Shadow DOM 내부**\n`;
-      md += '\n';
-    });
-
-    md += '\n## 사용 가능한 명령\n\n';
-    md += '- `click(id)`: 요소 클릭\n';
-    md += '- `input(id, text)`: 텍스트 입력\n';
-    md += '- `select(id, value)`: 옵션 선택\n';
-    md += '- `focus(id)`: 포커스 이동\n';
-    md += '- `check(id, checked)`: 체크박스 토글\n';
-
-    md += '\n**테스트해보려면 위의 요소 ID를 사용해서 명령을 내려보세요!**\n';
-
-    return md;
   }
 
   // ── 유틸 ──

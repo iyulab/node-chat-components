@@ -47,7 +47,6 @@
   "dependencies": {
     "@iyulab/components": "^1.4.0",
     "highlight.js": "^11.11.1",
-    "html2canvas": "^1.4.1",
     "katex": "^0.17.0",
     "lit": "^3.3.3",
     "marked": "^18.0.5",

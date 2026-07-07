@@ -25,4 +25,3 @@ export type * from './events/StopEvent';
 
 // utilities exports
 export * from './utilities/ExtraPromptBuilder.js';
-// export * from './utilities/dom-agent/index.js';

@@ -35,7 +35,6 @@ export default defineConfig({
         /^chart.js.*/,
         /^marked.*/,
         /^highlight.js.*/,
-        /^html2canvas.*/,
       ],
       output: {
         preserveModules: true,
