@@ -28,7 +28,6 @@ import '@iyulab/chat-components/dist/components/blocks/UMarkedBlock.js';
 
 ```ts
 import type { BlockItem, ReferenceSource } from '@iyulab/chat-components';
-import { PresetIntent, PresetView } from '@iyulab/chat-components';
 ```
 
 ---
@@ -51,8 +50,8 @@ const prompt = document.getElementById('prompt');
 const messages = document.getElementById('messages');
 
 // Handle send event
-prompt.addEventListener('send', () => {
-  const value = prompt.value;
+prompt.addEventListener('send', (e) => {
+  const { value } = e.detail;
   if (!value) return;
 
   // Add user message
@@ -70,15 +69,14 @@ prompt.addEventListener('send', () => {
   // Handle LLM streaming...
 });
 
-// Handle file attachments
-prompt.addEventListener('attach', (e) => {
-  const { files } = e.detail;
+// Handle file attachments (there is no built-in attach button — wire up your own)
+fileInput.addEventListener('change', (e) => {
+  const files = [...e.target.files];
   prompt.files = files.map(f => ({
     type: 'file',
     name: f.name,
     size: f.size,
     mimeType: f.type,
-    status: 'idle',
   }));
 });
 ```
@@ -117,72 +115,23 @@ markedBlock.refs = refs;
 
 ---
 
-## Intent System
+## Extra System
 
-Make the LLM output structured intent-json blocks by adding instructions to the system prompt:
-
-```ts
-import { IntentPromptBuilder, PresetIntent } from '@iyulab/chat-components';
-
-// Use preset intents
-IntentPromptBuilder.instance.use(PresetIntent.Questions);
-
-// Add custom intent
-IntentPromptBuilder.instance.add({
-  type: 'rating',
-  description: 'Ask user to rate something on a scale',
-  properties: {
-    label: { type: 'string', description: 'What to rate' },
-    max: { type: 'number', description: 'Max score (default: 5)' }
-  },
-  required: ['label']
-});
-
-// Inject into system prompt
-const systemPrompt = IntentPromptBuilder.instance.build();
-```
-
-Parse intent-json from the LLM response and render components:
+Let the LLM render rich content (charts, maps, image galleries, videos) via `block-json` code fences. See [extra-system.md](./extra-system.md) for full details.
 
 ```ts
-const [cleanText, intents] = IntentPromptBuilder.instance.parse(llmResponse);
+import '@iyulab/chat-components';
+import { prompt as extraInstructions } from '@iyulab/chat-components/extra';
 
-for (const intent of intents) {
-  if (intent.type === 'question') {
-    const el = document.createElement('u-question-intent');
-    el.question = intent.properties?.question;
-    el.choices = intent.properties?.choices ?? [];
-    messageEl.appendChild(el);
-  }
-}
-
-markedBlock.value = cleanText;
+const systemPrompt = `You are a helpful assistant.\n\n${extraInstructions}`;
 ```
 
----
-
-## View System
-
-Let the LLM render rich content (charts, maps, videos, etc.) via view-json code blocks:
-
-```ts
-import { ViewPromptBuilder, PresetView } from '@iyulab/chat-components';
-
-// Use all preset views
-ViewPromptBuilder.instance.use(PresetView.All);
-// Or selectively
-ViewPromptBuilder.instance.use(PresetView.Images | PresetView.Chart);
-
-// Inject into system prompt
-const systemPrompt = ViewPromptBuilder.instance.build();
-```
-
-When `u-marked-block` encounters a view-json code block from the LLM, it automatically renders it via `u-view`:
+`u-marked-block` automatically detects `block-json` fences and renders them via `u-element-block` — no parsing step needed:
 
 ````
-```view-json
+```block-json
 {
-  "tag": "u-chart-view",
+  "tag": "u-chart-block",
   "properties": {
     "type": "bar",
     "data": { "labels": ["A", "B"], "datasets": [{ "data": [10, 20] }] }
@@ -216,29 +165,12 @@ function renderBlocks(blocks: BlockItem[], container: HTMLElement) {
         container.appendChild(el);
         break;
       }
-      case 'thinking': {
-        const el = document.createElement('u-think-block');
-        el.loading = block.loading ?? false;
-        el.value = block.value;
-        container.appendChild(el);
-        break;
-      }
-      case 'tool': {
-        const el = document.createElement('u-tool-block');
-        el.loading = block.loading ?? false;
-        el.title = block.title ?? '';
-        el.input = block.input;
-        el.output = block.output;
-        container.appendChild(el);
-        break;
-      }
       case 'file': {
         const el = document.createElement('u-file-block');
         el.name = block.name;
         el.size = block.size;
         el.type = block.mimeType;
         el.url = block.url;
-        el.status = block.status ?? 'idle';
         container.appendChild(el);
         break;
       }

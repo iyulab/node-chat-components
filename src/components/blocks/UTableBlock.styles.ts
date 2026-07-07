@@ -89,7 +89,7 @@ export const styles = css`
     opacity: 0.7;
   }
   th[active] {
-    color: var(--u-primary, #4a90e2);
+    color: var(--u-primary-color, #4a90e2);
   }
   th[active] .sort-icon {
     opacity: 1;

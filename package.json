@@ -26,26 +26,22 @@
   ],
   "type": "module",
   "types": "./dist/index.d.ts",
-  "main": "./dist/index.js",
   "exports": {
     ".": {
-      "types": "./src/index.d.ts",
-      "import": "./src/index.js"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
     },
-    "./extras": {
-      "types": "./src/extras.d.ts",
-      "import": "./src/extras.js"
-    },
-    "./dist/*": "./src/*",
+    "./extra": "./dist/extra.js",
+    "./dist/*": "./dist/*",
     "./react": "./dist/react/index.js",
     "./react/*": "./dist/react/*"
   },
   "scripts": {
-    "test": "vite",
+    "start": "vite",
     "build": "eslint && vite build"
   },
   "dependencies": {
-    "@iyulab/components": "^1.4.0",
+    "@iyulab/components": "^1.5.0",
     "highlight.js": "^11.11.1",
     "katex": "^0.17.0",
     "lit": "^3.3.3",

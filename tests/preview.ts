@@ -3,31 +3,25 @@ import { customElement, state } from "lit/decorators.js";
 import { repeat } from "lit/directives/repeat.js";
 
 import '../src';
-import '../src/extras.js';
+import { prompt } from '../src/extra.js';
 import { Theme, Toast } from '@iyulab/components';
-import { ExtraPromptBuilder } from '../src/utilities/ExtraPromptBuilder.js';
-import { PresetExtra } from '../src/types/Extras.js';
 import type { BlockItem } from '../src/types/BlockItem';
 import type { Message } from './messages';
 import { messages } from './messages';
 import { generateStreamingMessage, generateRandomId } from './generator';
 import type { ResponseOptions } from "./generator";
-import './sandbox.js';
 import { SendEvent, UPrompt } from "../src";
 
 @customElement('preview-app')
 export class PreviewApp extends LitElement {
   private aborter: AbortController = new AbortController();
-  private eb = new ExtraPromptBuilder();
 
   @state() showPanel = false;
-  @state() showSandbox = true;
   @state() instructions: string = '';
   @state() messages: Message[] = messages;
-  @state() isAutomating: boolean = false;
 
   // Response API Options
-  @state() model: string = 'gpt-5-mini';
+  @state() model: string = 'gpt-5.4-mini';
   @state() reasoningEffort: string = 'low';
   @state() webSearch: boolean = true;
 
@@ -45,7 +39,7 @@ export class PreviewApp extends LitElement {
     // 시스템 프롬프트에 사용할 instruction 빌드
     this.instructions = [
       'You are a helpful AI assistant that can use various blocks to enhance your responses.',
-      this.eb.use(PresetExtra.All).build(),
+      prompt,
     ].join('\n\n');
   }
 
@@ -64,14 +58,11 @@ export class PreviewApp extends LitElement {
       <div class="header">
         <span class="header-title">Chat Preview</span>
         <div class="header-actions">
-          <u-button @click=${() => this.showSandbox = !this.showSandbox}>
-            ${this.showSandbox ? 'Hide' : 'Show'} Sandbox
+          <u-button @click=${() => this.messages = []}>
+            Clear
           </u-button>
           <u-button @click=${() => this.showPanel = !this.showPanel}>
             Settings
-          </u-button>
-          <u-button @click=${() => this.messages = []}>
-            Clear
           </u-button>
           <u-button @click=${() => Theme.set(Theme.get() === 'dark' ? 'light' : 'dark')}>
             Theme
@@ -81,12 +72,7 @@ export class PreviewApp extends LitElement {
 
       <!-- 바디 -->
       <div class="body">
-        <!-- 샌드박스 (왼쪽) -->
-        <div class="sandbox" ?hidden=${!this.showSandbox}>
-          <sandbox-app></sandbox-app>
-        </div>
-
-        <!-- 채팅룸 (오른쪽) -->
+        <!-- 채팅룸 -->
         <div class="main" @scroll=${this.handleScroll}>
           <div class="messages">
             ${repeat(this.messages || [], msg => msg.id, msg =>
@@ -173,10 +159,8 @@ export class PreviewApp extends LitElement {
         <aside class="aside-panel" ?hidden=${!this.showPanel}>
           <u-select label="Model" .value=${this.model as any}
             @change=${(e: any) => this.model = e.target.value}>
-            <u-option value="gpt-5.2">gpt-5.2</u-option>
-            <u-option value="gpt-5.2-pro">gpt-5.2-pro</u-option>
-            <u-option value="gpt-5-mini">gpt-5-mini</u-option>
-            <u-option value="gpt-5-nano">gpt-5-nano</u-option>
+            <u-option value="gpt-5.4-mini">gpt-5.4-mini</u-option>
+            <u-option value="gpt-5.5">gpt-5.5</u-option>
           </u-select>
 
           <u-textarea 
@@ -203,14 +187,6 @@ export class PreviewApp extends LitElement {
               .checked=${this.webSearch}
               @change=${(e: any) => this.webSearch = e.target.checked}>
               Web Search
-            </u-checkbox>
-            <u-checkbox disabled checked
-              @change=${(e: any) => this.isAutomating = e.target.checked}>
-              Code Execution (coming soon)
-            </u-checkbox>
-            <u-checkbox disabled checked
-              @change=${(e: any) => this.isAutomating = e.target.checked}>
-              Image Generation (coming soon)
             </u-checkbox>
           </label>
         </aside>
@@ -386,18 +362,6 @@ export class PreviewApp extends LitElement {
       flex: 1;
       display: flex;
       overflow: hidden;
-    }
-
-    /* 샌드박스 (왼쪽) */
-    .sandbox {
-      width: 500px;
-      flex-shrink: 0;
-      border-right: 2px solid var(--u-border-color);
-      background: var(--u-surface-color);
-      overflow: hidden;
-    }
-    .sandbox[hidden] {
-      display: none;
     }
 
     .main {

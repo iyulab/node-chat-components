@@ -3,11 +3,18 @@ import { css } from "lit";
 export const styles = css`
   :host {
     position: relative;
+    display: block;
+    min-width: 0;
+    max-width: 200px;
+    font-size: 14px;
+  }
+
+  .card {
+    position: relative;
     display: flex;
     flex-direction: row;
     align-items: center;
     min-width: 0;
-    max-width: 200px;
     gap: 10px;
     padding: 8px 10px;
     border: 1px solid var(--u-border-color);
@@ -16,9 +23,8 @@ export const styles = css`
     overflow: visible;
     cursor: pointer;
     transition: background-color 0.12s ease, border-color 0.12s ease;
-    font-size: 14px;
   }
-  :host(:hover) {
+  .card:hover {
     background-color: var(--u-neutral-100);
     border-color: var(--u-border-color-strong);
   }
@@ -37,9 +43,6 @@ export const styles = css`
     background-color: var(--u-neutral-200);
     transition: background 0.15s ease;
     overflow: hidden;
-  }
-  .thumbnail[clickable] {
-    cursor: pointer;
   }
   .thumbnail img,
   .thumbnail video {
@@ -89,27 +92,6 @@ export const styles = css`
     font-variant-numeric: tabular-nums;
   }
 
-  .download-btn {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    color: var(--u-neutral-0);
-    font-size: 14px;
-    border-radius: 6px;
-    background-color: color-mix(in srgb, var(--u-neutral-900) 70%, transparent);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.15s ease;
-  }
-  .thumbnail:hover .download-btn {
-    opacity: 1;
-    pointer-events: auto;
-  }
-  .download-btn:hover {
-    background-color: color-mix(in srgb, var(--u-neutral-900) 85%, transparent);
-  }
-
   .remove-btn {
     position: absolute;
     z-index: 10;
@@ -123,7 +105,7 @@ export const styles = css`
     pointer-events: none;
     transition: opacity 0.12s ease, background-color 0.12s ease;
   }
-  :host(:hover) .remove-btn {
+  .card:hover .remove-btn {
     opacity: 1;
     pointer-events: auto;
   }

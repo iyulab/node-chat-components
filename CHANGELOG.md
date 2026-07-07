@@ -4,31 +4,41 @@
 
 ### Changed
 
-- **Breaking:** The View system is renamed to the **Extras** system, and the 4 built-in views (chart/images/map/video) are no longer part of the core entrypoint:
-  - `u-view` → `u-extra-block` (`UExtraBlock`, in `components/blocks/`)
-  - `u-chart-view`/`u-images-view`/`u-map-view`/`u-video-view` → `u-chart-block`/`u-images-block`/`u-map-block`/`u-video-block` (`UChartBlock`/`UImagesBlock`/`UMapBlock`/`UVideoBlock`, in the new `components-extras/` folder)
+- **Breaking:** The View system is renamed to the **Extra** system, rendered via `u-element-block`, and the 4 built-in extras (chart/images/map/video) are no longer part of the core entrypoint:
+  - `u-view` → `u-element-block` (`UElementBlock`, in `components/blocks/`)
+  - `u-chart-view`/`u-images-view`/`u-map-view`/`u-video-view` → `u-chart-block`/`u-images-block`/`u-map-block`/`u-video-block` (`UChartBlock`/`UImagesBlock`/`UMapBlock`/`UVideoBlock`, in the new `components-extra/` folder, each with a co-located `{Name}Block.schema.ts`)
   - `view-json` fenced code blocks → `block-json`
-  - `ViewPromptBuilder` → `ExtraPromptBuilder`; `PresetView` → `PresetExtra`; `types/Views.ts` → `types/Extras.ts` (`ViewDefinition` → `ExtraDefinition`, `element` field dropped)
-  - The `./chart` subpath is replaced by `./extras`, which registers all 4 built-ins at once (`import '@iyulab/chat-components/extras'`). Need only one or two and want to skip bundling the rest (e.g. skip `chart.js`)? Import the specific component directly via `@iyulab/chat-components/dist/components-extras/UImagesBlock.js` instead.
-  - `u-extra-block` no longer shows an error card for unregistered tags or invalid data — it renders nothing and logs to the console instead, since an unregistered tag is more often a missing `/extras` import than a real error.
+  - `ViewPromptBuilder` → `ElementPromptBuilder`; the `PresetView`/`ViewDefinition` preset bit-flag system is dropped — each built-in extra defines its own `ElementSchema` in its `.schema.ts` file instead of a central preset map. `types/Views.ts` and `types/JsonSchema.ts` are merged into `types/Schema.ts`.
+  - The `./chart` subpath is replaced by `./extra`, which exports a ready-built `prompt` string with all 4 built-ins registered:
 
-  **Migration:** see MIGRATION.md.
+    ```ts
+    import { prompt as extraInstructions } from '@iyulab/chat-components/extra';
+    ```
+
+    Need only one or two and want to skip bundling the rest (e.g. skip `chart.js`)? Import the specific component directly via `@iyulab/chat-components/dist/components-extra/UImagesBlock.js` instead.
+  - `u-element-block` no longer shows an error card for unregistered tags or invalid data — it renders nothing and logs to the console instead, since an unregistered tag is more often a missing `/extra` import than a real error.
 
 - `u-marked-block` now tracks a `streaming` state (resets a 1500ms idle timer on every `value` update). A `block-json` extra's `loading` stays `true` until **both** its own fence is closed **and** the message has been idle for 1500ms, instead of turning off as soon as its own fence closes while the rest of the message keeps streaming.
-- The 0.6.0 note about `./react` still re-exporting the chart component regardless of exclusion no longer applies — moving chart out of `components/` into `components-extras/` also dropped it from the generated `react/index.js` barrel.
+- The 0.6.0 note about `./react` still re-exporting the chart component regardless of exclusion no longer applies — moving chart out of `components/` into `components-extra/` also dropped it from the generated `react/index.js` barrel.
+- `UChartBlock` now imports `chart.js/auto` statically instead of lazy-loading it at render time. `chart.js` remains an optional peer dependency — only the load timing changed.
+- Switched the icon set used by `u-code-block`, `u-table-block`, `u-prompt`, `u-ref-card`, `u-ref-tag`, and `u-chart-block` from ad-hoc `lib="bootstrap"` references to the package's own bundled icon set (`lib="internal-chat"`, see `src/utilities/icons.ts`).
+- `UDataElement`-based components (`u-table-block`, `u-ref-card`, `u-element-block`, and any custom subclass) no longer render an error card UI when `data`/JSON parsing fails — the error is logged to the console only.
+- `u-file-block`: preview now opens by clicking anywhere on the card instead of only the thumbnail (see **Removed** for the download button).
+- `u-prompt`: `send` and `stop` events now fire with `bubbles: false, composed: false` (no longer cross the shadow boundary); send button restyled as a circular ghost button.
+- `u-table-block`: fixed a CSS custom property typo, `--u-primary` → `--u-primary-color`, for the active sort column color.
 
 ### Removed
 
-- **Breaking:** Legacy `u-submit`/`u-cancel` DOM events removed from `UPrompt`. They were dispatched alongside `send`/`stop` since 0.5.1 as a deprecation-period compatibility alias; 0.6.0 was the announced removal target. Use `send`/`stop` instead — see MIGRATION.md.
+- **Breaking:** Legacy `u-submit`/`u-cancel` DOM events removed from `UPrompt`. They were dispatched alongside `send`/`stop` since 0.5.1 as a deprecation-period compatibility alias; 0.6.0 was the announced removal target. Use `send`/`stop` instead.
 - **Breaking:** Removed unused components and their public exports:
   - Blocks: `u-tool-block` (`UToolBlock`), `u-think-block` (`UThinkBlock`), `u-json-block` (`UJsonBlock`)
-  - Buttons: `u-attach-button` (`UAttachButton`), `u-vote-button` (`UVoteButton`)
+  - Buttons: `u-attach-button` (`UAttachButton`), `u-vote-button` (`UVoteButton`), `u-copy-button` (`UCopyButton` — `u-code-block` now uses the copy-button shipped by `@iyulab/components` instead)
   - Intent system: `u-question-intent` (`UQuestionIntent`), `IntentPromptBuilder`, `PresetIntent`, `types/Intents.ts`
   - Related types: `ThinkingBlockItem` and `ToolBlockItem` removed from the `BlockItem` union; `AttachEvent`/`ChoiceEvent` removed
-- `u-copy-button` (`UCopyButton`) is retained — still used internally by `u-code-block`.
-- **Breaking:** `FileBlockItem.status` and `UFileBlock.status` removed (unused in practice). `u-file-block` now renders an actual `<img>`/`<video>` thumbnail for image/video files with a `url` (instead of a generic icon) and opens a full-size overlay on click; other file types keep the icon.
+- **Breaking:** `FileBlockItem.status` and `UFileBlock.status` removed (unused in practice). `u-file-block` now renders an actual `<img>`/`<video>` thumbnail for image/video files with a `url` (instead of a generic icon) and opens a full-size overlay on click; other file types keep the icon. The download button and its click handler are also removed — there is no built-in download affordance anymore.
+- **Breaking:** `u-code-block`'s `loading` property is removed — the header always shows the language icon now (no streaming spinner state).
 
-  **Migration:** see MIGRATION.md for the full mapping. There is no drop-in replacement for the intent system or the removed blocks/buttons; if you rely on any of them, stay on `0.6.x` or vendor the component from that version's source.
+  There is no drop-in replacement for the intent system or the removed blocks/buttons; if you rely on any of them, stay on `0.6.x` or vendor the component from that version's source.
 
 ## [0.6.0] - 2026-05-21
 

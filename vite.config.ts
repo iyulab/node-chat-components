@@ -21,7 +21,7 @@ export default defineConfig({
     lib: {
       entry: [
         resolve(__dirname, 'src/index.ts'),
-        resolve(__dirname, 'src/extras.ts'),
+        resolve(__dirname, 'src/extra.ts'),
       ],
       formats: ['es'],
       fileName: (format, entry) => {
@@ -50,7 +50,7 @@ export default defineConfig({
     react({
       input: 'src',
       output: 'react',
-      exclude: ['src/components-extras/UChartBlock.ts'],
+      exclude: ['src/components-extra/UChartBlock.ts'],
     }),
     raw(),
   ]

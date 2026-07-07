@@ -5,6 +5,7 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 import '@iyulab/components/dist/components/tooltip/UTooltip.js';
 import '@iyulab/components/dist/components/icon/UIcon.js';
 import { UElement } from '@iyulab/components/dist/components/UElement.js';
+import '../../utilities/icons.js';
 import { styles } from './URefTag.styles.js';
 
 /**
@@ -24,7 +25,7 @@ export class URefTag extends UElement {
         <slot></slot>
       </a>
 
-      <u-icon lib="bootstrap" name="box-arrow-up-right"></u-icon>
+      <u-icon lib="internal-chat" name="external-link"></u-icon>
 
       <u-tooltip interactive placement="bottom" distance="4">
         <slot name="tooltip"></slot>

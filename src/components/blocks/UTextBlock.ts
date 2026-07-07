@@ -6,6 +6,8 @@ import { styles } from "./UTextBlock.styles.js";
 
 /**
  * 텍스트를 표시하거나 편집할 수 있는 블록 컴포넌트입니다.
+ * 
+ * @event input - 텍스트가 변경될 때 발생하는 이벤트입니다. 이벤트의 `data` 속성에 변경된 텍스트가 포함됩니다.
  */
 @customElement("u-text-block")
 export class UTextBlock extends UElement {

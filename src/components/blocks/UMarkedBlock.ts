@@ -10,10 +10,10 @@ import "../references/URefTag.js";
 import "../references/URefCardGroup.js";
 import { URefCard } from "../references/URefCard.js";
 import { UTableBlock } from "./UTableBlock.js";
-import { UExtraBlock } from "./UExtraBlock.js";
+import { UElementBlock } from "./UElementBlock.js";
 import { UElement } from "@iyulab/components/dist/components/UElement.js";
-import { escapeHtmlText, stripZeroWidth } from "@iyulab/components/dist/utilities/sanitizers.js";
-import { buildElementHTML } from "@iyulab/components/dist/utilities/elements.js";
+import { escapeHtmlText, stripZeroWidth } from "../../utilities/sanitizers.js";
+import { HtmlBuilder } from "../../utilities/HtmlBuilder.js";
 import type { ReferenceCitation } from "../../types/References.js";
 import { HtmlPlaceholder } from "../../utilities/HtmlPlaceholder.js";
 import { styles } from "./UMarkedBlock.styles.js";
@@ -34,7 +34,7 @@ export class UMarkedBlock extends UElement {
   @property({ type: String }) value?: string;
   /** 컨텐츠의 인용 출처들입니다. */
   @property({ type: Array }) refs?: ReferenceCitation[];
-  
+
   // Marked 인스턴스: 커스텀 렌더러와 KaTeX 확장 포함
   private parser = new Marked({
     pedantic: false,
@@ -51,22 +51,13 @@ export class UMarkedBlock extends UElement {
   private placeholder = new HtmlPlaceholder();
   // 렌더링 지연 플래그
   private queued: boolean = false;
-  private timer?: number;
-
-  /**
-   * value가 계속 갱신되고 있는지(스트리밍 중인지) 여부입니다.
-   * `value`가 갱신될 때마다 타이머가 리셋되며, STREAMING_IDLE_MS 동안
-   * 추가 갱신이 없으면 스트리밍이 끝난 것으로 간주합니다.
-   * 이 블록 자체의 닫힘 여부(`isClosed`)와 별개로, 메시지 전체가 아직
-   * 스트리밍 중인지 근사하기 위한 값이라 block-json 등의 loading 판단에 함께 사용됩니다.
-   */
+  private queuedTimer?: number;
+  // 스트리밍 상태 플래그
   @state() private streaming: boolean = false;
   private streamingTimer?: number;
-  // value 갱신이 이 시간(ms) 동안 없으면 스트리밍이 끝난 것으로 판단합니다.
-  private static readonly STREAMING_IDLE_MS = 1500;
 
   disconnectedCallback(): void {
-    clearTimeout(this.timer);
+    clearTimeout(this.queuedTimer);
     clearTimeout(this.streamingTimer);
     super.disconnectedCallback();
   }
@@ -85,12 +76,12 @@ export class UMarkedBlock extends UElement {
       clearTimeout(this.streamingTimer);
       this.streamingTimer = window.setTimeout(() => {
         this.streaming = false;
-      }, UMarkedBlock.STREAMING_IDLE_MS);
+      }, 1500);
 
       if (this.queued) return;
       this.queued = true;
 
-      this.timer = window.setTimeout(() => {
+      this.queuedTimer = window.setTimeout(() => {
         this.queued = false;
         this.requestUpdate();
       }, 80);
@@ -118,19 +109,17 @@ export class UMarkedBlock extends UElement {
    */
   private renderCode(token: Tokens.Code): string {
     const lang = token.lang ?? "plaintext";
-    const trimmed = token.raw.trimEnd();
-    const isClosed = trimmed.endsWith("```") || trimmed.endsWith("~~~");
 
     // Extra 코드블록 감지
     // 블록 자체가 닫혔더라도 메시지가 아직 스트리밍 중이면 loading을 유지합니다.
     if (lang === 'block-json') {
-      return UExtraBlock.buildHTML(token.text, { loading: !isClosed || this.streaming });
+      return UElementBlock.buildHTML(token.text, { loading: this.streaming });
     }
 
     // 코드블록은 refs 태그 제거 + HTML escape
     const safeText = this.removeRefs(token.text);
 
-    return buildElementHTML("u-code-block", { lang: lang, loading: !isClosed }, safeText);
+    return HtmlBuilder.build("u-code-block", { lang: lang }, safeText);
   }
 
   /**
@@ -167,10 +156,10 @@ export class UMarkedBlock extends UElement {
       let tooltip = "";
       if (sources.length > 0) {
         const cards = sources.map((s) => URefCard.buildHTML(s)).join("");
-        tooltip = buildElementHTML("u-ref-card-group", { slot: "tooltip" }, cards);
+        tooltip = HtmlBuilder.build("u-ref-card-group", { slot: "tooltip" }, cards);
       }
 
-      const html = buildElementHTML("u-ref-tag", { href: link }, label + tooltip);
+      const html = HtmlBuilder.build("u-ref-tag", { href: link }, label + tooltip);
       const key = this.placeholder.store(html);
       value = value.slice(0, ref.endIndex) + key + value.slice(ref.endIndex);
     }

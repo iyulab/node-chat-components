@@ -108,15 +108,11 @@ function appendMessage(position: 'left' | 'right', text?: string, files?: FileBl
 
 ## LLM System Prompt Integration
 
-Add extra instructions to your LLM system prompt (import `@iyulab/chat-components/extras` first to register the built-in chart/images/map/video components — see [docs/extras-system.md](./extras-system.md)):
+Add extra instructions to your LLM system prompt (import `@iyulab/chat-components/extra` first to register the built-in chart/images/map/video components — see [docs/extras-system.md](./extras-system.md)):
 
 ```ts
-import '@iyulab/chat-components/extras';
-import { ExtraPromptBuilder, PresetExtra } from '@iyulab/chat-components';
-
-const extraInstructions = ExtraPromptBuilder.instance
-  .use(PresetExtra.All)
-  .build();
+import '@iyulab/chat-components/extra';
+import { prompt as extraInstructions } from '@iyulab/chat-components/extra';
 
 const systemPrompt = `
 You are a helpful assistant.

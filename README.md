@@ -86,14 +86,11 @@ npx skills add ./node_modules/@iyulab/chat-components
 
 ## Extras System
 
-Chart/images/map/video are optional and not part of the core import — bring them in via `@iyulab/chat-components/extras`:
+Chart/images/map/video are optional and not part of the core import — bring them in via `@iyulab/chat-components/extra`:
 
 ```ts
-import '@iyulab/chat-components/extras';
-import { ExtraPromptBuilder, PresetExtra } from '@iyulab/chat-components';
-
-// Build system prompt instructions
-const extraInstructions = ExtraPromptBuilder.instance.use(PresetExtra.All).build();
+import '@iyulab/chat-components/extra';
+import { prompt as extraInstructions } from '@iyulab/chat-components/extra';
 
 const systemPrompt = `You are a helpful assistant.\n\n${extraInstructions}`;
 

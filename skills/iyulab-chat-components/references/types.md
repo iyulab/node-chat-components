@@ -10,22 +10,10 @@ Union type for all message content blocks. Used to exchange structured message d
 
 ```ts
 type BlockItem =
-  | ThinkingBlockItem
   | TextBlockItem
   | MarkdownBlockItem
   | FileBlockItem
-  | ToolBlockItem
   | ReferenceBlockItem;
-```
-
-### ThinkingBlockItem → `u-think-block`
-
-```ts
-interface ThinkingBlockItem {
-  type: 'thinking';
-  loading?: boolean;  // Streaming in progress
-  value?: string;     // Reasoning text content
-}
 ```
 
 ### TextBlockItem → `u-text-block`
@@ -52,24 +40,11 @@ interface MarkdownBlockItem {
 ```ts
 interface FileBlockItem {
   type: 'file';
-  status?: 'idle' | 'uploading' | 'error';
   name?: string;      // File name
   size?: number;      // File size in bytes
   mimeType?: string;  // MIME type, e.g. "image/png"
-  url?: string;       // Download URL
+  url?: string;       // File URL (used for image/video thumbnail + preview)
   data?: any;
-}
-```
-
-### ToolBlockItem → `u-tool-block`
-
-```ts
-interface ToolBlockItem {
-  type: 'tool';
-  loading?: boolean;
-  title?: string;
-  input?: JsonNode;
-  output?: JsonNode;
 }
 ```
 
@@ -105,11 +80,22 @@ interface ReferenceCitation {
 
 ---
 
-## JsonNode
+## JsonSchema & ElementSchema
+
+Used by [`ElementPromptBuilder`](./utilities/prompt-builder.md) to describe extra/element schemas for the LLM system prompt (see [extra-system.md](./extra-system.md)).
 
 ```ts
-type JsonValue  = string | number | boolean | null;
-type JsonArray  = JsonNode[];
-type JsonObject = { [key: string]: JsonNode };
-type JsonNode   = JsonValue | JsonArray | JsonObject;
+type JsonSchema =
+  | { type: 'boolean'; description?: string; default?: any; enum?: any[]; examples?: any[] }
+  | { type: 'string'; minLength?: number; maxLength?: number; /* + base fields above */ }
+  | { type: 'number' | 'integer'; minimum?: number; maximum?: number; /* + base fields above */ }
+  | { type: 'array'; items?: JsonSchema; minItems?: number; maxItems?: number; /* + base fields above */ }
+  | { type: 'object'; properties?: Record<string, JsonSchema>; required?: string[]; additionalProperties?: boolean; /* + base fields above */ };
+
+interface ElementSchema {
+  tag: string;                                 // Custom element tag to register
+  description: string;                         // LLM-facing description
+  properties?: Record<string, JsonSchema>;     // LLM-facing property schema
+  required?: string[];                         // Required property names
+}
 ```

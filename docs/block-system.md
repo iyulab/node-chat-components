@@ -28,7 +28,7 @@ The primary block for LLM text output. Parses markdown and handles several speci
 | `` ```lang ``` `` | `u-code-block` |
 | `\| table \|` | `u-table-block` |
 | KaTeX `$...$` | MathML via `marked-katex-extension` |
-| `` ```block-json ``` `` | `u-extra-block` → extra component (see [docs/extras-system.md](./extras-system.md)) |
+| `` ```block-json ``` `` | `u-element-block` → extra component (see [docs/extras-system.md](./extras-system.md)) |
 | `refs` citations | `u-ref-tag` inserted inline |
 
 **Debouncing:** updates are batched with an 80ms delay, which smooths out high-frequency streaming writes.

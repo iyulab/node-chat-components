@@ -15,11 +15,9 @@ Chat input component. Combines a text input area, file attachment previews, and 
 <!-- Loading (streaming) state -->
 <u-prompt loading></u-prompt>
 
-<!-- With file attach button -->
+<!-- Custom actions via slots (there is no built-in attach button) -->
 <u-prompt>
-  <u-attach-button slot="left-actions" multiple accept="image/*,application/pdf">
-    Attach
-  </u-attach-button>
+  <button slot="left-actions" @click=${openFilePicker}>Attach</button>
 </u-prompt>
 ```
 
@@ -37,20 +35,11 @@ prompt.addEventListener('stop', () => {
   console.log('stopped');
 });
 
-// Wire up file attach button
-prompt.addEventListener('attach', (e) => {
-  const { files } = e.detail;
-  prompt.files = [
-    ...(prompt.files ?? []),
-    ...files.map(f => ({
-      type: 'file' as const,
-      name: f.name,
-      size: f.size,
-      mimeType: f.type,
-      status: 'idle' as const,
-    }))
-  ];
-});
+// Attaching files (no built-in picker — wire up your own <input type="file">)
+prompt.files = [
+  ...(prompt.files ?? []),
+  { type: 'file' as const, name: 'photo.png', size: 12345, mimeType: 'image/png' }
+];
 
 // Programmatic submit
 prompt.submit();
@@ -63,7 +52,7 @@ prompt.submit();
 | Name | Description |
 |------|-------------|
 | `header` | Area above the input |
-| `left-actions` | Left side of the control bar (e.g. attach button) |
+| `left-actions` | Left side of the control bar (e.g. a custom attach button) |
 | `right-actions` | Right side of the control bar |
 | `footer` | Area below the input |
 
@@ -86,10 +75,12 @@ prompt.submit();
 
 ## Events
 
+Both `send` and `stop` are dispatched with `bubbles: false, composed: false` — listen directly on the `u-prompt` element, they won't bubble past it.
+
 | Event | Detail | Description |
 |-------|--------|-------------|
-| `send` | `unknown` | Fired on Enter or send button click |
-| `stop` | `unknown` | Fired on send button click while loading |
+| `send` | `SendEventDetail` (`{ value, files? }`) | Fired on Enter or send button click (only when there's a value or files) |
+| `stop` | `StopEventDetail` (`{}`) | Fired on send button click while loading |
 | `remove` | `RemoveEventDetail` | Fired when an attached file's remove button is clicked |
 
 ## CSS Parts

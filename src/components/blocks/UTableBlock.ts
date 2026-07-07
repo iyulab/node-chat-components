@@ -7,7 +7,8 @@ import "@iyulab/components/dist/components/icon/UIcon.js";
 import "@iyulab/components/dist/components/button/UButton.js";
 import "@iyulab/components/dist/components/skeleton/USkeleton.js";
 import { UInput } from "@iyulab/components/dist/components/input/UInput.js";
-import { UDataElement } from "@iyulab/components/dist/components/UDataElement.js";
+import { UDataElement } from "../UDataElement.js";
+import "../../utilities/icons.js";
 import { styles } from "./UTableBlock.styles.js";
 
 /** 테이블 셀 데이터 타입 */
@@ -69,11 +70,11 @@ export class UTableBlock extends UDataElement {
         <div class="toolbar-right">
           <u-button @click=${this.handleDownloadXLS} title="Excel Download">
             XLS
-            <u-icon slot="suffix" lib="bootstrap" name="download"></u-icon>
+            <u-icon slot="suffix" lib="internal-chat" name="download"></u-icon>
           </u-button>
           <u-button @click=${this.handleDownloadCSV} title="CSV Download">
             CSV
-            <u-icon slot="suffix" lib="bootstrap" name="download"></u-icon>
+            <u-icon slot="suffix" lib="internal-chat" name="download"></u-icon>
           </u-button>
         </div>
       </div>
@@ -92,8 +93,8 @@ export class UTableBlock extends UDataElement {
                     ${unsafeHTML(h.text)}
                     <u-icon
                       class="sort-icon"
-                      lib="bootstrap"
-                      name=${isActive ? (this.sort.dir === "asc" ? "sort-alpha-up" : "sort-alpha-down") : "arrow-down-up"}
+                      lib="internal-chat"
+                      name=${isActive ? (this.sort.dir === "asc" ? "sort-ascending-letters" : "sort-descending-letters") : "arrows-sort"}
                     ></u-icon>
                   </th>
                 `;

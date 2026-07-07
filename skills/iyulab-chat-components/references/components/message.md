@@ -29,8 +29,7 @@ Chat message wrapper component. Arranges content blocks via slots, shows a loadi
   <div slot="header">AI Assistant</div>
   <u-marked-block .value=${content}></u-marked-block>
   <div slot="footer">
-    <u-copy-button .value=${content}></u-copy-button>
-    <u-vote-button></u-vote-button>
+    <!-- Add your own action buttons here (e.g. @iyulab/components's copy-button) -->
   </div>
 </u-message>
 ```

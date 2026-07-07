@@ -1,12 +1,13 @@
 ﻿import { html } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import hljs from "highlight.js";
 
 import "@iyulab/components/dist/components/icon/UIcon.js";
 import "@iyulab/components/dist/components/spinner/USpinner.js";
-import "../buttons/UCopyButton.js";
+import "@iyulab/components/dist/components/copy-button/UCopyButton.js";
 import { UElement } from "@iyulab/components/dist/components/UElement.js";
+import "../../utilities/icons.js";
 import { styles } from "./UCodeBlock.styles.js";
 
 /**
@@ -17,17 +18,12 @@ import { styles } from "./UCodeBlock.styles.js";
 export class UCodeBlock extends UElement {
   static styles = [ super.styles, styles ];
 
-  /** 코드 블록이 로딩 중인지 여부를 나타냅니다. */
-  @property({ type: Boolean, reflect: true }) loading: boolean = false;
   /** 코드 블록의 헤더를 숨길지 여부를 지정합니다. */
   @property({ type: Boolean, reflect: true }) headless: boolean = false;
   /** 코드 언어를 지정합니다. */
   @property({ type: String, reflect: true }) lang: string = 'plaintext';
   /** 표시할 코드 내용입니다. */
   @property({ type: String }) value?: string;
-
-  /** 클립보드 복사 상태를 나타내는 플래그입니다. */
-  @state() isCopied: boolean = false;
 
   render() {
     // 지원하지 않는 경우 'plaintext'로 설정
@@ -37,9 +33,7 @@ export class UCodeBlock extends UElement {
     return html`
       <div class="header" ?hidden=${this.headless}>
         <span class="status">
-          ${this.loading 
-            ? html`<u-spinner></u-spinner>` 
-            : html`<u-icon lib="bootstrap" name="code-slash"></u-icon>`}
+          <u-icon lib="internal-chat" name="code"></u-icon>
         </span>
         <span class="lang">
           ${lang}

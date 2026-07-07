@@ -24,7 +24,59 @@ export const messages: Message[] = [
     items: [
       {
         type: 'text',
-        value: '오늘 서울의 날씨에 대해 알려줘. \n 그리고 이미지, 비디오, 지도, 차트 위젯도 보여줘. \n 마지막으로 프로그래밍 언어 비교표와 JSON 파싱 에러 UI 예시도 보고 싶어.'
+        value: '오늘 서울의 날씨에 대해 알려줘. \n 그리고 이미지, 비디오, 지도, 차트 위젯도 보여줘. \n 마지막으로 프로그래밍 언어 비교표와 JSON 파싱 에러 UI 예시도 보고 싶어. \n 참고로 첨부한 파일들도 같이 확인해줘.'
+      },
+      // ── file: 이미지/비디오 ──
+      {
+        type: 'file',
+        name: 'landscape.jpg',
+        mimeType: 'image/jpeg',
+        size: 2_458_112,
+        url: 'https://picsum.photos/1200/800?random=11',
+      },
+      {
+        type: 'file',
+        name: 'sample-clip.mp4',
+        mimeType: 'video/mp4',
+        size: 15_728_640,
+        url: 'https://www.w3schools.com/html/mov_bbb.mp4',
+      },
+      // ── file: 문서/코드/스프레드시트/압축 ──
+      {
+        type: 'file',
+        name: '보고서.pdf',
+        mimeType: 'application/pdf',
+        size: 892_456,
+        url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
+      },
+      {
+        type: 'file',
+        name: 'config.json',
+        mimeType: 'application/json',
+        size: 1_284,
+      },
+      {
+        type: 'file',
+        name: '매출현황.xlsx',
+        mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        size: 45_312,
+      },
+      {
+        type: 'file',
+        name: 'archive.zip',
+        mimeType: 'application/zip',
+        size: 10_485_760,
+      },
+      // ── file: 오디오/텍스트 (메타데이터 누락 케이스) ──
+      {
+        type: 'file',
+        name: 'voice-memo.mp3',
+        mimeType: 'audio/mpeg',
+        size: 3_145_728,
+      },
+      {
+        type: 'file',
+        name: 'notes.txt',
       }
     ]
   },

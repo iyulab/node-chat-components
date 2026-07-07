@@ -11,6 +11,7 @@ import { UTextBlock } from "../blocks/UTextBlock.js";
 import type { FileBlockItem } from "../../types/BlockItem.js";
 import { StopEventDetail } from "../../events/StopEvent.js";
 import { SendEventDetail } from "../../events/SendEvent.js";
+import "../../utilities/icons.js";
 import { styles } from "./UPrompt.styles.js";
 
 /**
@@ -73,11 +74,12 @@ export class UPrompt extends UElement {
         <slot name="right-actions"></slot>
         
         <u-button class="send-btn" part="send-btn"
+          variant="ghost"
           ?disabled=${!this.loading && !this.value}
           @click=${this.handleSendButtonClick}>
           <u-icon
-            lib="bootstrap"
-            name=${this.loading ? 'stop-circle' : 'arrow-up'}
+            lib="internal-chat"
+            name=${this.loading ? 'player-stop-fill' : 'send'}
           ></u-icon>
         </u-button>
       </div>
@@ -92,8 +94,11 @@ export class UPrompt extends UElement {
    */
   public submit() {
     if (this.loading) {
-      const stopDetail: StopEventDetail = {};
-      this.fire<StopEventDetail>('stop', { detail: stopDetail });
+      this.fire<StopEventDetail>('stop', {
+        bubbles: false,
+        composed: false, 
+        detail: {} 
+      });
       return;
     }
 
@@ -101,11 +106,14 @@ export class UPrompt extends UElement {
     const hasFiles = this.files && this.files.length > 0;
 
     if (hasValue || hasFiles) {
-      const sendDetail: SendEventDetail = {
-        value: this.value?.trim() ?? '',
-        files: this.files ? [...this.files] : undefined,
-      };
-      this.fire<SendEventDetail>('send', { detail: sendDetail });
+      this.fire<SendEventDetail>('send', { 
+        bubbles: false,
+        composed: false,
+        detail: {
+          value: this.value?.trim() ?? '',
+          files: this.files ? [...this.files] : undefined,
+        }
+      });
     }
   }
 

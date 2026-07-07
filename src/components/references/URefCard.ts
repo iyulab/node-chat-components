@@ -4,7 +4,8 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 
 import '@iyulab/components/dist/components/icon/UIcon.js';
 import { arrayAttrConverter } from '@iyulab/components/dist/utilities/converters.js';
-import { UDataElement } from '@iyulab/components/dist/components/UDataElement.js';
+import { UDataElement } from '../UDataElement.js';
+import '../../utilities/icons.js';
 import { styles } from './URefCard.styles.js';
 
 /**
@@ -42,9 +43,9 @@ export class URefCard extends UDataElement {
           <div style="flex: 1;"></div>
 
           <div class="badge" type=${this.type}>
-            <u-icon 
-              lib="bootstrap" 
-              name=${this.type === 'web' ? 'globe' : 'file-earmark'}
+            <u-icon
+              lib="internal-chat"
+              name=${this.type === 'web' ? 'world' : 'file'}
             ></u-icon>
             ${this.type.toUpperCase()}
           </div>

@@ -6,12 +6,13 @@ import '@iyulab/chat-components/dist/components/blocks/UMarkedBlock.js';
 
 **Tag:** `u-marked-block`
 
-Renders markdown text to HTML. Supports KaTeX math equations, code syntax highlighting, inline citation tag injection, and special handling for `view-json` and `intent-json` code blocks. Applying an 80ms debounce makes it suitable for LLM streaming.
+Renders markdown text to HTML. Supports KaTeX math equations, code syntax highlighting, inline citation tag injection, and special handling for `block-json` code fences (the [extra system](../extra-system.md)). Applying an 80ms debounce makes it suitable for LLM streaming.
 
-**Special code fences:**
-- `` ```view-json `` → automatically rendered as a `u-view` component
-- `` ```intent-json `` → stripped from output (must be parsed separately via `IntentPromptBuilder`)
+**Special code fence:**
+- `` ```block-json `` → automatically rendered via [`u-element-block`](./element-block.md)
 - All other HTML inside markdown is escaped to prevent XSS
+
+Tracks a `streaming` state internally (resets a 1500ms idle timer on every `value` update). A `block-json` extra's `loading` stays `true` until both its own fence is closed and the message has been idle for 1500ms.
 
 ```html
 <!-- Basic markdown -->
