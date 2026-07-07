@@ -1,11 +1,11 @@
-﻿import { html, nothing, PropertyValues } from "lit";
+import { html, nothing, PropertyValues } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import type { Chart as ChartInstance, ChartType, ChartData, ChartOptions } from "chart.js/auto";
 
 import "@iyulab/components/dist/components/icon/UIcon.js";
 import "@iyulab/components/dist/components/button/UButton.js";
 import { UElement } from "@iyulab/components/dist/components/UElement.js";
-import { styles } from "./UChartView.styles.js";
+import { styles } from "./UChartBlock.styles.js";
 
 /** chart.js lazy load */
 let ChartCtor: typeof ChartInstance | undefined;
@@ -18,10 +18,10 @@ async function loadChartJS(): Promise<typeof ChartInstance> {
 }
 
 /**
- * Chart.js를 사용하여 다양한 차트를 렌더링하는 뷰 컴포넌트입니다.
+ * Chart.js를 사용하여 다양한 차트를 렌더링하는 블록 컴포넌트입니다.
  */
-@customElement('u-chart-view')
-export class UChartView extends UElement {
+@customElement('u-chart-block')
+export class UChartBlock extends UElement {
   static styles = [super.styles, styles];
 
   /** 차트 유형 (bar, line, pie 등) */
@@ -196,6 +196,6 @@ export class UChartView extends UElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "u-chart-view": UChartView;
+    "u-chart-block": UChartBlock;
   }
 }

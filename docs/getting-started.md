@@ -108,23 +108,24 @@ function appendMessage(position: 'left' | 'right', text?: string, files?: FileBl
 
 ## LLM System Prompt Integration
 
-Add view instructions to your LLM system prompt:
+Add extra instructions to your LLM system prompt (import `@iyulab/chat-components/extras` first to register the built-in chart/images/map/video components — see [docs/extras-system.md](./extras-system.md)):
 
 ```ts
-import { ViewPromptBuilder, PresetView } from '@iyulab/chat-components';
+import '@iyulab/chat-components/extras';
+import { ExtraPromptBuilder, PresetExtra } from '@iyulab/chat-components';
 
-const viewInstructions = ViewPromptBuilder.instance
-  .use(PresetView.All)
+const extraInstructions = ExtraPromptBuilder.instance
+  .use(PresetExtra.All)
   .build();
 
 const systemPrompt = `
 You are a helpful assistant.
 
-${viewInstructions}
+${extraInstructions}
 `.trim();
 ```
 
-No parse step is needed — `view-json` blocks inside markdown are rendered automatically:
+No parse step is needed — `block-json` blocks inside markdown are rendered automatically:
 
 ```ts
 block.value = llmResponse;

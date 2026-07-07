@@ -23,10 +23,6 @@ export const styles = css`
     border-color: var(--u-border-color-strong);
   }
 
-  u-icon[name="file-earmark-x"] {
-    color: var(--u-red-600);
-  }
-
   .thumbnail {
     position: relative;
     flex-shrink: 0;
@@ -41,6 +37,17 @@ export const styles = css`
     background-color: var(--u-neutral-200);
     transition: background 0.15s ease;
     overflow: hidden;
+  }
+  .thumbnail[clickable] {
+    cursor: pointer;
+  }
+  .thumbnail img,
+  .thumbnail video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
   }
 
   .info {
@@ -122,5 +129,73 @@ export const styles = css`
   }
   .remove-btn:hover {
     background-color: var(--u-red-600);
+  }
+
+  /* ─── 미리보기 오버레이 ─── */
+
+  .preview-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    background: rgba(0, 0, 0, 0.92);
+    cursor: default;
+    animation: preview-fadeIn 0.2s ease;
+  }
+
+  .preview-header {
+    height: 56px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+  }
+
+  .preview-name {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.875em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .preview-close {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 12px;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .preview-close:hover  { background: rgba(255, 255, 255, 0.18); }
+  .preview-close:active { background: rgba(255, 255, 255, 0.28); }
+  .preview-close u-icon { color: white; font-size: 1.25em; }
+
+  .preview-body {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 24px 24px;
+  }
+  .preview-body img,
+  .preview-body video {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 6px;
+  }
+
+  @keyframes preview-fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
   }
 `;

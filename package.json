@@ -32,9 +32,9 @@
       "types": "./src/index.d.ts",
       "import": "./src/index.js"
     },
-    "./chart": {
-      "types": "./src/chart.d.ts",
-      "import": "./src/chart.js"
+    "./extras": {
+      "types": "./src/extras.d.ts",
+      "import": "./src/extras.js"
     },
     "./dist/*": "./src/*",
     "./react": "./dist/react/index.js",

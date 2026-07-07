@@ -49,7 +49,6 @@ export class UPrompt extends UElement {
           <u-file-block
             data-index=${index}
             .removable=${true}
-            .status=${file.status}
             .name=${file.name}
             .type=${file.mimeType}
             .size=${file.size}

@@ -28,7 +28,7 @@ The primary block for LLM text output. Parses markdown and handles several speci
 | `` ```lang ``` `` | `u-code-block` |
 | `\| table \|` | `u-table-block` |
 | KaTeX `$...$` | MathML via `marked-katex-extension` |
-| `` ```view-json ``` `` | `u-view` → view component |
+| `` ```block-json ``` `` | `u-extra-block` → extra component (see [docs/extras-system.md](./extras-system.md)) |
 | `refs` citations | `u-ref-tag` inserted inline |
 
 **Debouncing:** updates are batched with an 80ms delay, which smooths out high-frequency streaming writes.
@@ -59,6 +59,8 @@ block.refs = [{
 
 Represents a single attached or received file. When used inside `u-prompt` (via `files` prop), add `removable` to show a delete button.
 
+Images and videos (when `url` is set) render an actual thumbnail instead of a generic icon, and clicking the thumbnail opens a full-size preview overlay. Other file types keep the type-based icon.
+
 ```ts
 // Reading file input
 fileInput.addEventListener('change', (e) => {
@@ -66,19 +68,9 @@ fileInput.addEventListener('change', (e) => {
   const newFiles = files.map((f: File) => ({
     type: 'file' as const,
     name: f.name, size: f.size, mimeType: f.type,
-    status: 'idle' as const,
   }));
   prompt.files = [...(prompt.files ?? []), ...newFiles];
 });
-```
-
-**Upload status progression:**
-
-```
-status: 'idle'     → file selected, not yet uploaded
-status: 'uploading' → upload in progress (spinner shown)
-status: 'error'    → upload failed (error icon shown)
-status: 'idle' + url → upload complete, download available
 ```
 
 ---

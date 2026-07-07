@@ -2,6 +2,21 @@
 
 ## [0.7.0] - 2026-07-07
 
+### Changed
+
+- **Breaking:** The View system is renamed to the **Extras** system, and the 4 built-in views (chart/images/map/video) are no longer part of the core entrypoint:
+  - `u-view` → `u-extra-block` (`UExtraBlock`, in `components/blocks/`)
+  - `u-chart-view`/`u-images-view`/`u-map-view`/`u-video-view` → `u-chart-block`/`u-images-block`/`u-map-block`/`u-video-block` (`UChartBlock`/`UImagesBlock`/`UMapBlock`/`UVideoBlock`, in the new `components-extras/` folder)
+  - `view-json` fenced code blocks → `block-json`
+  - `ViewPromptBuilder` → `ExtraPromptBuilder`; `PresetView` → `PresetExtra`; `types/Views.ts` → `types/Extras.ts` (`ViewDefinition` → `ExtraDefinition`, `element` field dropped)
+  - The `./chart` subpath is replaced by `./extras`, which registers all 4 built-ins at once (`import '@iyulab/chat-components/extras'`). Need only one or two and want to skip bundling the rest (e.g. skip `chart.js`)? Import the specific component directly via `@iyulab/chat-components/dist/components-extras/UImagesBlock.js` instead.
+  - `u-extra-block` no longer shows an error card for unregistered tags or invalid data — it renders nothing and logs to the console instead, since an unregistered tag is more often a missing `/extras` import than a real error.
+
+  **Migration:** see MIGRATION.md.
+
+- `u-marked-block` now tracks a `streaming` state (resets a 1500ms idle timer on every `value` update). A `block-json` extra's `loading` stays `true` until **both** its own fence is closed **and** the message has been idle for 1500ms, instead of turning off as soon as its own fence closes while the rest of the message keeps streaming.
+- The 0.6.0 note about `./react` still re-exporting the chart component regardless of exclusion no longer applies — moving chart out of `components/` into `components-extras/` also dropped it from the generated `react/index.js` barrel.
+
 ### Removed
 
 - **Breaking:** Legacy `u-submit`/`u-cancel` DOM events removed from `UPrompt`. They were dispatched alongside `send`/`stop` since 0.5.1 as a deprecation-period compatibility alias; 0.6.0 was the announced removal target. Use `send`/`stop` instead — see MIGRATION.md.
@@ -11,6 +26,7 @@
   - Intent system: `u-question-intent` (`UQuestionIntent`), `IntentPromptBuilder`, `PresetIntent`, `types/Intents.ts`
   - Related types: `ThinkingBlockItem` and `ToolBlockItem` removed from the `BlockItem` union; `AttachEvent`/`ChoiceEvent` removed
 - `u-copy-button` (`UCopyButton`) is retained — still used internally by `u-code-block`.
+- **Breaking:** `FileBlockItem.status` and `UFileBlock.status` removed (unused in practice). `u-file-block` now renders an actual `<img>`/`<video>` thumbnail for image/video files with a `url` (instead of a generic icon) and opens a full-size overlay on click; other file types keep the icon.
 
   **Migration:** see MIGRATION.md for the full mapping. There is no drop-in replacement for the intent system or the removed blocks/buttons; if you rely on any of them, stay on `0.6.x` or vendor the component from that version's source.
 

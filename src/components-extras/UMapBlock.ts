@@ -1,14 +1,14 @@
-﻿import { html, nothing } from "lit";
+import { html, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 
 import { UElement } from "@iyulab/components/dist/components/UElement.js";
-import { styles } from "./UMapView.styles.js";
+import { styles } from "./UMapBlock.styles.js";
 
 /**
- * 지도 뷰 컴포넌트 (OpenStreetMap embed)
+ * 지도 블록 컴포넌트 (OpenStreetMap embed)
  */
-@customElement('u-map-view')
-export class UMapView extends UElement {
+@customElement('u-map-block')
+export class UMapBlock extends UElement {
   static styles = [super.styles, styles];
 
   /** 위도 (latitude) */
@@ -31,14 +31,14 @@ export class UMapView extends UElement {
     const linkUrl = `https://www.openstreetmap.org/?mlat=${this.lat}&mlon=${this.lng}#map=${this.zoom}/${this.lat}/${this.lng}`;
 
     return html`
-      <iframe 
-        src="${embedUrl}" 
+      <iframe
+        src="${embedUrl}"
         loading="lazy"
       ></iframe>
-      <a class="caption" 
-        ?hidden=${!this.label && !this.description}  
-        href="${linkUrl}" 
-        target="_blank" 
+      <a class="caption"
+        ?hidden=${!this.label && !this.description}
+        href="${linkUrl}"
+        target="_blank"
         rel="noopener"
       >
         <strong>${this.label}</strong>
@@ -50,6 +50,6 @@ export class UMapView extends UElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "u-map-view": UMapView;
+    "u-map-block": UMapBlock;
   }
 }

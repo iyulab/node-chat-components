@@ -1,11 +1,11 @@
-﻿import { html, nothing } from "lit";
+import { html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { repeat } from "lit/directives/repeat.js";
 
 import "@iyulab/components/dist/components/carousel/UCarousel.js";
 import "@iyulab/components/dist/components/icon/UIcon.js";
 import { UElement } from "@iyulab/components/dist/components/UElement.js";
-import { styles } from "./UImagesView.styles.js";
+import { styles } from "./UImagesBlock.styles.js";
 
 export interface ImageSlide {
   src: string;
@@ -14,10 +14,10 @@ export interface ImageSlide {
 }
 
 /**
- * u-carousel 기반 가로 슬라이드 + 슬라이딩 라이트박스 형태의 이미지 뷰어입니다.
+ * u-carousel 기반 가로 슬라이드 + 슬라이딩 라이트박스 형태의 이미지 블록입니다.
  */
-@customElement('u-images-view')
-export class UImagesView extends UElement {
+@customElement('u-images-block')
+export class UImagesBlock extends UElement {
   static styles = [super.styles, styles];
 
   /** 이미지 슬라이드 배열 */
@@ -50,12 +50,12 @@ export class UImagesView extends UElement {
         .gap=${8}
       >
         ${repeat(this.items, (item, i) => html`
-          <div class="slide" 
+          <div class="slide"
             @click=${() => this.open(i)}>
-            <img 
-              src=${item.src} 
-              alt=${item.alt || ''} 
-              loading="lazy" 
+            <img
+              src=${item.src}
+              alt=${item.alt || ''}
+              loading="lazy"
             />
             <div class="caption"
               ?hidden=${!item.caption}>
@@ -129,12 +129,12 @@ export class UImagesView extends UElement {
     `;
   }
 
-  public open = (i: number) => { 
-    this.index = i; 
+  public open = (i: number) => {
+    this.index = i;
   }
 
-  public close = () => { 
-    this.index = null; 
+  public close = () => {
+    this.index = null;
   }
 
   public prev = () => {
@@ -169,6 +169,6 @@ export class UImagesView extends UElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "u-images-view": UImagesView;
+    "u-images-block": UImagesBlock;
   }
 }

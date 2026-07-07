@@ -21,7 +21,7 @@ export default defineConfig({
     lib: {
       entry: [
         resolve(__dirname, 'src/index.ts'),
-        resolve(__dirname, 'src/chart.ts'),
+        resolve(__dirname, 'src/extras.ts'),
       ],
       formats: ['es'],
       fileName: (format, entry) => {
@@ -51,7 +51,7 @@ export default defineConfig({
     react({
       input: 'src',
       output: 'react',
-      exclude: ['src/components/views/UChartView.ts'],
+      exclude: ['src/components-extras/UChartBlock.ts'],
     }),
     raw(),
   ]

@@ -4,12 +4,14 @@
 
 ```
 src/
-├── index.ts                        # Public exports
+├── index.ts                        # Public exports (core only — no chart/images/map/video)
+├── extras.ts                       # `./extras` subpath: registers all 4 built-in extras at once
 ├── assets/
-│   └── view-prompt.md              # View system prompt template
+│   └── extra-prompt.md             # Extras system prompt template
 ├── components/
 │   ├── blocks/                     # Content block components
 │   │   ├── UCodeBlock.ts
+│   │   ├── UExtraBlock.ts          # Generic tag/properties renderer used by u-marked-block
 │   │   ├── UFileBlock.ts
 │   │   ├── UMarkedBlock.ts
 │   │   ├── URefBlock.ts
@@ -21,26 +23,25 @@ src/
 │   │   └── UMessage.ts
 │   ├── prompt/
 │   │   └── UPrompt.ts
-│   ├── references/
-│   │   ├── URefCard.ts
-│   │   ├── URefCardGroup.ts
-│   │   └── URefTag.ts
-│   └── views/
-│       ├── UChartView.ts
-│       ├── UImagesView.ts
-│       ├── UMapView.ts
-│       ├── UVideoView.ts
-│       └── UView.ts
+│   └── references/
+│       ├── URefCard.ts
+│       ├── URefCardGroup.ts
+│       └── URefTag.ts
+├── components-extras/              # Optional built-in extras, not part of core index.ts
+│   ├── UChartBlock.ts
+│   ├── UImagesBlock.ts
+│   ├── UMapBlock.ts
+│   └── UVideoBlock.ts
 ├── events/
 │   ├── SendEvent.ts
 │   └── StopEvent.ts
 ├── types/
 │   ├── BlockItem.ts                # Message content block union type
+│   ├── Extras.ts                   # Extra definitions and preset flags
 │   ├── JsonSchema.ts               # JSON Schema types for LLM prompts
-│   ├── References.ts               # ReferenceSource / ReferenceCitation
-│   └── Views.ts                    # View definitions and preset flags
+│   └── References.ts               # ReferenceSource / ReferenceCitation
 └── utilities/
-    └── ViewPromptBuilder.ts        # View LLM instruction builder
+    └── ExtraPromptBuilder.ts       # Extras LLM instruction builder
 ```
 
 ---
@@ -52,10 +53,10 @@ src/
 └── @iyulab/chat-components
     ├── UMessage          ← message container (slot-based)
     ├── UPrompt           ← chat input
-    ├── Block components  ← content renderers (UMarkedBlock, UCodeBlock, ...)
+    ├── Block components  ← content renderers (UMarkedBlock, UCodeBlock, UExtraBlock, ...)
     ├── Button components ← action buttons (UCopyButton)
     ├── Reference components ← citation UI (URefTag, URefCard, ...)
-    └── View components   ← LLM-generated rich media (UChartView, UMapView, ...)
+    └── Extra components  ← LLM-generated rich media, optional (UChartBlock, UMapBlock, ...)
 ```
 
 All components extend `UElement` from `@iyulab/components`.
@@ -68,16 +69,19 @@ Messages are composed of two layers:
 
 ```
 u-message
-├── [Blocks]    ← plain content (text, markdown, code, file, reference)
-└── [Views]     ← rich media rendered from view-json code blocks (chart, map, images, video)
+├── [Blocks]  ← plain content (text, markdown, code, file, reference)
+└── [Extras]  ← rich media rendered from block-json code blocks (chart, map, images, video)
 ```
 
 **Blocks** are static content pieces:
 - Assembled manually from `BlockItem[]` data or rendered by `u-marked-block` from markdown
 
-**Views** are rendered automatically:
-- `ViewPromptBuilder` injects view instructions into the system prompt
-- `u-marked-block` detects `view-json` code blocks and renders them via `u-view`
+**Extras** are rendered automatically:
+- `ExtraPromptBuilder` injects extra instructions into the system prompt
+- `u-marked-block` detects `block-json` code blocks and renders them via `u-extra-block`
+- The 4 built-in extras (chart/images/map/video) live in `components-extras/` and must be
+  imported via `@iyulab/chat-components/extras` (or individually via the `dist/` path) —
+  they are not part of core `index.ts`
 
 ---
 
@@ -93,7 +97,7 @@ u-marked-block.value
         ├── ```code```  →  u-code-block
         ├── |table|  →  u-table-block
         ├── refs  →  u-ref-tag (inline)
-        └── ```view-json```  →  u-view  →  u-chart-view / u-map-view / ...
+        └── ```block-json```  →  u-extra-block  →  u-chart-block / u-map-block / ...
 ```
 
 ---

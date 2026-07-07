@@ -1,15 +1,16 @@
-import { html } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { html, nothing } from "lit";
+import { customElement, property, state } from "lit/decorators.js";
 
 import "@iyulab/components/dist/components/icon/UIcon.js";
 import "@iyulab/components/dist/components/button/UButton.js";
-import "@iyulab/components/dist/components/spinner/USpinner.js";
 import { RemoveEventDetail } from "@iyulab/components/dist/events/RemoveEvent.js";
 import { UElement } from "@iyulab/components/dist/components/UElement.js";
 import { styles } from "./UFileBlock.styles.js";
 
 /**
  * 단일 파일을 표시하는 블록 컴포넌트입니다.
+ * 이미지/비디오는 실제 미리보기를, 그 외 타입은 아이콘을 썸네일로 보여주며
+ * 미리보기가 가능한 경우 클릭 시 오버레이로 원본을 확인할 수 있습니다.
  */
 @customElement("u-file-block")
 export class UFileBlock extends UElement {
@@ -17,8 +18,6 @@ export class UFileBlock extends UElement {
 
   /** 삭제 버튼 표시 */
   @property({ type: Boolean, reflect: true }) removable = false;
-  /** 파일 상태 */
-  @property({ type: String, reflect: true }) status?: | 'idle' | 'uploading' | 'error';
   /** 파일 이름 */
   @property({ type: String }) name?: string;
   /** MIME 타입 */
@@ -28,24 +27,44 @@ export class UFileBlock extends UElement {
   /** 다운로드 URL */
   @property({ type: String }) url?: string;
 
+  /** 미리보기 오버레이가 열려있는지 여부 */
+  @state() private previewOpen = false;
+
+  connectedCallback(): void {
+    super.connectedCallback();
+    document.addEventListener('keydown', this.handleKeyDown);
+  }
+
+  disconnectedCallback(): void {
+    document.removeEventListener('keydown', this.handleKeyDown);
+    super.disconnectedCallback();
+  }
+
+  private get isImage(): boolean {
+    return !!this.url && !!this.type?.startsWith("image/");
+  }
+
+  private get isVideo(): boolean {
+    return !!this.url && !!this.type?.startsWith("video/");
+  }
+
+  /** 클릭 시 오버레이로 미리볼 수 있는 타입인지 여부 */
+  private get previewable(): boolean {
+    return this.isImage || this.isVideo;
+  }
+
   render() {
     return html`
-      <div class="thumbnail">
-        <u-spinner 
-          ?hidden=${this.status !== 'uploading'}
-        ></u-spinner>  
-        <u-icon
-          ?hidden=${this.status !== 'error'}
-          lib="bootstrap" 
-          name="file-earmark-x"
-        ></u-icon>
-        <u-icon
-          ?hidden=${this.status && this.status !== 'idle'}
-          lib="bootstrap" 
-          name=${this.resolveIcon(this.type)}
-        ></u-icon>
+      <div class="thumbnail"
+        ?clickable=${this.previewable}
+        @click=${this.handleThumbnailClick}>
+        ${this.isImage
+          ? html`<img src=${this.url!} alt=${this.name || ''} loading="lazy" />`
+          : this.isVideo
+          ? html`<video src="${this.url}#t=0.1" preload="metadata" muted playsinline></video>`
+          : html`<u-icon lib="bootstrap" name=${this.resolveIcon(this.type)}></u-icon>`}
         <u-button class="download-btn"
-          ?hidden=${!this.url || this.status === 'uploading' || this.status === 'error'}
+          ?hidden=${!this.url}
           title="Download"
           @click=${this.handleDownloadClick}>
           <u-icon lib="bootstrap" name="download"></u-icon>
@@ -63,15 +82,51 @@ export class UFileBlock extends UElement {
           </span>
         </div>
       </div>
-      
+
       <u-button class="remove-btn"
         ?hidden=${!this.removable}
         title="Remove"
         @click=${this.handleRemoveClick}>
         <u-icon lib="internal" name="x-lg"></u-icon>
       </u-button>
+
+      ${this.renderPreviewOverlay()}
     `;
   }
+
+  private renderPreviewOverlay() {
+    if (!this.previewOpen || !this.previewable) return nothing;
+
+    return html`
+      <div class="preview-overlay" @click=${this.closePreview}>
+        <header class="preview-header">
+          <span class="preview-name">${this.name}</span>
+          <button class="preview-close" @click=${this.closePreview}>
+            <u-icon lib="internal" name="x-lg"></u-icon>
+          </button>
+        </header>
+        <div class="preview-body" @click=${(e: Event) => e.stopPropagation()}>
+          ${this.isImage
+            ? html`<img src=${this.url!} alt=${this.name || ''} />`
+            : html`<video src=${this.url!} controls autoplay></video>`}
+        </div>
+      </div>
+    `;
+  }
+
+  private handleThumbnailClick = (e: Event) => {
+    if (!this.previewable) return;
+    e.stopPropagation();
+    this.previewOpen = true;
+  }
+
+  private closePreview = () => {
+    this.previewOpen = false;
+  }
+
+  private handleKeyDown = (e: KeyboardEvent) => {
+    if (this.previewOpen && e.key === 'Escape') this.closePreview();
+  };
 
   private handleDownloadClick = (e: Event) => {
     e.stopPropagation();

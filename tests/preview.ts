@@ -3,9 +3,10 @@ import { customElement, state } from "lit/decorators.js";
 import { repeat } from "lit/directives/repeat.js";
 
 import '../src';
+import '../src/extras.js';
 import { Theme, Toast } from '@iyulab/components';
-import { ViewPromptBuilder } from '../src/utilities/ViewPromptBuilder.js';
-import { PresetView } from '../src/types/Views.js';
+import { ExtraPromptBuilder } from '../src/utilities/ExtraPromptBuilder.js';
+import { PresetExtra } from '../src/types/Extras.js';
 import type { BlockItem } from '../src/types/BlockItem';
 import type { Message } from './messages';
 import { messages } from './messages';
@@ -19,7 +20,7 @@ import { SendEvent, UPrompt } from "../src";
 @customElement('preview-app')
 export class PreviewApp extends LitElement {
   private aborter: AbortController = new AbortController();
-  private vb = new ViewPromptBuilder();
+  private eb = new ExtraPromptBuilder();
   private db = new DOMPromptBuilder();
   private domAgent = new DOMAgent();
 
@@ -50,8 +51,8 @@ export class PreviewApp extends LitElement {
 
     // 시스템 프롬프트에 사용할 instruction 빌드
     this.instructions = [
-      'You are a helpful AI assistant that can use various views to enhance your responses.',
-      this.vb.use(PresetView.All).build(),
+      'You are a helpful AI assistant that can use various blocks to enhance your responses.',
+      this.eb.use(PresetExtra.All).build(),
     ].join('\n\n');
 
     // DOMAgent 이벤트 리스너

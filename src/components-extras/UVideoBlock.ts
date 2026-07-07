@@ -1,15 +1,15 @@
-﻿import { html, nothing, PropertyValues } from "lit";
+import { html, nothing, PropertyValues } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { ifDefined } from "lit/directives/if-defined.js";
 
 import { UElement } from "@iyulab/components/dist/components/UElement.js";
-import { styles } from "./UVideoView.styles.js";
+import { styles } from "./UVideoBlock.styles.js";
 
 /**
- * 비디오 플레이어 뷰 컴포넌트
+ * 비디오 플레이어 블록 컴포넌트
  */
-@customElement('u-video-view')
-export class UVideoView extends UElement {
+@customElement('u-video-block')
+export class UVideoBlock extends UElement {
   static styles = [super.styles, styles];
 
   /** 비디오 URL (YouTube, Vimeo, 직접 파일) */
@@ -105,6 +105,6 @@ export class UVideoView extends UElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "u-video-view": UVideoView;
+    "u-video-block": UVideoBlock;
   }
 }

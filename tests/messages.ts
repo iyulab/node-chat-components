@@ -105,9 +105,9 @@ interface Weather {
 
 ### 1. 이미지 갤러리
 
-\`\`\`view-json
+\`\`\`block-json
 {
-  "tag": "u-images-view",
+  "tag": "u-images-block",
   "properties": {
     "items": [
       { "src": "https://picsum.photos/1600/1200?random=1", "alt": "Beautiful landscape", "caption": "Mountain view" },
@@ -121,9 +121,9 @@ interface Weather {
 
 ### 2. 비디오 플레이어
 
-\`\`\`view-json
+\`\`\`block-json
 {
-  "tag": "u-video-view",
+  "tag": "u-video-block",
   "properties": {
     "src": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     "ratio": "16:9"
@@ -133,9 +133,9 @@ interface Weather {
 
 ### 3. 지도
 
-\`\`\`view-json
+\`\`\`block-json
 {
-  "tag": "u-map-view",
+  "tag": "u-map-block",
   "properties": {
     "lat": 37.5665,
     "lng": 126.9780,
@@ -148,9 +148,9 @@ interface Weather {
 
 ### 4. 차트
 
-\`\`\`view-json
+\`\`\`block-json
 {
-  "tag": "u-chart-view",
+  "tag": "u-chart-block",
   "properties": {
     "type": "bar",
     "data": {

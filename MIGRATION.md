@@ -28,13 +28,70 @@ promptEl.addEventListener('stop', handler);
 | `u-attach-button` (`UAttachButton`) | 파일 선택 버튼. `attach` 이벤트도 함께 제거 |
 | `u-vote-button` (`UVoteButton`) | 투표(좋아요/싫어요) 버튼 |
 | `u-question-intent` (`UQuestionIntent`) | Intent 시스템 UI |
-| `IntentPromptBuilder`, `PresetIntent`, `types/Intents.ts` | Intent 시스템 전체 (View 시스템과 별개) |
+| `IntentPromptBuilder`, `PresetIntent`, `types/Intents.ts` | Intent 시스템 전체 (Extras 시스템과 별개) |
 | `ThinkingBlockItem`, `ToolBlockItem` | `BlockItem` union에서 제거 |
 | `AttachEvent`, `ChoiceEvent` | 위 컴포넌트들과 함께 제거된 이벤트 타입 |
 
 `u-copy-button` (`UCopyButton`)은 `u-code-block`이 내부적으로 사용하고 있어 유지됩니다.
 
 `intent-json` 코드펜스를 사용 중이었다면, `u-marked-block`이 더 이상 이를 인식하지 않고 일반 코드 블록으로 렌더링합니다.
+
+### View 시스템 → Extras 시스템
+
+"View"라는 이름을 전부 걷어내고 "Extras"로 통일했습니다. 동작 방식은 거의 그대로이고, 이름과 파일 위치만 바뀌었습니다.
+
+| Before (0.6.x) | After (0.7.0) |
+|---|---|
+| `u-view` (`UView`) | `u-extra-block` (`UExtraBlock`, `components/blocks/`로 이동) |
+| `u-chart-view` (`UChartView`) | `u-chart-block` (`UChartBlock`, `components-extras/`로 이동) |
+| `u-images-view` (`UImagesView`) | `u-images-block` (`UImagesBlock`) |
+| `u-map-view` (`UMapView`) | `u-map-block` (`UMapBlock`) |
+| `u-video-view` (`UVideoView`) | `u-video-block` (`UVideoBlock`) |
+| `view-json` 코드펜스 | `block-json` |
+| `ViewPromptBuilder` | `ExtraPromptBuilder` |
+| `PresetView` | `PresetExtra` |
+| `types/Views.ts` (`ViewDefinition`) | `types/Extras.ts` (`ExtraDefinition`, `element` 필드 제거됨) |
+| `@iyulab/chat-components/chart` 서브패스 | `@iyulab/chat-components/extras` 서브패스 (4개 전부 한 번에 등록) |
+
+```ts
+// Before (0.6.x)
+import '@iyulab/chat-components/chart';
+import { ViewPromptBuilder, PresetView } from '@iyulab/chat-components';
+
+const instructions = ViewPromptBuilder.instance.use(PresetView.All).build();
+```
+
+```ts
+// After (0.7.0)
+import '@iyulab/chat-components/extras';
+import { ExtraPromptBuilder, PresetExtra } from '@iyulab/chat-components';
+
+const instructions = ExtraPromptBuilder.instance.use(PresetExtra.All).build();
+```
+
+4개 중 일부만 필요해서 나머지(특히 `chart.js`)를 번들에 포함하고 싶지 않다면, `/extras`를 쓰지 말고 필요한 컴포넌트만 `dist` 경로로 직접 import하세요:
+
+```ts
+import '@iyulab/chat-components/dist/components-extras/UImagesBlock.js';
+```
+
+**에러 UI 제거:** `u-extra-block`은 대상 태그가 등록되어 있지 않거나 데이터가 유효하지 않아도 더 이상 에러 카드를 띄우지 않습니다. `/extras`를 import하지 않아 아직 등록 안 된 태그일 수도 있기 때문에, 콘솔 경고만 남기고 아무것도 렌더링하지 않습니다.
+
+### `u-file-block` 정리
+
+`FileBlockItem.status`/`UFileBlock.status`가 제거되었습니다(실사용 없음 확인). 이미지/비디오(`url` 있는 경우)는 아이콘 대신 실제 썸네일을 보여주고 클릭 시 오버레이로 원본을 확인할 수 있습니다.
+
+```ts
+// Before
+{ type: 'file', status: 'idle', name, mimeType, size, url }
+
+// After — status 필드 삭제
+{ type: 'file', name, mimeType, size, url }
+```
+
+### `u-marked-block`의 `streaming` 플래그
+
+`block-json` 블록의 `loading`이 이제 자기 펜스가 닫히는 시점이 아니라, 자기 펜스가 닫히고 **+** 메시지 전체가 1500ms 동안 추가 업데이트 없이 유휴 상태가 된 시점에 함께 꺼집니다. 별도 마이그레이션 작업은 필요 없습니다(자동 동작 변경).
 
 ## 0.4.x → 0.5.x
 

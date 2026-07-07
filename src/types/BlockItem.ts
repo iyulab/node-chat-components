@@ -19,8 +19,6 @@ export interface MarkdownBlockItem {
 /** 파일 하나의 데이터 구조입니다. */
 export interface FileBlockItem {
   type: "file";
-  /** 파일 상태 */
-  status?: "idle" | "uploading" | "error";
   /** 파일 이름 */
   name?: string;
   /** 파일 크기 (bytes) */

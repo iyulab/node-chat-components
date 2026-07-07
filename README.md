@@ -69,10 +69,10 @@ npx skills add ./node_modules/@iyulab/chat-components
 
 | Tag | Description |
 |-----|-------------|
-| `u-marked-block` | Markdown renderer — KaTeX, code highlighting, citation injection, view-json handling |
+| `u-marked-block` | Markdown renderer — KaTeX, code highlighting, citation injection, block-json handling |
 | `u-code-block` | Syntax-highlighted code block (Highlight.js) with language label and copy button |
 | `u-text-block` | Plain text display or editable textarea |
-| `u-file-block` | File card — type icon, upload status, download, remove |
+| `u-file-block` | File card — type-based preview (image/video) or icon, click-to-open overlay, download, remove |
 | `u-ref-block` | Reference source group — collapse/expand, card grid |
 | `u-table-block` | Table — column sort, search, CSV/XLS download |
 
@@ -84,21 +84,24 @@ npx skills add ./node_modules/@iyulab/chat-components
 
 ---
 
-## View System
+## Extras System
+
+Chart/images/map/video are optional and not part of the core import — bring them in via `@iyulab/chat-components/extras`:
 
 ```ts
-import { ViewPromptBuilder, PresetView } from '@iyulab/chat-components';
+import '@iyulab/chat-components/extras';
+import { ExtraPromptBuilder, PresetExtra } from '@iyulab/chat-components';
 
 // Build system prompt instructions
-const viewInstructions = ViewPromptBuilder.instance.use(PresetView.All).build();
+const extraInstructions = ExtraPromptBuilder.instance.use(PresetExtra.All).build();
 
-const systemPrompt = `You are a helpful assistant.\n\n${viewInstructions}`;
+const systemPrompt = `You are a helpful assistant.\n\n${extraInstructions}`;
 
-// view-json blocks inside markdown are rendered automatically
+// block-json blocks inside markdown are rendered automatically
 markedBlock.value = llmResponse;
 ```
 
-> - View system details: **[docs/view-system.md](./docs/view-system.md)**
+> - Extras system details: **[docs/extras-system.md](./docs/extras-system.md)**
 
 ---
 
@@ -119,7 +122,7 @@ markedBlock.value = llmResponse;
 | [docs/getting-started.md](./docs/getting-started.md) | Installation, basic chat UI, streaming, history rendering |
 | [docs/architecture.md](./docs/architecture.md) | Package structure, class hierarchy, rendering pipeline |
 | [docs/block-system.md](./docs/block-system.md) | Block components and `BlockItem` types in depth |
-| [docs/view-system.md](./docs/view-system.md) | View system setup and custom views |
+| [docs/extras-system.md](./docs/extras-system.md) | Extras system setup and custom extras |
 | [docs/events.md](./docs/events.md) | Full event reference |
 
 ---

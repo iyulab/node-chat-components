@@ -4,15 +4,16 @@ import { customElement, property, state } from "lit/decorators.js";
 import "@iyulab/components/dist/components/skeleton/USkeleton.js";
 import { UDataElement } from "../UDataElement.js";
 
-import { styles } from "./UView.styles.js";
+import { styles } from "./UExtraBlock.styles.js";
 
 const DEFAULT_BLACKLIST = ["innerHTML", "outerHTML", "textContent", "innerText", "outerText", "srcdoc"];
 
 /**
- * 뷰 컴포넌트를 렌더링 또는 오류를 표시하는 컴포넌트입니다.
+ * `block-json` 코드펜스에서 지정한 커스텀 엘리먼트(extra 블록)를 동적으로 렌더링하는 컴포넌트입니다.
+ * 대상 태그가 등록되어 있지 않거나 데이터가 유효하지 않은 경우, 에러 카드 없이 콘솔에만 기록하고 아무것도 렌더링하지 않습니다.
  */
-@customElement('u-view')
-export class UView extends UDataElement {
+@customElement('u-extra-block')
+export class UExtraBlock extends UDataElement {
   static styles = [super.styles, styles];
 
   /** 로딩 상태입니다. `true`인 경우, 위젯이 로딩 중임을 나타냅니다. */
@@ -66,19 +67,30 @@ export class UView extends UDataElement {
     return nothing;
   }
 
-  /** 
-   * `loading`이 `true`인 경우, 에러 UI로 대체하지 않습니다. 
+  /**
+   * `UDataElement.load()`의 JSON 파싱 실패 시 호출됩니다. 스트리밍 중(`loading`)에는
+   * JSON이 아직 완성되지 않아 일시적으로 파싱에 실패하는 것이 정상이므로 콘솔 기록도 건너뜁니다.
    */
-  protected override async error(error: Error): Promise<void> {
-    if (this.loading) return; // 로딩 중에는 에러 UI로 대체하지 않음
+  protected override async error(error: unknown): Promise<void> {
+    if (this.loading) return;
+    this.reportError(error);
+  }
 
-    await super.error(error);
+  /**
+   * 에러 카드 없이 콘솔에만 기록합니다. 채팅 UI에 갑작스러운 에러 카드가 뜨는 것을 피하기 위함입니다 —
+   * addon 모듈을 import하지 않아 아직 등록되지 않은 태그일 수도 있으므로, 실제 에러라기보다
+   * "아직 준비 안 됨"에 가깝습니다.
+   */
+  private reportError(error: unknown): void {
+    console.error(`[u-extra-block]`, error);
   }
 
   /**
    * `tag` 프로퍼티에 등록된 커스텀 엘리먼트를 렌더링하는 컴포넌트입니다.
    * `tag`가 변경될 때마다 등록된 커스텀 엘리먼트를 새로 생성하여 렌더링합니다.
    * `tag`가 유효하지 않거나 등록된 커스텀 엘리먼트가 아닌 경우, 에러 처리합니다.
+   * JSON 자체는 이미 파싱에 성공한 상태이므로(스트리밍 중 파싱 실패와는 다른 케이스),
+   * `loading` 여부와 무관하게 항상 기록합니다.
    */
   private updateElement(tag?: string) {
     tag = tag?.trim();
@@ -86,14 +98,14 @@ export class UView extends UDataElement {
     // 태그 이름이 없는 경우, 에러 처리합니다.
     if (!tag) {
       this.element = null;
-      void super.error(new Error("Tag is required"));
+      this.reportError(new Error("Tag is required"));
       return;
     }
 
     // 등록된 커스텀 엘리먼트만 허용
     if (!customElements.get(tag)) {
       this.element = null;
-      void super.error(new Error(`Unknown tag: ${tag}`));
+      this.reportError(new Error(`Unknown tag: ${tag}`));
       return;
     }
 
@@ -112,11 +124,11 @@ export class UView extends UDataElement {
         Object.assign(element, props);
       } catch (error) {
         // 프로퍼티 할당 중 오류가 발생한 경우, 에러 처리합니다.
-        void super.error(error);
+        this.reportError(error);
       }
     } else {
       // `properties` 객체가 유효하지 않은 경우, 에러 처리합니다.
-      void super.error(new Error(`Not allowed properties: ${JSON.stringify(props)}`));
+      this.reportError(new Error(`Not allowed properties: ${JSON.stringify(props)}`));
     }
   }
 
@@ -140,6 +152,6 @@ export class UView extends UDataElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "u-view": UView;
+    "u-extra-block": UExtraBlock;
   }
 }

@@ -1,5 +1,5 @@
 ﻿import { nothing, PropertyValues } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { customElement, property, state } from "lit/decorators.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 
 import { Marked, Parser, type Tokens } from "marked";
@@ -10,7 +10,7 @@ import "../references/URefTag.js";
 import "../references/URefCardGroup.js";
 import { URefCard } from "../references/URefCard.js";
 import { UTableBlock } from "./UTableBlock.js";
-import { UView } from "../views/UView.js";
+import { UExtraBlock } from "./UExtraBlock.js";
 import { UElement } from "@iyulab/components/dist/components/UElement.js";
 import { escapeHtmlText, stripZeroWidth } from "@iyulab/components/dist/utilities/sanitizers.js";
 import { buildElementHTML } from "@iyulab/components/dist/utilities/elements.js";
@@ -53,14 +53,27 @@ export class UMarkedBlock extends UElement {
   private queued: boolean = false;
   private timer?: number;
 
+  /**
+   * value가 계속 갱신되고 있는지(스트리밍 중인지) 여부입니다.
+   * `value`가 갱신될 때마다 타이머가 리셋되며, STREAMING_IDLE_MS 동안
+   * 추가 갱신이 없으면 스트리밍이 끝난 것으로 간주합니다.
+   * 이 블록 자체의 닫힘 여부(`isClosed`)와 별개로, 메시지 전체가 아직
+   * 스트리밍 중인지 근사하기 위한 값이라 block-json 등의 loading 판단에 함께 사용됩니다.
+   */
+  @state() private streaming: boolean = false;
+  private streamingTimer?: number;
+  // value 갱신이 이 시간(ms) 동안 없으면 스트리밍이 끝난 것으로 판단합니다.
+  private static readonly STREAMING_IDLE_MS = 1500;
+
   disconnectedCallback(): void {
     clearTimeout(this.timer);
+    clearTimeout(this.streamingTimer);
     super.disconnectedCallback();
   }
 
   protected shouldUpdate(_changedProperties: PropertyValues): boolean {
     // 대기 중이면 렌더링 건너뛰기
-    if (this.queued) return false; 
+    if (this.queued) return false;
     return true;
   }
 
@@ -68,6 +81,12 @@ export class UMarkedBlock extends UElement {
     super.willUpdate(changedProperties);
 
     if (changedProperties.has("value")) {
+      this.streaming = true;
+      clearTimeout(this.streamingTimer);
+      this.streamingTimer = window.setTimeout(() => {
+        this.streaming = false;
+      }, UMarkedBlock.STREAMING_IDLE_MS);
+
       if (this.queued) return;
       this.queued = true;
 
@@ -102,9 +121,10 @@ export class UMarkedBlock extends UElement {
     const trimmed = token.raw.trimEnd();
     const isClosed = trimmed.endsWith("```") || trimmed.endsWith("~~~");
 
-    // View 코드블록 감지
-    if (lang === 'view-json') {
-      return UView.buildHTML(token.text, { loading: !isClosed });
+    // Extra 코드블록 감지
+    // 블록 자체가 닫혔더라도 메시지가 아직 스트리밍 중이면 loading을 유지합니다.
+    if (lang === 'block-json') {
+      return UExtraBlock.buildHTML(token.text, { loading: !isClosed || this.streaming });
     }
 
     // 코드블록은 refs 태그 제거 + HTML escape

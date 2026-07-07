@@ -88,11 +88,11 @@ export const styles = css`
     cursor: pointer;
     transition: background 0.2s;
   }
-  .lb-close:hover  { 
-    background: rgba(255, 255, 255, 0.18); 
+  .lb-close:hover  {
+    background: rgba(255, 255, 255, 0.18);
   }
-  .lb-close:active { 
-    background: rgba(255, 255, 255, 0.28); 
+  .lb-close:active {
+    background: rgba(255, 255, 255, 0.28);
   }
 
   .lb-close u-icon {
