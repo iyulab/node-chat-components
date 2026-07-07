@@ -10,10 +10,5 @@ export type StopEvent = CustomEvent<StopEventDetail>;
 declare global {
   interface HTMLElementEventMap {
     'stop': StopEvent;
-    /**
-     * @deprecated 0.5.1부터 `stop`과 동시에 발생합니다. 0.6.0에서 제거 예정.
-     * 새 코드는 `stop`를 사용하세요.
-     */
-    'u-cancel': StopEvent;
   }
 }

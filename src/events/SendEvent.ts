@@ -14,10 +14,5 @@ export type SendEvent = CustomEvent<SendEventDetail>;
 declare global {
   interface HTMLElementEventMap {
     'send': SendEvent;
-    /**
-     * @deprecated 0.5.1부터 `send`와 동시에 발생합니다. 0.6.0에서 제거 예정.
-     * 새 코드는 `send`를 사용하세요.
-     */
-    'u-submit': SendEvent;
   }
 }

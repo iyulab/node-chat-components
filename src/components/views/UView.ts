@@ -2,7 +2,7 @@ import { html, nothing, PropertyValues } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 
 import "@iyulab/components/dist/components/skeleton/USkeleton.js";
-import { UDataElement } from "@iyulab/components/dist/components/UDataElement.js";
+import { UDataElement } from "../UDataElement.js";
 
 import { styles } from "./UView.styles.js";
 

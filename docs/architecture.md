@@ -6,25 +6,17 @@
 src/
 ├── index.ts                        # Public exports
 ├── assets/
-│   ├── intent-prompt.md            # Intent system prompt template
 │   └── view-prompt.md              # View system prompt template
 ├── components/
 │   ├── blocks/                     # Content block components
 │   │   ├── UCodeBlock.ts
 │   │   ├── UFileBlock.ts
-│   │   ├── UJsonBlock.ts
 │   │   ├── UMarkedBlock.ts
 │   │   ├── URefBlock.ts
 │   │   ├── UTableBlock.ts
-│   │   ├── UTextBlock.ts
-│   │   ├── UThinkBlock.ts
-│   │   └── UToolBlock.ts
+│   │   └── UTextBlock.ts
 │   ├── buttons/
-│   │   ├── UAttachButton.ts
-│   │   ├── UCopyButton.ts
-│   │   └── UVoteButton.ts
-│   ├── intents/
-│   │   └── UQuestionIntent.ts
+│   │   └── UCopyButton.ts
 │   ├── message/
 │   │   └── UMessage.ts
 │   ├── prompt/
@@ -40,19 +32,14 @@ src/
 │       ├── UVideoView.ts
 │       └── UView.ts
 ├── events/
-│   ├── AttachEvent.ts
-│   ├── ChoiceEvent.ts
 │   ├── SendEvent.ts
 │   └── StopEvent.ts
 ├── types/
 │   ├── BlockItem.ts                # Message content block union type
-│   ├── Intents.ts                  # Intent definitions and preset flags
-│   ├── JsonNode.ts                 # JSON tree node types
 │   ├── JsonSchema.ts               # JSON Schema types for LLM prompts
 │   ├── References.ts               # ReferenceSource / ReferenceCitation
 │   └── Views.ts                    # View definitions and preset flags
 └── utilities/
-    ├── IntentPromptBuilder.ts      # Intent LLM instruction builder
     └── ViewPromptBuilder.ts        # View LLM instruction builder
 ```
 
@@ -66,9 +53,8 @@ src/
     ├── UMessage          ← message container (slot-based)
     ├── UPrompt           ← chat input
     ├── Block components  ← content renderers (UMarkedBlock, UCodeBlock, ...)
-    ├── Button components ← action buttons (UCopyButton, UVoteButton, ...)
+    ├── Button components ← action buttons (UCopyButton)
     ├── Reference components ← citation UI (URefTag, URefCard, ...)
-    ├── Intent components ← LLM-generated interactive UI (UQuestionIntent)
     └── View components   ← LLM-generated rich media (UChartView, UMapView, ...)
 ```
 
@@ -76,23 +62,18 @@ All components extend `UElement` from `@iyulab/components`.
 
 ---
 
-## Three-Layer Content Model
+## Two-Layer Content Model
 
-Messages are composed of three layers:
+Messages are composed of two layers:
 
 ```
 u-message
-├── [Blocks]    ← plain content (text, markdown, code, file, tool, thinking, reference)
-├── [Intents]   ← structured interactive prompts from the LLM (question + choices)
+├── [Blocks]    ← plain content (text, markdown, code, file, reference)
 └── [Views]     ← rich media rendered from view-json code blocks (chart, map, images, video)
 ```
 
 **Blocks** are static content pieces:
 - Assembled manually from `BlockItem[]` data or rendered by `u-marked-block` from markdown
-
-**Intents** are extracted from `intent-json` code blocks in the LLM response:
-- `IntentPromptBuilder` injects intent instructions into the system prompt
-- The app parses `intent-json` blocks and renders intent components manually
 
 **Views** are rendered automatically:
 - `ViewPromptBuilder` injects view instructions into the system prompt
@@ -106,16 +87,13 @@ u-message
 LLM Response (raw text)
         │
         ▼
-IntentPromptBuilder.parse()
-├── cleanText  →  u-marked-block.value
-│       │
-│       ├── markdown  →  HTML
-│       ├── ```code```  →  u-code-block
-│       ├── |table|  →  u-table-block
-│       ├── refs  →  u-ref-tag (inline)
-│       └── ```view-json```  →  u-view  →  u-chart-view / u-map-view / ...
-│
-└── intents[]  →  u-question-intent (manually appended)
+u-marked-block.value
+        │
+        ├── markdown  →  HTML
+        ├── ```code```  →  u-code-block
+        ├── |table|  →  u-table-block
+        ├── refs  →  u-ref-tag (inline)
+        └── ```view-json```  →  u-view  →  u-chart-view / u-map-view / ...
 ```
 
 ---

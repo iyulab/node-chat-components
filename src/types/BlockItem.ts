@@ -1,14 +1,4 @@
 import type { ReferenceSource, ReferenceCitation } from "./References";
-import type { JsonNode } from "./JsonNode";
-
-/** LLM 추론 텍스트 블록입니다. */
-export interface ThinkingBlockItem {
-  type: "thinking";
-  /** 추론 중 로딩 상태 여부 */
-  loading?: boolean;
-  /** 추론 텍스트 내용 */
-  value?: string;
-}
 
 /** 일반 텍스트 블록입니다. */
 export interface TextBlockItem {
@@ -43,19 +33,6 @@ export interface FileBlockItem {
   data?: any;
 }
 
-/** 툴 사용 블록입니다. */
-export interface ToolBlockItem {
-  type: "tool";
-  /** 툴 사용 중 로딩 상태 여부 */
-  loading?: boolean;
-  /** 도구 블록 제목 */
-  title?: string;
-  /** 도구 블록 입력값(json) */
-  input?: JsonNode;
-  /** 도구 블록 출력값(json) */
-  output?: JsonNode;
-}
-
 /** 출처 정보 */
 export interface ReferenceBlockItem {
   type: "reference";
@@ -67,10 +44,8 @@ export interface ReferenceBlockItem {
  * 타입별 메시지 컨텐츠 아이템
  */
 export type BlockItem = (
-  ThinkingBlockItem |
   TextBlockItem |
   MarkdownBlockItem |
   FileBlockItem |
-  ToolBlockItem |
   ReferenceBlockItem
 );

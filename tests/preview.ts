@@ -5,26 +5,21 @@ import { repeat } from "lit/directives/repeat.js";
 import '../src';
 import { Theme, Toast } from '@iyulab/components';
 import { ViewPromptBuilder } from '../src/utilities/ViewPromptBuilder.js';
-import { IntentPromptBuilder } from '../src/utilities/IntentPromptBuilder.js';
 import { PresetView } from '../src/types/Views.js';
-import { PresetIntent } from '../src/types/Intents.js';
 import type { BlockItem } from '../src/types/BlockItem';
-import type { Message, AssistantMessage } from './messages';
+import type { Message } from './messages';
 import { messages } from './messages';
 import { generateStreamingMessage, generateRandomId } from './generator';
 import type { ResponseOptions } from "./generator";
 import './sandbox.js';
 import { DOMAgent, DOMPromptBuilder } from '../src/utilities/dom-agent/index.js';
 import type { ScanResult } from '../src/utilities/dom-agent/index.js';
-import { ChoiceEvent } from "../src/events/ChoiceEvent";
-import { SendEvent, UPrompt, UVoteButton } from "../src";
-import { AttachEvent } from "../src/events/AttachEvent";
+import { SendEvent, UPrompt } from "../src";
 
 @customElement('preview-app')
 export class PreviewApp extends LitElement {
   private aborter: AbortController = new AbortController();
   private vb = new ViewPromptBuilder();
-  private ib = new IntentPromptBuilder();
   private db = new DOMPromptBuilder();
   private domAgent = new DOMAgent();
 
@@ -55,9 +50,8 @@ export class PreviewApp extends LitElement {
 
     // 시스템 프롬프트에 사용할 instruction 빌드
     this.instructions = [
-      'You are a helpful AI assistant that can use various views and intents to enhance your responses.',
+      'You are a helpful AI assistant that can use various views to enhance your responses.',
       this.vb.use(PresetView.All).build(),
-      this.ib.use(PresetIntent.All).build(),
     ].join('\n\n');
 
     // DOMAgent 이벤트 리스너
@@ -123,23 +117,8 @@ export class PreviewApp extends LitElement {
         <!-- 채팅룸 (오른쪽) -->
         <div class="main" @scroll=${this.handleScroll}>
           <div class="messages">
-            ${repeat(this.messages || [], msg => msg.id, msg => 
-              msg.role === 'intent'
-              ? html`
-                <u-message variant="default" position="right">
-                  ${repeat(msg.items, (_, i) => i, (item: any) => {
-                    const props = item.properties || {};
-                    return item.type === 'question'
-                    ? html`
-                      <u-question-intent
-                        .question=${props.question}
-                        .choices=${props.choices}
-                        @choice=${this.handleQuestionChoice}
-                      ></u-question-intent>
-                    ` : nothing
-                  })}
-                </u-message>`
-              : msg.role === 'user'
+            ${repeat(this.messages || [], msg => msg.id, msg =>
+              msg.role === 'user'
               ? html`
                 <u-message variant="bubble" position="right">
                   ${repeat(msg.items, (_, i) => i, (item) =>
@@ -178,20 +157,6 @@ export class PreviewApp extends LitElement {
                         .value=${item.value}
                         .refs=${item.refs}
                       ></u-marked-block>`
-                    : item.type === 'thinking'
-                    ? html`
-                      <u-think-block
-                        ?loading=${item.loading}
-                        .value=${item.value}
-                      ></u-think-block>`
-                    : item.type === 'tool' ?
-                    html`
-                      <u-tool-block
-                        ?loading=${item.loading}
-                        .heading=${item.title}
-                        .input=${item.input}
-                        .output=${item.output}
-                      ></u-tool-block>`
                     : item.type === 'reference' ?
                     html`
                       <u-ref-block
@@ -204,12 +169,7 @@ export class PreviewApp extends LitElement {
                     <u-copy-button .value=${this.getTextValue(msg)}>
                       텍스트 복사
                     </u-copy-button>
-                    <u-vote-button data-id=${msg.id} .value=${(msg as any).voteValue || 'none'} 
-                      @change=${this.handleVoteChange}>
-                      <span slot="up">도움이 돼요</span>
-                      <span slot="down">도움이 안돼요</span>
-                    </u-vote-button>
-                    <u-icon-button lib="tabler" name="refresh" variant="ghost" 
+                    <u-icon-button lib="tabler" name="refresh" variant="ghost"
                       data-id=${msg.id} 
                       @click=${this.handleRetryClick}>
                       다시 시도
@@ -234,14 +194,6 @@ export class PreviewApp extends LitElement {
             @remove=${(e: any) => console.log('Removed file:', e.target.file)}
             @send=${this.handlePromptSend}
             @stop=${this.handlePromptStop}>
-            <div slot="left-actions">
-              <u-attach-button
-                multiple
-                accept="image/*,.pdf,.text/plain,application/*"
-                @attach=${this.handleAttachFiles}>
-                파일 첨부
-              </u-attach-button>
-            </div>
           </u-prompt>
         </div>
 
@@ -319,27 +271,8 @@ export class PreviewApp extends LitElement {
         webSearch: this.webSearch,
       };
       const stream = generateStreamingMessage(messages, this.instructions, this.aborter.signal, options);
-      let msg: AssistantMessage | undefined = undefined;
-      for await (msg of stream) {
+      for await (const msg of stream) {
         this.messages = [...this.messages.slice(0, -1), msg];
-      }
-
-      // intent-json 블록이 있는지 파싱하여 intent 메시지로 추가
-      const markdown = msg?.items
-        .filter(item => item.type === 'markdown')
-        .map(item => item.value)
-        .join('\n') ?? '';
-      console.log('Generated markdown:', markdown);
-      const [intents, _] = this.ib.parse(markdown);
-      if (intents.length > 0) {
-        this.messages = [...this.messages, {
-          id: generateRandomId(),
-          role: 'intent' as const,
-          items: intents.map(intent => ({
-            type: intent.type,
-            properties: intent.properties
-          })),
-        }];
       }
     } catch (error) {
       if (!(error instanceof Error && error.message === 'Request was aborted.')) {
@@ -365,24 +298,6 @@ export class PreviewApp extends LitElement {
 
   // ── 이벤트 핸들러 ──
 
-  private handleQuestionChoice = async (e: ChoiceEvent) => {
-    const choice = e.detail.value;
-
-    // 1. intent 메시지 제거
-    const messages = this.messages.filter(msg => msg.role !== 'intent');
-
-    // 2. user 메시지 추가
-    this.messages = [...messages, {
-      id: generateRandomId(),
-      role: 'user' as const,
-      items: [
-        { type: 'text', value: choice }
-      ]
-    }];
-    await this.updateComplete;
-    await this.generate();
-  }
-
   private handlePromptSend = async (e: SendEvent) => {
     const target = e.target as UPrompt;
     const value = target.value || '';
@@ -391,10 +306,7 @@ export class PreviewApp extends LitElement {
     target.value = '';
     target.files = [];
 
-    // 1. intent 메시지 제거
-    const messages = this.messages.filter(msg => msg.role !== 'intent');
-
-    // 2. user 메시지에 텍스트 + 파일 추가
+    // 1. user 메시지에 텍스트 + 파일 추가
     const items = [] as BlockItem[];
     if (value.trim()) {
       items.push({ type: 'text', value });
@@ -403,8 +315,8 @@ export class PreviewApp extends LitElement {
       items.push(...files);
     }
 
-    // 3. user 메시지 추가
-    this.messages = [...messages, {
+    // 2. user 메시지 추가
+    this.messages = [...this.messages, {
       id: generateRandomId(),
       role: 'user' as const,
       items: items,
@@ -429,46 +341,6 @@ export class PreviewApp extends LitElement {
 
     await this.updateComplete;
     await this.generate();
-  }
-
-  private handleAttachFiles = async (e: AttachEvent) => {
-    const files: File[] = e.detail.files;
-    if (!files || files.length === 0) return;
-
-    const items = await Promise.all(files.map(async file => {
-      const data = await new Promise<string>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result as string);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-
-      return {
-        type: 'file' as const,
-        status: 'idle' as const,
-        name: file.name,
-        mimeType: file.type,
-        size: file.size,
-        url: URL.createObjectURL(file),
-        data: data,
-      };
-    }));
-
-    console.log('Uploaded files:', items);
-    const prompt = this.shadowRoot?.querySelector('u-prompt') as any;
-    if (prompt) {
-      prompt.files = [...(prompt.files || []), ...items];
-    }
-  }
-
-  private handleVoteChange = (e: Event) => {
-    const target = e.target as UVoteButton;
-    const id = target.dataset.id;
-    this.messages.forEach(msg => {
-      if (msg.role === 'assistant' && msg.id === id) {
-        msg.voteValue = target.value;
-      }
-    });
   }
 
   private handleShareClick = (e: Event) => {
@@ -572,7 +444,6 @@ export class PreviewApp extends LitElement {
   // ── 유틸 ──
 
   private getTextValue(msg: Message): string {
-    if (msg.role === 'intent') return '';
     return msg.items
       .filter(item => item.type === 'text' || item.type === 'markdown')
       .map((item: any) => item.value || '')

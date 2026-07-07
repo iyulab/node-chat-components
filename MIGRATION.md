@@ -1,5 +1,41 @@
 # Migration Guide
 
+## 0.6.x → 0.7.0
+
+### `u-submit` / `u-cancel` 완전 제거
+
+0.5.1부터 과도기 호환을 위해 `send`/`stop`과 함께 발행되던 `u-submit`/`u-cancel`이 예정대로 제거되었습니다.
+
+```ts
+// Before (0.6.x 이하, 둘 다 동작)
+promptEl.addEventListener('u-submit', handler);
+promptEl.addEventListener('send', handler);
+
+// After (0.7.0, send/stop만 동작)
+promptEl.addEventListener('send', handler);
+promptEl.addEventListener('stop', handler);
+```
+
+### 제거된 컴포넌트 / 유틸리티
+
+실제 사용되지 않는 것으로 확인되어 제거되었습니다. 대체 컴포넌트는 제공되지 않습니다 — 필요하다면 `0.6.x` 소스를 그대로 프로젝트에 복사해 사용하세요.
+
+| 제거된 것 | 비고 |
+|-----------|------|
+| `u-tool-block` (`UToolBlock`) | 툴 호출 입출력 표시 블록 |
+| `u-think-block` (`UThinkBlock`) | LLM 추론(thinking) 표시 블록 |
+| `u-json-block` (`UJsonBlock`) | 접이식 JSON 트리 뷰어. `UToolBlock` 내부에서만 쓰였음 |
+| `u-attach-button` (`UAttachButton`) | 파일 선택 버튼. `attach` 이벤트도 함께 제거 |
+| `u-vote-button` (`UVoteButton`) | 투표(좋아요/싫어요) 버튼 |
+| `u-question-intent` (`UQuestionIntent`) | Intent 시스템 UI |
+| `IntentPromptBuilder`, `PresetIntent`, `types/Intents.ts` | Intent 시스템 전체 (View 시스템과 별개) |
+| `ThinkingBlockItem`, `ToolBlockItem` | `BlockItem` union에서 제거 |
+| `AttachEvent`, `ChoiceEvent` | 위 컴포넌트들과 함께 제거된 이벤트 타입 |
+
+`u-copy-button` (`UCopyButton`)은 `u-code-block`이 내부적으로 사용하고 있어 유지됩니다.
+
+`intent-json` 코드펜스를 사용 중이었다면, `u-marked-block`이 더 이상 이를 인식하지 않고 일반 코드 블록으로 렌더링합니다.
+
 ## 0.4.x → 0.5.x
 
 0.5.0은 여러 이름 변경을 포함한 breaking release입니다. 아래 매핑 표를 참고해 마이그레이션하세요.

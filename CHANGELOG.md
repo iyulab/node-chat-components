@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.7.0] - 2026-07-07
+
+### Removed
+
+- **Breaking:** Legacy `u-submit`/`u-cancel` DOM events removed from `UPrompt`. They were dispatched alongside `send`/`stop` since 0.5.1 as a deprecation-period compatibility alias; 0.6.0 was the announced removal target. Use `send`/`stop` instead — see MIGRATION.md.
+- **Breaking:** Removed unused components and their public exports:
+  - Blocks: `u-tool-block` (`UToolBlock`), `u-think-block` (`UThinkBlock`), `u-json-block` (`UJsonBlock`)
+  - Buttons: `u-attach-button` (`UAttachButton`), `u-vote-button` (`UVoteButton`)
+  - Intent system: `u-question-intent` (`UQuestionIntent`), `IntentPromptBuilder`, `PresetIntent`, `types/Intents.ts`
+  - Related types: `ThinkingBlockItem` and `ToolBlockItem` removed from the `BlockItem` union; `AttachEvent`/`ChoiceEvent` removed
+- `u-copy-button` (`UCopyButton`) is retained — still used internally by `u-code-block`.
+
+  **Migration:** see MIGRATION.md for the full mapping. There is no drop-in replacement for the intent system or the removed blocks/buttons; if you rely on any of them, stay on `0.6.x` or vendor the component from that version's source.
+
 ## [0.6.0] - 2026-05-21
 
 ### Changed

@@ -1,5 +1,3 @@
-import { VoteValue } from "../src/components/buttons/UVoteButton.js";
-import { IntentSchema } from "../src/types/Intents.js";
 import { BlockItem } from "../src/types/BlockItem";
 import { generateRandomId } from "./generator.js";
 
@@ -13,19 +11,9 @@ export interface AssistantMessage {
   role: 'assistant';
   id: string;
   items: BlockItem[];
-  voteValue?: VoteValue;
 }
 
-/**
- * LLM 응답의 intent-json 블록에서 추출되어 생성됩니다.
- */
-export interface IntentMessage {
-  role: 'intent';
-  id: string;
-  items: IntentSchema[];
-}
-
-export type Message = UserMessage | AssistantMessage | IntentMessage;
+export type Message = UserMessage | AssistantMessage;
 
 export const messages: Message[] = [
 
@@ -41,25 +29,11 @@ export const messages: Message[] = [
     ]
   },
 
-  // ── Assistant (thinking + tools + markdown/refs + widgets + table + reference + files) ──
+  // ── Assistant (markdown/refs + widgets + table + reference + files) ──
   {
     id: generateRandomId(),
     role: 'assistant',
     items: [
-      // ── thinking ──
-      {
-        type: 'thinking',
-        value: '사용자가 날씨를 요청했습니다. 순서대로 처리하겠습니다.'
-      },
-
-      // ── tool: 날씨 ──
-      {
-        type: 'tool',
-        title: 'Search Weather API',
-        input: { location: 'Seoul', date: '2024-06-15' },
-        output: { temperature: 22, condition: '맑음', humidity: 65, wind_speed: 2.5 },
-      },
-
       // ── markdown: 날씨 (with refs) ──
       {
         type: 'markdown',
@@ -276,7 +250,6 @@ interface Weather {
           }
         ]
       }
-    ],
-    voteValue: 'up'
+    ]
   }
 ]

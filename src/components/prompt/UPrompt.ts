@@ -95,7 +95,6 @@ export class UPrompt extends UElement {
     if (this.loading) {
       const stopDetail: StopEventDetail = {};
       this.fire<StopEventDetail>('stop', { detail: stopDetail });
-      this.dispatchLegacy('u-cancel', stopDetail);
       return;
     }
 
@@ -108,21 +107,7 @@ export class UPrompt extends UElement {
         files: this.files ? [...this.files] : undefined,
       };
       this.fire<SendEventDetail>('send', { detail: sendDetail });
-      this.dispatchLegacy('u-submit', sendDetail);
     }
-  }
-
-  /**
-   * 0.4.x 호환을 위한 legacy 이벤트를 함께 발행합니다.
-   * `u-submit`/`u-cancel`은 0.6.0에서 제거 예정.
-   */
-  private dispatchLegacy<T>(name: 'u-submit' | 'u-cancel', detail: T): void {
-    this.dispatchEvent(new CustomEvent<T>(name, {
-      bubbles: true,
-      composed: true,
-      cancelable: true,
-      detail,
-    }));
   }
 
   private handleRemoveFile(e: RemoveEvent) {

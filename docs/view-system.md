@@ -2,7 +2,7 @@
 
 Views allow the LLM to render rich media content — charts, maps, image galleries, videos — directly inside a chat message by outputting a `view-json` fenced code block.
 
-Unlike the intent system, **views are rendered automatically** by `u-marked-block`. No manual parsing is required.
+**Views are rendered automatically** by `u-marked-block`. No manual parsing is required.
 
 ---
 

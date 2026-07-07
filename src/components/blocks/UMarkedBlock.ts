@@ -107,11 +107,6 @@ export class UMarkedBlock extends UElement {
       return UView.buildHTML(token.text, { loading: !isClosed });
     }
 
-    // Intent 코드블록 감지
-    if (lang === 'intent-json') {
-      return ''; // 출력 X
-    }
-
     // 코드블록은 refs 태그 제거 + HTML escape
     const safeText = this.removeRefs(token.text);
 

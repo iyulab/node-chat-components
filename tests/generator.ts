@@ -109,27 +109,11 @@ export async function* generateStreamingMessage(
       // output_item 추가 이벤트 처리
       if (event.type === 'response.output_item.added') {
         const item = event.item;
-        if (item.type === 'reasoning') {
-          // reasoning 블록 추가
-          blocks.push({ 
-            type: 'thinking',
-            loading: true, 
-            value: '' 
-          });
-          shouldYield = true;
-        } else if (item.type === 'message') {
+        if (item.type === 'message') {
           // message 블록 추가
-          blocks.push({ 
-            type: 'markdown', 
-            value: '', refs: [] 
-          });
-          shouldYield = true;
-        } else if (item.type === 'web_search_call') {
-          // 웹 검색 시작 시 블록 추가
           blocks.push({
-            type: 'tool',
-            loading: true,
-            title: `Web Search`,
+            type: 'markdown',
+            value: '', refs: []
           });
           shouldYield = true;
         }
@@ -138,21 +122,7 @@ export async function* generateStreamingMessage(
       // output_item 완료 이벤트 처리
       if (event.type === 'response.output_item.done') {
         const item = event.item;
-        if (item.type === 'reasoning') {
-          // reasoning 블록 완료
-          const lastBlock = blocks[blocks.length - 1];
-          if (lastBlock && lastBlock.type === 'thinking') {
-            let text = '';
-            for (const part of item.summary || []) {
-              if (part.type === 'summary_text') {
-                text += part.text;
-              }
-            }
-            lastBlock.loading = false;
-            lastBlock.value = text;
-            shouldYield = true;
-          }
-        } else if (item.type === 'message') {
+        if (item.type === 'message') {
           // message 블록 완료
           const lastBlock = blocks[blocks.length - 1];
           if (lastBlock && lastBlock.type === 'markdown') {
@@ -181,25 +151,11 @@ export async function* generateStreamingMessage(
             lastBlock.refs = refs;
             shouldYield = true;
           }
-        } else if (item.type === 'web_search_call') {
-          // 웹 검색 결과 완료 시 블록 업데이트
-          const lastBlock = blocks[blocks.length - 1];
-          if (lastBlock && lastBlock.type === 'tool') {
-            lastBlock.loading = false;
-            lastBlock.input = { ...item.action } as any;
-            shouldYield = true;
-          }
         }
       }
 
       // delta 이벤트 처리 (텍스트 스트리밍)
-      if (event.type === 'response.reasoning_summary_text.delta') {
-        const lastBlock = blocks[blocks.length - 1];
-        if (lastBlock && lastBlock.type === 'thinking') {
-          lastBlock.value += event.delta;
-          shouldYield = true;
-        }
-      } else if (event.type === 'response.output_text.delta') {
+      if (event.type === 'response.output_text.delta') {
         const lastBlock = blocks[blocks.length - 1];
         if (lastBlock && lastBlock.type === 'markdown') {
           lastBlock.value += event.delta;

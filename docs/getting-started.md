@@ -42,9 +42,7 @@ import '@iyulab/chat-components/dist/components/blocks/UMarkedBlock.js';
 
 <div id="chat">
   <div id="messages"></div>
-  <u-prompt id="prompt" placeholder="Type a message...">
-    <u-attach-button slot="left-actions" multiple>Attach</u-attach-button>
-  </u-prompt>
+  <u-prompt id="prompt" placeholder="Type a message..."></u-prompt>
 </div>
 ```
 
@@ -85,21 +83,6 @@ prompt.addEventListener('stop', () => {
   prompt.loading = false;
 });
 
-// ── File attach ─────────────────────────────────────────
-prompt.addEventListener('attach', (e: any) => {
-  const { files }: { files: File[] } = e.detail;
-  prompt.files = [
-    ...(prompt.files ?? []),
-    ...files.map((f: File) => ({
-      type: 'file' as const,
-      name: f.name,
-      size: f.size,
-      mimeType: f.type,
-      status: 'idle' as const,
-    })),
-  ];
-});
-
 // ── Helpers ─────────────────────────────────────────────
 function appendMessage(position: 'left' | 'right', text?: string, files?: FileBlockItem[]) {
   const msg = document.createElement('u-message') as any;
@@ -125,14 +108,10 @@ function appendMessage(position: 'left' | 'right', text?: string, files?: FileBl
 
 ## LLM System Prompt Integration
 
-Add intent and view instructions to your LLM system prompt:
+Add view instructions to your LLM system prompt:
 
 ```ts
-import { IntentPromptBuilder, ViewPromptBuilder, PresetIntent, PresetView } from '@iyulab/chat-components';
-
-const intentInstructions = IntentPromptBuilder.instance
-  .use(PresetIntent.Questions)
-  .build();
+import { ViewPromptBuilder, PresetView } from '@iyulab/chat-components';
 
 const viewInstructions = ViewPromptBuilder.instance
   .use(PresetView.All)
@@ -141,35 +120,14 @@ const viewInstructions = ViewPromptBuilder.instance
 const systemPrompt = `
 You are a helpful assistant.
 
-${intentInstructions}
-
 ${viewInstructions}
 `.trim();
 ```
 
-Parse the LLM response before rendering:
+No parse step is needed — `view-json` blocks inside markdown are rendered automatically:
 
 ```ts
-import { IntentPromptBuilder } from '@iyulab/chat-components';
-
-const [cleanText, intents] = IntentPromptBuilder.instance.parse(llmResponse);
-
-// Render clean markdown (views are handled automatically inside u-marked-block)
-block.value = cleanText;
-
-// Render intent components
-for (const intent of intents) {
-  if (intent.type === 'question') {
-    const el = document.createElement('u-question-intent') as any;
-    el.question = intent.properties?.question;
-    el.choices  = intent.properties?.choices ?? [];
-    el.addEventListener('choice', (e: any) => {
-      prompt.value = e.detail.value;
-      prompt.submit();
-    });
-    msg.appendChild(el);
-  }
-}
+block.value = llmResponse;
 ```
 
 ---
@@ -187,23 +145,10 @@ function renderMessage(blocks: BlockItem[], position: 'left' | 'right') {
 
   for (const block of blocks) {
     switch (block.type) {
-      case 'thinking': {
-        const el = document.createElement('u-think-block') as any;
-        el.value   = block.value;
-        el.loading = block.loading ?? false;
-        msg.appendChild(el); break;
-      }
       case 'markdown': {
         const el = document.createElement('u-marked-block') as any;
         el.value = block.value;
         el.refs  = block.refs;
-        msg.appendChild(el); break;
-      }
-      case 'tool': {
-        const el = document.createElement('u-tool-block') as any;
-        el.title  = block.title ?? '';
-        el.input  = block.input;
-        el.output = block.output;
         msg.appendChild(el); break;
       }
       case 'file': {

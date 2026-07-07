@@ -8,11 +8,9 @@ Blocks are the individual content units inside a `u-message`. Each block maps to
 
 ```ts
 type BlockItem =
-  | ThinkingBlockItem    →  u-think-block
   | TextBlockItem        →  u-text-block
   | MarkdownBlockItem    →  u-marked-block
   | FileBlockItem        →  u-file-block
-  | ToolBlockItem        →  u-tool-block
   | ReferenceBlockItem   →  u-ref-block
 ```
 
@@ -31,7 +29,6 @@ The primary block for LLM text output. Parses markdown and handles several speci
 | `\| table \|` | `u-table-block` |
 | KaTeX `$...$` | MathML via `marked-katex-extension` |
 | `` ```view-json ``` `` | `u-view` → view component |
-| `` ```intent-json ``` `` | Stripped (no output) |
 | `refs` citations | `u-ref-tag` inserted inline |
 
 **Debouncing:** updates are batched with an 80ms delay, which smooths out high-frequency streaming writes.
@@ -58,54 +55,15 @@ block.refs = [{
 
 ---
 
-## u-think-block
-
-Displays LLM reasoning content (extended thinking). Intended to be shown before the main answer. Collapsed by default; click the header to expand.
-
-```ts
-// Pattern: show while streaming, collapse when done
-const thinkBlock = document.createElement('u-think-block') as any;
-thinkBlock.loading    = true;
-thinkBlock.autoScroll = true;
-msg.appendChild(thinkBlock);
-
-// Stream reasoning
-for await (const chunk of thinkingStream) {
-  thinkBlock.value = (thinkBlock.value ?? '') + chunk;
-}
-thinkBlock.loading = false;
-// Reader can now expand to see the reasoning
-```
-
----
-
-## u-tool-block
-
-Displays a tool call's input and output. Shows as collapsed by default — users can open it to inspect what the LLM did.
-
-```ts
-// Pattern: show tool call immediately, update output when done
-const toolBlock = document.createElement('u-tool-block') as any;
-toolBlock.title   = 'search_web';
-toolBlock.loading = true;
-toolBlock.input   = { query: 'latest news' };
-msg.appendChild(toolBlock);
-
-// When tool returns
-toolBlock.output  = { results: [{ title: '...', url: '...' }] };
-toolBlock.loading = false;
-```
-
----
-
 ## u-file-block
 
 Represents a single attached or received file. When used inside `u-prompt` (via `files` prop), add `removable` to show a delete button.
 
 ```ts
 // Reading file input
-attachButton.addEventListener('attach', (e) => {
-  const newFiles = e.detail.files.map((f: File) => ({
+fileInput.addEventListener('change', (e) => {
+  const files = Array.from((e.target as HTMLInputElement).files ?? []);
+  const newFiles = files.map((f: File) => ({
     type: 'file' as const,
     name: f.name, size: f.size, mimeType: f.type,
     status: 'idle' as const,
@@ -141,16 +99,13 @@ msg.appendChild(refBlock);
 
 ---
 
-## u-code-block / u-table-block / u-json-block / u-text-block
+## u-code-block / u-table-block / u-text-block
 
 These are typically rendered automatically inside `u-marked-block`. They can also be used standalone:
 
 ```html
 <!-- Standalone code block -->
 <u-code-block lang="python" .value=${"print('hello')"}></u-code-block>
-
-<!-- Standalone JSON tree -->
-<u-json-block .value=${{ key: 'value', count: 42 }}></u-json-block>
 
 <!-- Editable text input (same element, different mode) -->
 <u-text-block editable placeholder="Edit me..." .value=${text}></u-text-block>
