@@ -63,11 +63,13 @@ export class URefCard extends UDataElement {
   }
 
   /**
-   * UDataElement의 기본 동작을 오버라이드하여 에러를 처리합니다.
-   * 콘솔 출력만 수행합니다.
+   * script-payload(UMarkedBlock 툴팁)와 property 바인딩(URefBlock) 두 사용
+   * 패턴을 모두 지원합니다. script 자식이 없으면 property 기반 렌더로
+   * 간주하고 조용히 건너뜁니다.
    */
-  protected error(error: unknown): Promise<void> {
-    return Promise.resolve(console.error('Error in URefCard:', error));
+  protected async load(data?: object): Promise<void> {
+    if (!data && !this.querySelector('script[type="application/json"]')) return;
+    return super.load(data);
   }
 
   /** 링크 클릭 핸들러 */

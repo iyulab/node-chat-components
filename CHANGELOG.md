@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.7.1] - 2026-07-12
+
+### Fixed
+
+- `u-ref-card`: no longer logs a spurious `Missing <script type="application/json">` console error on every render when driven by property bindings (the pattern `u-ref-block` itself uses). `URefCard` now overrides `UDataElement.load()` to skip JSON loading gracefully when neither a `data` argument nor a `<script type="application/json">` child is present; the script-payload path (used by `u-marked-block` reference tooltips via `URefCard.buildHTML`) is unaffected. Cards always rendered correctly — the error was cosmetic console noise, but it fired once per reference card per message in downstream consoles. (Reported by the Filer project.)
+- `URefCard`'s redundant `error()` override was removed — since 0.7.0 the `UDataElement` base logs to the console without rendering an error card, so the override duplicated base behavior. Genuine load errors now log as `failed to load data for [u-ref-card]` instead of `Error in URefCard:`.
+
+### Added
+
+- Browser-mode regression tests (vitest + playwright, matching the `@iyulab/components` test setup) covering both `u-ref-card` data paths and the `u-ref-block` sources rendering acceptance criteria.
+
 ## [0.7.0] - 2026-07-07
 
 ### Changed

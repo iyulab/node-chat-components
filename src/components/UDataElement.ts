@@ -14,6 +14,10 @@ import { HtmlBuilder } from '../utilities/HtmlBuilder.js';
  * ```
  *
  * JSON 최상위 키가 컴포넌트의 프로퍼티 이름과 일치하면 자동으로 할당됩니다.
+ *
+ * script 페이로드 없이 property 바인딩만으로도 사용되는 서브클래스는
+ * `load()`를 오버라이드해 script 부재 시 조용히 건너뛰어야 합니다.
+ * (예: `URefCard` — URefBlock의 property 구동과 UMarkedBlock의 script 주입을 모두 지원)
  */
 export class UDataElement extends UElement {
   static styles = super.styles;
