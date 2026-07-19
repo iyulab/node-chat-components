@@ -100,7 +100,7 @@ export class UMarkedBlock extends UElement {
       value = this.insertRefs(value, this.refs);
     }
 
-    let html = this.parser.parse(value, { async: false }) as string;
+    const html = this.parser.parse(value, { async: false }) as string;
     return unsafeHTML(this.placeholder.restore(html));
   }
 

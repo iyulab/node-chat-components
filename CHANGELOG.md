@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.8.0] - 2026-07-19
+
+### Fixed
+- **채팅 메시지의 이모지가 조용히 분해되던 결함 수정** — `stripZeroWidth` 가 보이지 않는 문자를 제거하면서 ZWJ(U+200D)까지 지웠다. ZWJ 는 이모지 시퀀스를 결합하는 조판 문자이므로, `UMarkedBlock` 이 메시지 본문에 이 함수를 적용할 때 가족·직업 이모지가 낱개로 쪼개졌다(👨‍👩‍👧 → 👨👩👧). 이제 표시 경로는 ZWJ 를 보존하고, URL 위생 경로(`escapeHtmlHref`)는 종전대로 ZWJ 까지 제거해 `java<ZWJ>script:` 형태의 protocol 우회를 계속 차단한다. 두 경로의 요구가 반대이므로 문자 집합을 분리했다. 회귀 테스트 7건 추가.
+
+### Changed
+- **이 패키지의 eslint 가 실제로 동작하기 시작했다.** `eslint.config.js` 의 두 결함 — (1) `files: ["src/**/*"]` 가 ESLint 9 에서 universal 패턴이라 `.ts` 를 opt-in 하지 못함, (2) 배열 프리셋(`tseslint.configs.recommended`)을 객체 스프레드해 프리셋이 무력화됨 — 을 수정했다. `build` 스크립트의 `eslint &&` 게이트는 매칭 파일이 0개라 항상 통과하고 있었다. 위 이모지 결함은 이 복구로 처음 드러났다.
+- `npm run lint` / `npm run lint:fix` 스크립트 추가.
+- **타입 정밀화(소비자 영향 가능)**: `BaseJsonSchema` 의 `default`/`enum`/`examples` 가 `any` → 새 `JsonValue` 타입으로, `FileBlockItem.data` 가 `any` → `unknown` 으로 좁혀졌다. 값을 그대로 사용하던 코드는 좁히기(narrowing)나 캐스팅이 필요할 수 있다.
+- `UMarkedBlock`: 재할당 없는 `let` → `const`.
+
 ## [0.7.1] - 2026-07-12
 
 ### Fixed

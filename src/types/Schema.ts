@@ -12,15 +12,27 @@
  * - 고급 object/array 검증들 (단순한 구조만으로 충분)
  */
 
+/**
+ * JSON 으로 표현 가능한 임의의 값.
+ * 스키마의 default/enum/examples 는 임의 JSON 을 담으므로 `any` 대신 이 타입을 쓴다.
+ */
+export type JsonValue =
+  | string
+  | number
+  | boolean
+  | null
+  | JsonValue[]
+  | { [key: string]: JsonValue };
+
 export interface BaseJsonSchema {
   /** 속성에 대한 설명 (LLM용) */
   description?: string;
   /** 기본값 */
-  default?: any;
+  default?: JsonValue;
   /** 허용 가능한 값들 (제한된 선택지) */
-  enum?: any[];
+  enum?: JsonValue[];
   /** 예시 값들 (LLM이 이해하기 쉽도록) */
-  examples?: any[];
+  examples?: JsonValue[];
 }
 
 export interface BooleanJsonSchema extends BaseJsonSchema {

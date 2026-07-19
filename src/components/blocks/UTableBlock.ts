@@ -58,7 +58,7 @@ export class UTableBlock extends UDataElement {
             class="toolbar-search"
             type="search"
             placeholder="Search..."
-            .value=${this.search as any}
+            .value=${this.search}
             @input=${this.handleSearchInput}
           >
             <u-icon slot="prefix" lib="internal" name="search"></u-icon>

@@ -28,7 +28,7 @@ export interface FileBlockItem {
   /** 다운로드 URL */
   url?: string;
   /** 실제 파일 데이터 (선택적, 필요에 따라 사용) */
-  data?: any;
+  data?: unknown;
 }
 
 /** 출처 정보 */
