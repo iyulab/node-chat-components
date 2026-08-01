@@ -70,15 +70,15 @@ export const styles = css`
     gap: 6px;
     padding: 6px 10px;
     background: var(--u-red-0);
-    border: 1px solid var(--u-red-200);
+    border: 1px solid var(--u-danger-color-weakest, #EF9A9A);
     border-radius: 6px;
-    color: var(--u-red-800);
+    color: var(--u-danger-color-strong, #D32F2F);
     font-size: 12px;
     pointer-events: none;
   }
 
   .error-overlay u-icon {
-    color: var(--u-red-600);
+    color: var(--u-danger-color, #E53935);
     flex-shrink: 0;
   }
 `;

@@ -41,7 +41,7 @@ export const styles = css`
   .dot-loader {
     width: 24px;
     height: 24px;
-    fill: var(--u-neutral-800, #6b7280);
+    fill: var(--u-txt-color, #212121);
   }
   .dot-loader circle {
     animation: bounce 1.05s infinite;

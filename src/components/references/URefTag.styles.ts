@@ -6,9 +6,9 @@ export const styles = css`
     flex-direction: row;
     align-items: center;
     gap: 4px;
-    color: var(--u-neutral-800);
+    color: var(--u-txt-color, #212121);
     font-size: 10px;
-    border: 1px solid var(--u-neutral-300);
+    border: 1px solid var(--u-border-color, #E0E0E0);
     border-radius: 9999px;
     background-color: var(--u-neutral-100);
     padding: 2px 6px;
@@ -16,8 +16,8 @@ export const styles = css`
     cursor: pointer;
   }
   :host(:hover) {
-    color: var(--u-neutral-100);
-    background-color: var(--u-neutral-900);
+    color: var(--u-txt-color-inverse, #FFFFFF);
+    background-color: var(--u-bg-color-inverse, #212121);
   }
 
   a {

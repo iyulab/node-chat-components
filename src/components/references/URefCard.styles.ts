@@ -19,7 +19,7 @@ export const styles = css`
     transition: all 0.2s ease;
   }
   a:hover {
-    color: var(--u-blue-600);
+    color: var(--u-txt-color-hover, #1E88E5);
     background-color: var(--u-neutral-50);
   }
 
@@ -59,11 +59,11 @@ export const styles = css`
     white-space: nowrap;
   }
   .badge[type="web"] {
-    color: var(--u-blue-700);
+    color: var(--u-info-color-strong, #1976D2);
     background: var(--u-blue-0);
   }
   .badge[type="document"] {
-    color: var(--u-green-700);
+    color: var(--u-success-color-strong, #388E3C);
     background: var(--u-green-0);
   }
   .badge u-icon {

@@ -5,11 +5,23 @@ import { playwright } from '@vitest/browser-playwright';
 // vitest 전용 config를 분리한다 — 테스트 실행이 dist/를 건드리는
 // 부작용을 막기 위함. (packages/components와 동일한 관례)
 //
-// 커스텀 엘리먼트의 lifecycle(connectedCallback microtask 등)을 실제
-// 브라우저 엔진에서 검증해야 하므로 browser 프로젝트만 둔다.
+// - browser: 커스텀 엘리먼트의 lifecycle(connectedCallback microtask 등)은 실제
+//   브라우저 엔진에서만 재현된다.
+// - unit:    소스 규약 대조처럼 DOM 이 필요 없는 검사.
+//
+// ⚠**`include` 를 좁게 잡으면 그 밖의 테스트는 조용히 실행되지 않는다** — 실패가 아니라
+// *부재*로 나타나므로 눈에 띄지 않는다. 프로젝트를 추가할 때 그 반대편도 함께 확인할 것.
 export default defineConfig({
   test: {
     projects: [
+      {
+        test: {
+          name: 'unit',
+          include: ['tests/**/*.test.ts'],
+          exclude: ['tests/browser/**'],
+          environment: 'node',
+        },
+      },
       {
         test: {
           name: 'browser',
