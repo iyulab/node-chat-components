@@ -72,13 +72,13 @@ export const styles = css`
     background: var(--u-red-0);
     border: 1px solid var(--u-danger-color-weakest, #EF9A9A);
     border-radius: 6px;
-    color: var(--u-danger-color-strong, #D32F2F);
+    color: var(--u-danger-color-strong, #C62828);
     font-size: 12px;
     pointer-events: none;
   }
 
   .error-overlay u-icon {
-    color: var(--u-danger-color, #E53935);
+    color: var(--u-danger-color, #D32F2F);
     flex-shrink: 0;
   }
 `;

@@ -110,7 +110,7 @@ export const styles = css`
     pointer-events: auto;
   }
   .remove-btn:hover {
-    background-color: var(--u-danger-color, #E53935);
+    background-color: var(--u-danger-color, #D32F2F);
   }
 
   /* ─── 미리보기 오버레이 ─── */

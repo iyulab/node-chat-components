@@ -89,7 +89,7 @@ export const styles = css`
     opacity: 0.7;
   }
   th[active] {
-    color: var(--u-primary-color, #4a90e2);
+    color: var(--u-primary-color, #1976D2);
   }
   th[active] .sort-icon {
     opacity: 1;
@@ -107,7 +107,7 @@ export const styles = css`
     background-color: var(--u-neutral-0);
   }
   tbody tr:hover td {
-    background-color: var(--u-neutral-50, rgba(0,0,0,0.02));
+    background-color: var(--u-neutral-50, #FAFAFA);
   }
   tbody tr:last-child td {
     border-bottom: none;

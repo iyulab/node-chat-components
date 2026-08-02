@@ -29,7 +29,7 @@ export const styles = css`
   .body[variant="bubble"] {
     padding: 12px 18px;
     border-radius: 18px;
-    background-color: var(--u-neutral-200, #f3f4f6);
+    background-color: var(--u-neutral-200, #EEEEEE);
   }
   .body[variant="bubble"][position="left"] {
     border-bottom-left-radius: 4px;
