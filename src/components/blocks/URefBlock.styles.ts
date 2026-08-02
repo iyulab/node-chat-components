@@ -41,7 +41,11 @@ export const styles = css`
     font-size: 1em;
     line-height: 1.5;
     font-weight: 600;
-    color: var(--u-text-color-weak);
+    /* 여기 color: var(--u-text-color-weak) 가 있었다 — 그런 토큰은 없다
+       (올바른 이름은 --u-txt-color-weak). 폴백도 없어 선언이 통째로 무효가 됐고,
+       그래서 위의 color: inherit 과 결과가 같았다. 즉 한 번도 적용된 적이 없는
+       선언이다. 형제 .count 도 inherit 이므로 현재 렌더를 유지하며 죽은 선언만
+       걷는다. 제목을 약한 회색으로 하려던 의도였다면 이름을 고쳐 되살릴 것. */
   }
 
   .count {
