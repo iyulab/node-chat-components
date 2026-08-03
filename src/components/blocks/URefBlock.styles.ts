@@ -23,7 +23,7 @@ export const styles = css`
     color: var(--u-txt-color-hover);
   }
   .header:focus-visible {
-    outline: 2px solid rgba(100, 150, 250, 0.6);
+    outline: 2px solid var(--u-primary-color-strong, #1565C0);
     outline-offset: 2px;
   }
 
