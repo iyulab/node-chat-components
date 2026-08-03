@@ -51,7 +51,6 @@ export const styles = css`
     visibility: hidden;
     position: relative;
     display: block;
-    color: red;
 
     /* 동일 스타일 크기 싱크 */
     margin: 0;
