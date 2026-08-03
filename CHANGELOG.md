@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.11.0] - 2026-08-04
+
+### Changed
+
+- ⚠**차트 오류 문구가 «영어 기본 + 로케일 레지스트리»로 이주했다.** `Canvas 2D context` 실패
+  안내가 한국어 리터럴이었다 — 화면에 그대로 뜨는 문자열이다.
+
+  ```ts
+  import { Locale } from '@iyulab/components';
+  import { messages } from '@iyulab/chat-components';
+
+  Locale.set('ko');                      // 한국어 환경은 종전 문구를 본다
+  messages.register('ja', { canvasUnavailable: '…' });
+  ```
+
+  ⚠**한 키뿐인데 레지스트리를 둔 이유**: 영어 리터럴만으로는 한국어 앱이 그 문구를 되돌릴
+  방법이 없다. 표준은 *"영어 기본 **+ 레지스트리**"* 다.
+
+### Requires
+
+- `@iyulab/components >= 1.23.0` (`Locale.namespace`) — 의존 하한을 올렸다.
+
 ## [0.10.0] - 2026-08-03
 
 ### Fixed

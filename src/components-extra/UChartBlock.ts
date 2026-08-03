@@ -2,6 +2,7 @@ import { html, nothing, PropertyValues } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import { Chart, type ChartType, type ChartData, type ChartOptions } from "chart.js/auto";
 
+import { messages } from "../utilities/messages.js";
 import "@iyulab/components/dist/components/icon/UIcon.js";
 import "@iyulab/components/dist/components/button/UButton.js";
 import { UElement } from "@iyulab/components/dist/components/UElement.js";
@@ -97,7 +98,7 @@ export class UChartBlock extends UElement {
 
     const ctx = this.canvas.getContext('2d');
     if (!ctx) {
-      this.error = 'Canvas 2D context를 가져올 수 없습니다.';
+      this.error = messages.text('canvasUnavailable');
       return;
     }
 
