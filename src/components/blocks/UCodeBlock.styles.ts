@@ -18,22 +18,40 @@ export const styles = css`
     --hljs-deletion-color: #b31d28;
     --hljs-deletion-bg-color: #ffeef0;
   }
-  :host-context([theme="dark"]) {
-    --hljs-text-color: #c9d1d9;
-    --hljs-background-color: #0d1117;
-    --hljs-keyword-color: #ff7b72;
-    --hljs-entity-color: #d2a8ff;
-    --hljs-constant-color: #79c0ff;
-    --hljs-string-color: #a5d6ff;
-    --hljs-variable-color: #ffa657;
-    --hljs-comment-color: #8b949e;
-    --hljs-entity-tag-color: #7ee787;
-    --hljs-markup-heading-color: #1f6feb;
-    --hljs-markup-list-color: #f2cc60;
-    --hljs-addition-color: #aff5b4;
-    --hljs-addition-bg-color: #033a16;
-    --hljs-deletion-color: #ffdcd7;
-    --hljs-deletion-bg-color: #67060c;
+  /* ★다크 팔레트는 light-dark() 로 싣는다 — 종전에는 :host-context([theme="dark"]) 였고,
+     그 선택자는 **Firefox·Safari 에서 미지원**이라 두 브라우저에서 다크 구문 강조가 적용된
+     적이 없다(라이트용 색이 어두운 코드블록 위에 그대로 남았다).
+
+     왜 light-dark() 인가: 테마 표시(theme 속성)는 문서 루트에 있고 이 팔레트는 섀도 루트
+     안에 있다. 그 경계를 넘는 수단 중 상속되는 것은 color-scheme 뿐이고, 토큰 시트가
+     :root[theme="dark"] { color-scheme: dark } 로 이미 선언한다 — 상속 프로퍼티라
+     섀도 안까지 닿는다.
+
+     ⚠**:host 에 color-scheme 을 선언하지 말 것.** 선언하면 루트에서 상속받은 값을 덮어
+     OS 선호를 따르게 되어, 앱이 라이트인데 OS 가 다크면 코드블록만 어두워진다.
+
+     ⚠**이 방식을 --u-* 디자인 토큰으로 확대하지 말 것.** getComputedStyle 로 읽는 소비자
+     (같은 패키지의 UChartBlock 이 Chart.js 기본값을 그렇게 세팅한다)에게는 해석된 색이
+     아니라 light-dark(...) **문자열 그대로** 돌아온다. 여기 팔레트는 CSS 안에서만 쓰이므로
+     안전하다. */
+  @supports (color: light-dark(#000, #fff)) {
+    :host {
+      --hljs-text-color: light-dark(#24292e, #c9d1d9);
+      --hljs-background-color: light-dark(#ffffff, #0d1117);
+      --hljs-keyword-color: light-dark(#d73a49, #ff7b72);
+      --hljs-entity-color: light-dark(#6f42c1, #d2a8ff);
+      --hljs-constant-color: light-dark(#005cc5, #79c0ff);
+      --hljs-string-color: light-dark(#032f62, #a5d6ff);
+      --hljs-variable-color: light-dark(#e36209, #ffa657);
+      --hljs-comment-color: light-dark(#6a737d, #8b949e);
+      --hljs-entity-tag-color: light-dark(#22863a, #7ee787);
+      --hljs-markup-heading-color: light-dark(#005cc5, #1f6feb);
+      --hljs-markup-list-color: light-dark(#735c0f, #f2cc60);
+      --hljs-addition-color: light-dark(#22863a, #aff5b4);
+      --hljs-addition-bg-color: light-dark(#f0fff4, #033a16);
+      --hljs-deletion-color: light-dark(#b31d28, #ffdcd7);
+      --hljs-deletion-bg-color: light-dark(#ffeef0, #67060c);
+    }
   }
 
   :host {

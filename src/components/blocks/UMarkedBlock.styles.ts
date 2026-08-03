@@ -25,18 +25,23 @@ export const styles = css`
     --borderColor-muted: #d1d9e0b3;
     --borderColor-neutral-muted: #d1d9e0b3;
   }
-  :host-context([theme="dark"]) {
-    --focus-outlineColor: #1f6feb;
-    --fgColor-default: #f0f6fc;
-    --fgColor-muted: #9198a1;
-    --fgColor-accent: #4493f8;
-    --bgColor-default: #0d1117;
-    --bgColor-muted: #151b23;
-    --bgColor-neutral-muted: #656c7633;
-    --bgColor-attention-muted: #bb800926;
-    --borderColor-default: #3d444d;
-    --borderColor-muted: #3d444db3;
-    --borderColor-neutral-muted: #3d444db3;
+  /* ★다크 팔레트는 light-dark() 로 — 근거는 UCodeBlock.styles.ts 의 같은 자리 주석 참조.
+     :host-context() 가 Firefox·Safari 미지원이라 두 브라우저에서 마크다운 본문의 다크가
+     적용된 적이 없다. */
+  @supports (color: light-dark(#000, #fff)) {
+    :host {
+      --focus-outlineColor: light-dark(#0969da, #1f6feb);
+      --fgColor-default: light-dark(#1f2328, #f0f6fc);
+      --fgColor-muted: light-dark(#59636e, #9198a1);
+      --fgColor-accent: light-dark(#0969da, #4493f8);
+      --bgColor-default: light-dark(#ffffff, #0d1117);
+      --bgColor-muted: light-dark(#f6f8fa, #151b23);
+      --bgColor-neutral-muted: light-dark(#818b981f, #656c7633);
+      --bgColor-attention-muted: light-dark(#fff8c5, #bb800926);
+      --borderColor-default: light-dark(#d1d9e0, #3d444d);
+      --borderColor-muted: light-dark(#d1d9e0b3, #3d444db3);
+      --borderColor-neutral-muted: light-dark(#d1d9e0b3, #3d444db3);
+    }
   }
 
   :host {
