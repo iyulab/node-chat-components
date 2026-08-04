@@ -52,11 +52,7 @@ export class UElementBlock extends UDataElement {
             <u-skeleton effect="shimmer" width="40%"  height="0.75em" shape="rounded"></u-skeleton>
           </div>
           <div class="sk-doc">
-            <u-skeleton effect="shimmer" width="40%"  height="0.75em" shape="rounded"></u-skeleton>
-            <u-skeleton effect="shimmer" width="80%"  height="0.75em" shape="rounded"></u-skeleton>
-            <u-skeleton effect="shimmer" width="60%" height="0.8em"  shape="rounded"></u-skeleton>
-            <u-skeleton effect="shimmer" width="100%" height="0.8em"  shape="rounded"></u-skeleton>
-            <u-skeleton effect="shimmer" width="80%"  height="0.8em"  shape="rounded"></u-skeleton>
+            <u-skeleton effect="shimmer" lines="5" height="0.8em" shape="rounded"></u-skeleton>
           </div>
         </div>`;
     }

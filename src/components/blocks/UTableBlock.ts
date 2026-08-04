@@ -106,10 +106,7 @@ export class UTableBlock extends UDataElement {
               ? html`
                 <tr>
                   <td colspan=${this.headers.length || 1}>
-                    <u-skeleton width="80%" height="1.2em"></u-skeleton>
-                    <u-skeleton width="60%" height="1.2em"></u-skeleton>
-                    <u-skeleton width="70%" height="1.2em"></u-skeleton>
-                    <u-skeleton width="50%" height="1.2em"></u-skeleton>
+                    <u-skeleton lines="4" height="1.2em"></u-skeleton>
                   </td>
                 </tr>
               `
