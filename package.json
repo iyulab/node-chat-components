@@ -38,11 +38,12 @@
   },
   "scripts": {
     "start": "vite",
-    "build": "eslint && vite build",
+    "build": "npm run typecheck && eslint && vite build",
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "eslint src/",
-    "lint:fix": "eslint src/ --fix"
+    "lint:fix": "eslint src/ --fix",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@iyulab/components": "^1.23.0",
