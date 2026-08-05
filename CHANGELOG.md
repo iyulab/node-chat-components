@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+
+- **Reference tag tooltip: the anchor gap was never applied.** The tooltip was configured
+  with a `distance` attribute, which `u-tooltip` does not define — the offset property is
+  `offset`. The tooltip now sits at the intended distance from its anchor.
+
 ## [0.11.0] - 2026-08-04
 
 ### Changed

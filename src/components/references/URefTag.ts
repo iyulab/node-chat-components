@@ -27,7 +27,7 @@ export class URefTag extends UElement {
 
       <u-icon lib="internal-chat" name="external-link"></u-icon>
 
-      <u-tooltip interactive placement="bottom" distance="4">
+      <u-tooltip interactive placement="bottom" offset="4">
         <slot name="tooltip"></slot>
       </u-tooltip>
     `;
