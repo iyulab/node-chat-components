@@ -26,13 +26,22 @@
   ],
   "type": "module",
   "types": "./dist/index.d.ts",
+  "engines": {
+    "node": ">=20"
+  },
+  "sideEffects": [
+    "./src/components/*/U*.ts",
+    "./src/components-extra/U*.ts",
+    "./dist/components/*/U*.js",
+    "./dist/components-extra/U*.js"
+  ],
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "types": "./src/index.d.ts",
+      "import": "./src/index.js"
     },
-    "./extra": "./dist/extra.js",
-    "./dist/*": "./dist/*",
+    "./extra": "./src/extra.js",
+    "./dist/*": "./src/*",
     "./react": "./dist/react/index.js",
     "./react/*": "./dist/react/*"
   },
