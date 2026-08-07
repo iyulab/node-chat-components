@@ -30,10 +30,15 @@
     "node": ">=20"
   },
   "sideEffects": [
-    "./src/components/*/U*.ts",
+    "./dist/components-extra/U*.js",
     "./src/components-extra/U*.ts",
     "./dist/components/*/U*.js",
-    "./dist/components-extra/U*.js"
+    "./src/components/*/U*.ts",
+    "./dist/extra.js",
+    "./src/extra.ts",
+    "./dist/index.js",
+    "./src/index.ts",
+    "./dist/react/index.js"
   ],
   "exports": {
     ".": {
