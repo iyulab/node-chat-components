@@ -42,6 +42,21 @@ Tracks a `streaming` state internally (resets a 1500ms idle timer on every `valu
 | `value` | `string` | `undefined` | Markdown text to render |
 | `refs` | `ReferenceCitation[]` | `undefined` | Citation list. `u-ref-tag` elements are automatically inserted at `startIndex`/`endIndex` positions |
 
+## CSS Custom Properties
+
+Vendored from GitHub's markdown theme — light values shown, dark auto-applies via
+`light-dark()`.
+
+| Property | Description |
+|----------|-------------|
+| `--fgColor-default` / `--fgColor-muted` / `--fgColor-accent` | Body text / secondary text / link color |
+| `--bgColor-default` / `--bgColor-muted` / `--bgColor-neutral-muted` / `--bgColor-attention-muted` | Body / code+table-stripe / hr+badge / warning-callout background |
+| `--borderColor-default` / `--borderColor-muted` / `--borderColor-neutral-muted` | Table and blockquote border weights |
+| `--focus-outlineColor` | Link focus outline |
+| `--fontStack-monospace` | Inline code and code-fence font stack |
+| `--base-size-4` / `-8` / `-16` / `-24` / `-40` | Spacing scale used throughout (margins, padding, gaps) |
+| `--base-text-weight-normal` / `-medium` / `-semibold` | Font-weight scale (body / table header / heading) |
+
 ## ReferenceCitation Type
 
 ```ts

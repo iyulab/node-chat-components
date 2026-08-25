@@ -36,3 +36,23 @@ Syntax-highlighted code block powered by Highlight.js. Shows a language label an
 | Name | Description |
 |------|-------------|
 | *(default, hidden)* | Code text injected directly as content; updates `value` on `slotchange` |
+
+## CSS Custom Properties
+
+Highlight.js syntax theme — light values shown, dark auto-applies via `light-dark()`.
+
+| Property | Description |
+|----------|-------------|
+| `--hljs-background-color` | Code block background |
+| `--hljs-text-color` | Default text color |
+| `--hljs-keyword-color` | Keywords |
+| `--hljs-string-color` | Strings |
+| `--hljs-comment-color` | Comments |
+| `--hljs-entity-color` | Function/class names |
+| `--hljs-entity-tag-color` | HTML/XML tag names |
+| `--hljs-constant-color` | Constants and numbers |
+| `--hljs-variable-color` | Variables and template literals |
+| `--hljs-markup-heading-color` | Markdown headings |
+| `--hljs-markup-list-color` | Markdown list bullets |
+| `--hljs-addition-color` / `--hljs-addition-bg-color` | Diff addition text / background |
+| `--hljs-deletion-color` / `--hljs-deletion-bg-color` | Diff deletion text / background |
