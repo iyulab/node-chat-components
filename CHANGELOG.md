@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.11.3] - 2026-08-25
+
+### Fixed
+
+- **Pin `marked-katex-extension` to `5.1.10`.** Versions `5.1.11`/`5.1.12` publish their `types`
+  field pointing at raw TypeScript source instead of compiled declarations (`./src/index.ts`
+  instead of `./src/index.d.ts`). Under a strict `tsconfig.json` (`noImplicitReturns`,
+  `noUnusedParameters`) with `moduleResolution: "bundler"`, that source file itself fails
+  typecheck — for this package's own CI, and for any downstream project that installs it fresh
+  and typechecks with similarly strict settings. No newer patched release exists yet, so the
+  range is pinned exact instead of `^5.1.10`; it will widen again once upstream fixes the
+  regression.
+
 ## [0.11.2] - 2026-08-07
 
 ### Fixed
