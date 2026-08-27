@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.11.4] - 2026-08-27
+
+### Fixed
+
+- **`u-ref-card-group`'s previous/next buttons and `u-file-block`'s preview
+  close button had no accessible name.** All three are icon-only controls;
+  without an explicit label a screen reader announced them as unnamed
+  buttons. They now carry a localized `aria-label` (English and Korean).
+
 ## [0.11.3] - 2026-08-25
 
 ### Fixed
