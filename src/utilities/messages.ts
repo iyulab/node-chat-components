@@ -7,14 +7,20 @@ import { Locale } from '@iyulab/components/dist/utilities/Locale.js';
  * 이 리포가 채택한 표준이 *"영어 기본 **+ 레지스트리**"* 이기 때문이다 — 영어 리터럴만으로는
  * 한국어 앱이 그 문구를 되돌릴 방법이 없다. 다음 문자열은 여기로 온다.
  */
-export type ChatMessageKey = 'canvasUnavailable';
+export type ChatMessageKey = 'canvasUnavailable' | 'previousReference' | 'nextReference' | 'closePreview';
 
 export const messages = Locale.namespace<ChatMessageKey>('@iyulab/chat-components');
 
 messages.register('en', {
   canvasUnavailable: 'Canvas 2D context is unavailable.',
+  previousReference: 'Previous reference',
+  nextReference: 'Next reference',
+  closePreview: 'Close preview',
 });
 
 messages.register('ko', {
   canvasUnavailable: 'Canvas 2D context를 가져올 수 없습니다.',
+  previousReference: '이전 참조',
+  nextReference: '다음 참조',
+  closePreview: '미리보기 닫기',
 });

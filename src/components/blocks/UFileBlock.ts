@@ -6,6 +6,7 @@ import "@iyulab/components/dist/components/button/UButton.js";
 import { RemoveEventDetail } from "@iyulab/components/dist/events/RemoveEvent.js";
 import { UElement } from "@iyulab/components/dist/components/UElement.js";
 import "../../utilities/icons.js";
+import { messages } from "../../utilities/messages.js";
 import { styles } from "./UFileBlock.styles.js";
 
 /**
@@ -89,7 +90,7 @@ export class UFileBlock extends UElement {
         <div class="preview-overlay" @click=${this.closePreview}>
           <header class="preview-header">
             <span class="preview-name">${this.name}</span>
-            <button class="preview-close" @click=${this.closePreview}>
+            <button class="preview-close" aria-label=${messages.text('closePreview')} @click=${this.closePreview}>
               <u-icon lib="internal" name="x"></u-icon>
             </button>
           </header>

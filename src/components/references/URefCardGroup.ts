@@ -4,6 +4,7 @@ import { customElement, state } from 'lit/decorators.js';
 import '@iyulab/components/dist/components/icon/UIcon.js';
 import { UElement } from '@iyulab/components/dist/components/UElement.js';
 import { URefCard } from './URefCard.js';
+import { messages } from '../../utilities/messages.js';
 import { styles } from './URefCardGroup.styles.js';
 
 /**
@@ -24,15 +25,17 @@ export class URefCardGroup extends UElement {
     return html`
       <div class="header" ?hidden=${this.cards.length <= 1}>
         <button class="nav-button"
+          aria-label=${messages.text('previousReference')}
           @click=${this.handlePreviousButtonClick}>
           <u-icon lib="internal" name="chevron-left"></u-icon>
         </button>
-        
+
         <span class="page-indicator">
           ${this.currentIndex + 1} / ${this.cards.length}
         </span>
-        
+
         <button class="nav-button"
+          aria-label=${messages.text('nextReference')}
           @click=${this.handleNextButtonClick}>
           <u-icon lib="internal" name="chevron-right"></u-icon>
         </button>
