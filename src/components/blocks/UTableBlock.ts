@@ -11,9 +11,17 @@ import { UDataElement } from "../UDataElement.js";
 import "../../utilities/icons.js";
 import { styles } from "./UTableBlock.styles.js";
 
-/** 테이블 셀 데이터 타입 */
+/**
+ * 테이블 셀 데이터 타입
+ *
+ * ⚠`text`는 렌더링 시 `unsafeHTML()`로 그대로 주입되는 **신뢰된 HTML 마크업**입니다
+ * (일반 텍스트가 아닙니다) — `UMarkedBlock`이 마크다운 인라인 렌더러(자체 XSS 방어
+ * 포함: 원시 HTML escape, `javascript:`/`data:` 링크 차단)를 거쳐 채우는 것을
+ * 전제로 합니다. 이 컴포넌트를 직접 구동하는 소비자가 정화되지 않은 외부 문자열을
+ * `text`에 넣으면 XSS로 이어질 수 있습니다 — 반드시 사전에 sanitize할 것.
+ */
 export interface TableCell {
-  /** 셀에 표시할 텍스트 내용 */
+  /** 셀에 표시할 (이미 안전 처리된) HTML 마크업 */
   text: string;
   /** 셀 내용의 정렬 방식. 기본값은 "left" */
   align: "left" | "center" | "right" | null;

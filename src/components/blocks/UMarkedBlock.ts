@@ -12,7 +12,7 @@ import { URefCard } from "../references/URefCard.js";
 import { UTableBlock } from "./UTableBlock.js";
 import { UElementBlock } from "./UElementBlock.js";
 import { UElement } from "@iyulab/components/dist/components/UElement.js";
-import { escapeHtmlText, stripZeroWidth } from "../../utilities/sanitizers.js";
+import { escapeHtmlText, escapeHtmlAttr, escapeHtmlHref, stripZeroWidth } from "../../utilities/sanitizers.js";
 import { HtmlBuilder } from "../../utilities/HtmlBuilder.js";
 import type { ReferenceCitation } from "../../types/References.js";
 import { HtmlPlaceholder } from "../../utilities/HtmlPlaceholder.js";
@@ -24,6 +24,15 @@ import { styles } from "./UMarkedBlock.styles.js";
  * 주의:
  * - refs로 삽입되는 커스텀 태그(u-ref-*)는 속성/내용을 모두 escape하여 XSS를 방지합니다.
  * - 코드블록 내부는 HTML을 전부 텍스트로 취급(escape)하며, refs 태그는 통째 제거합니다.
+ * - 마크다운 소스에 섞인 원시 HTML(html 토큰, 블록/인라인 공통)은 렌더하지 않고
+ *   텍스트로 escape합니다 — marked는 v5부터 sanitize 옵션을 제거했고 그 판단을
+ *   소비자에게 위임하므로, 이 컴포넌트가 직접 책임집니다.
+ * - 마크다운 링크/이미지(`[..](href)`, `![..](src)`, autolink)의 href/src는
+ *   `escapeHtmlHref`로 protocol을 검사합니다(javascript:/data:/vbscript: 차단) —
+ *   marked 자신은 URL을 encodeURI할 뿐 protocol을 걸러내지 않습니다.
+ * - 테이블 셀 인라인 콘텐츠(renderTable)도 위 두 규칙과 같은 렌더러 설정을 공유합니다
+ *   — `Parser.parseInline`을 옵션 없이 호출하면 기본(비-sanitize) 렌더러로 되돌아가므로
+ *   반드시 `this.parser.defaults`를 함께 넘겨야 합니다.
  * - 인덱스 기반 삽입(ref.endIndex)이 깨지지 않도록 "normalize(제로폭 제거)"를 insertRefs 전에 1회 수행합니다.
  */
 @customElement("u-marked-block")
@@ -44,6 +53,9 @@ export class UMarkedBlock extends UElement {
     renderer: {
       code: (token) => this.renderCode(token),
       table: (token) => this.renderTable(token),
+      html: (token) => this.renderHtml(token),
+      link: (token) => this.renderLink(token),
+      image: (token) => this.renderImage(token),
     },
   }).use(markedKatex({ output: "mathml" }));
 
@@ -125,19 +137,54 @@ export class UMarkedBlock extends UElement {
   /**
    * 테이블은 JSON 데이터로 변환하여 별도의 컴포넌트로 렌더링합니다.
    * 셀 내부의 인라인 마크다운(볼드, 코드, br 등)도 HTML로 변환합니다.
+   *
+   * `Parser.parseInline`은 옵션을 생략하면 marked 기본(비-sanitize) 렌더러로
+   * 돌아가 이 컴포넌트의 `html`/`link`/`image` 오버라이드를 건너뛴다 — 셀 안의
+   * 원시 HTML이나 `javascript:` 링크가 그대로 통과하는 별도 XSS 경로가 되므로,
+   * 반드시 `this.parser.defaults`(우리 렌더러가 병합된 설정)를 함께 넘긴다.
    */
   private renderTable(token: Tokens.Table): string {
     const headers = token.header.map((h: Tokens.TableCell) => ({
-      text: h.tokens ? Parser.parseInline(h.tokens) : h.text,
+      text: h.tokens ? Parser.parseInline(h.tokens, this.parser.defaults) : h.text,
       align: h.align
     }));
     const rows = token.rows.map((row: Tokens.TableCell[]) =>
       row.map((cell) => ({
-        text: cell.tokens ? Parser.parseInline(cell.tokens) : cell.text,
+        text: cell.tokens ? Parser.parseInline(cell.tokens, this.parser.defaults) : cell.text,
         align: cell.align
       }))
     );
     return UTableBlock.buildHTML({ headers, rows });
+  }
+
+  /**
+   * 마크다운 소스에 섞인 원시 HTML(블록/인라인 공통 — marked는 두 경우 모두
+   * 같은 `html` 렌더러 훅을 쓴다)을 렌더하지 않고 텍스트로 escape합니다.
+   * marked v5+는 sanitize 옵션을 제거하고 이 판단을 소비자에게 위임했다.
+   */
+  private renderHtml(token: Tokens.HTML | Tokens.Tag): string {
+    return escapeHtmlText(token.text);
+  }
+
+  /**
+   * 마크다운 링크의 href는 `escapeHtmlHref`로 protocol을 검사합니다
+   * (javascript:/data:/vbscript: 등은 `#`로 무력화). marked 기본 렌더러는
+   * URL을 encodeURI할 뿐 protocol을 걸러내지 않는다.
+   */
+  private renderLink(token: Tokens.Link): string {
+    const text = token.tokens ? Parser.parseInline(token.tokens, this.parser.defaults) : token.text;
+    let out = `<a href="${escapeHtmlHref(token.href)}"`;
+    if (token.title) out += ` title="${escapeHtmlAttr(token.title)}"`;
+    out += `>${text}</a>`;
+    return out;
+  }
+
+  /** 마크다운 이미지의 src도 `renderLink`와 동일하게 protocol을 검사합니다. */
+  private renderImage(token: Tokens.Image): string {
+    let out = `<img src="${escapeHtmlHref(token.href)}" alt="${escapeHtmlAttr(token.text)}"`;
+    if (token.title) out += ` title="${escapeHtmlAttr(token.title)}"`;
+    out += `>`;
+    return out;
   }
 
   /**
