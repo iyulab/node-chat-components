@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.11.5] - 2026-08-31
+
+### Security
+
+- **`UMarkedBlock` rendered unsanitized markdown output.** `marked` dropped
+  its built-in `sanitize` option in v5 and leaves that entirely to the
+  consumer; this component piped `marked`'s output straight into
+  `unsafeHTML()` without ever making that call. Raw HTML embedded in
+  markdown source (`<img onerror>`, `<script>`) ran verbatim, and
+  `javascript:`/`data:`/`vbscript:` hrefs in ordinary links, images, and
+  autolinks passed through untouched. Table cells hit the same gap
+  through a second path (`renderTable`'s inline parser call was missing
+  its options, silently falling back to `marked`'s unconfigured default
+  renderer). Fenced-code-block content had the same problem one layer
+  down — it reached `unsafeHTML()` unescaped even though a comment
+  already claimed otherwise.
+  Fixed by adding renderer overrides built on this package's existing
+  HTML/href sanitizers (no new dependency) and closing both bypass
+  paths.
+
 ## [0.11.4] - 2026-08-27
 
 ### Fixed
