@@ -51,6 +51,7 @@
     "./react/*": "./dist/react/*"
   },
   "scripts": {
+    "preversion": "node ../../scripts/preversion-check.mjs",
     "start": "vite",
     "build": "npm run typecheck && eslint && vite build",
     "test": "vitest run",
