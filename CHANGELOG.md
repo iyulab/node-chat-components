@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.11.6] - 2026-09-01
+
+### Fixed
+
+- **Several icon-only buttons had no accessible name.** The image lightbox's
+  close/previous/next buttons, the prompt's send/stop button, the file
+  preview's remove button, and the chart block's full-screen toggle showed
+  only an icon with no `aria-label` and no text content, so screen readers
+  announced them as plain "button". Added `aria-label` via the existing
+  locale registry.
+
 ## [0.11.5] - 2026-08-31
 
 ### Security
