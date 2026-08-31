@@ -91,6 +91,24 @@ describe('UMarkedBlock XSS 방어', () => {
     expect(tableBlock!.shadowRoot!.textContent).toContain('<img src=x onerror=alert(2)>');
   });
 
+  it('펜스 코드블록 안의 raw HTML은 실행되지 않고 하이라이트된 텍스트로만 보인다', async () => {
+    const md = ['```html', '<img src=x onerror=alert(1)>', '```'].join('\n');
+    const el = await render(md);
+    const codeBlock = el.shadowRoot!.querySelector('u-code-block');
+    expect(codeBlock).not.toBeNull();
+    await (codeBlock as HTMLElement & { updateComplete: Promise<boolean> }).updateComplete;
+
+    // light DOM(슬롯에 할당되는 raw 콘텐츠)에 실제 <img> 엘리먼트가 붙어서는 안 된다 —
+    // 그게 붙는 순간 onerror가 파싱 시점에 이미 발화한다(값을 읽기도 전에).
+    expect(codeBlock!.querySelector('img')).toBeNull();
+    expect(codeBlock!.textContent).toContain('<img src=x onerror=alert(1)>');
+
+    // 하이라이트 렌더(shadow DOM의 <pre class="hljs">)도 텍스트로만 보여야 한다.
+    const pre = codeBlock!.shadowRoot!.querySelector('pre.hljs');
+    expect(pre!.querySelector('img')).toBeNull();
+    expect(pre!.textContent).toContain('<img src=x onerror=alert(1)>');
+  });
+
   it('일반 마크다운(볼드·코드·표)은 그대로 렌더된다(회귀 방지)', async () => {
     const el = await render('**bold** and `code` and\n\n| h |\n|---|\n| cell |');
     const root = el.shadowRoot!;

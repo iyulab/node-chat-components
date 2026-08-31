@@ -129,7 +129,16 @@ export class UMarkedBlock extends UElement {
     }
 
     // 코드블록은 refs 태그 제거 + HTML escape
-    const safeText = this.removeRefs(token.text);
+    //
+    // ⚠순서 중요: escape를 먼저 하면 removeRefs가 찾는 `<u-ref-tag>`/`<!--ref:N-->`
+    // 패턴이 `&lt;u-ref-tag&gt;` 형태로 바뀌어 매칭되지 않는다 — 반드시 제거 후 escape.
+    //
+    // escape가 없으면 이 문자열이 `<u-code-block>` 라이트 DOM 콘텐츠로 그대로
+    // HtmlBuilder.build에 들어가고, 그 결과 문자열 전체가 render()에서 unsafeHTML()로
+    // 파싱된다 — 즉 코드블록 안의 `<img onerror=...>` 같은 실제 태그가 UCodeBlock이
+    // slotchange에서 textContent로 안전하게 환원하기도 전에 이미 라이브 엘리먼트로
+    // 파싱·부착돼 onerror가 발화한다(실측 확인).
+    const safeText = escapeHtmlText(this.removeRefs(token.text));
 
     return HtmlBuilder.build("u-code-block", { lang: lang }, safeText);
   }
