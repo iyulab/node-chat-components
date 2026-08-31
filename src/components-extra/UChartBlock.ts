@@ -73,7 +73,7 @@ export class UChartBlock extends UElement {
             JSON
             <u-icon slot="suffix" lib="internal-chat" name="download"></u-icon>
           </u-button>
-          <u-button title="Full Screen" @click=${this.handleFullscreen}>
+          <u-button title="Full Screen" aria-label=${messages.text('fullScreen')} @click=${this.handleFullscreen}>
             <u-icon lib="internal-chat" name="external-link"></u-icon>
           </u-button>
         </div>

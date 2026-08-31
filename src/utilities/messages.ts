@@ -7,7 +7,18 @@ import { Locale } from '@iyulab/components/dist/utilities/Locale.js';
  * 이 리포가 채택한 표준이 *"영어 기본 **+ 레지스트리**"* 이기 때문이다 — 영어 리터럴만으로는
  * 한국어 앱이 그 문구를 되돌릴 방법이 없다. 다음 문자열은 여기로 온다.
  */
-export type ChatMessageKey = 'canvasUnavailable' | 'previousReference' | 'nextReference' | 'closePreview';
+export type ChatMessageKey =
+  | 'canvasUnavailable'
+  | 'previousReference'
+  | 'nextReference'
+  | 'closePreview'
+  | 'closeLightbox'
+  | 'previousImage'
+  | 'nextImage'
+  | 'sendMessage'
+  | 'stopGenerating'
+  | 'fullScreen'
+  | 'remove';
 
 export const messages = Locale.namespace<ChatMessageKey>('@iyulab/chat-components');
 
@@ -16,6 +27,13 @@ messages.register('en', {
   previousReference: 'Previous reference',
   nextReference: 'Next reference',
   closePreview: 'Close preview',
+  closeLightbox: 'Close',
+  previousImage: 'Previous image',
+  nextImage: 'Next image',
+  sendMessage: 'Send message',
+  stopGenerating: 'Stop generating',
+  fullScreen: 'Full screen',
+  remove: 'Remove',
 });
 
 messages.register('ko', {
@@ -23,4 +41,11 @@ messages.register('ko', {
   previousReference: '이전 참조',
   nextReference: '다음 참조',
   closePreview: '미리보기 닫기',
+  closeLightbox: '닫기',
+  previousImage: '이전 이미지',
+  nextImage: '다음 이미지',
+  sendMessage: '메시지 보내기',
+  stopGenerating: '생성 중지',
+  fullScreen: '전체 화면',
+  remove: '제거',
 });

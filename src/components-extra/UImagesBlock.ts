@@ -6,6 +6,7 @@ import "@iyulab/components/dist/components/carousel/UCarousel.js";
 import "@iyulab/components/dist/components/icon/UIcon.js";
 import { UElement } from "@iyulab/components/dist/components/UElement.js";
 import { styles } from "./UImagesBlock.styles.js";
+import { messages } from "../utilities/messages.js";
 
 export interface ImageSlide {
   src: string;
@@ -90,7 +91,7 @@ export class UImagesBlock extends UElement {
           <div class="lb-counter" ?hidden=${total <= 1}>
             ${idx + 1} / ${total}
           </div>
-          <button class="lb-close" @click=${this.close}>
+          <button class="lb-close" aria-label=${messages.text('closeLightbox')} @click=${this.close}>
             <u-icon lib="internal" name="x"></u-icon>
           </button>
         </header>
@@ -109,12 +110,14 @@ export class UImagesBlock extends UElement {
 
           <button class="lb-nav prev"
             ?hidden=${idx <= 0}
+            aria-label=${messages.text('previousImage')}
             @click=${this.handlePrevClick}>
             <u-icon lib="internal" name="chevron-left"></u-icon>
           </button>
 
           <button class="lb-nav next"
             ?hidden=${idx >= total - 1}
+            aria-label=${messages.text('nextImage')}
             @click=${this.handleNextClick}>
             <u-icon lib="internal" name="chevron-right"></u-icon>
           </button>

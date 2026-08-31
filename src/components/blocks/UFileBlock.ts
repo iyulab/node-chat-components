@@ -81,6 +81,7 @@ export class UFileBlock extends UElement {
         <u-button class="remove-btn"
           ?hidden=${!this.removable}
           title="Remove"
+          aria-label=${messages.text('remove')}
           @click=${this.handleRemoveClick}>
           <u-icon lib="internal" name="x"></u-icon>
         </u-button>

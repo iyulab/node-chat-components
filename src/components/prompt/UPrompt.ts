@@ -12,6 +12,7 @@ import type { FileBlockItem } from "../../types/BlockItem.js";
 import { StopEventDetail } from "../../events/StopEvent.js";
 import { SendEventDetail } from "../../events/SendEvent.js";
 import "../../utilities/icons.js";
+import { messages } from "../../utilities/messages.js";
 import { styles } from "./UPrompt.styles.js";
 
 /**
@@ -76,6 +77,7 @@ export class UPrompt extends UElement {
         <u-button class="send-btn" part="send-btn"
           variant="ghost"
           ?disabled=${!this.loading && !this.value}
+          aria-label=${this.loading ? messages.text('stopGenerating') : messages.text('sendMessage')}
           @click=${this.handleSendButtonClick}>
           <u-icon
             lib="internal-chat"
