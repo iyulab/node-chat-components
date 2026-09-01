@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.11.7] - 2026-09-01
+
+### Fixed
+
+- **Some tooltips stayed English after switching locale.** `UFileBlock`'s
+  remove button and `UChartBlock`'s PNG/JSON-download and full-screen
+  buttons localized their `aria-label` via the existing message registry
+  but left `title` as an English literal in the same template, so the
+  visible tooltip didn't follow `aria-label` into Korean. Routed `title`
+  through the same registry calls.
+
 ## [0.11.6] - 2026-09-01
 
 ### Fixed
