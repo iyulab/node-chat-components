@@ -35,7 +35,7 @@ export const styles = css`
   .toolbar-right u-button {
     font-size: 12px;
   }
-  .toolbar-right u-button[title="Full Screen"] {
+  .toolbar-right u-button.fullscreen-btn {
     font-size: 15px;
   }
 

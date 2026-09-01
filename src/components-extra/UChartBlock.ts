@@ -65,15 +65,15 @@ export class UChartBlock extends UElement {
       <div class="toolbar">
         <div class="toolbar-left"></div>
         <div class="toolbar-right">
-          <u-button title="PNG Download" @click=${this.handleDownloadPNG}>
+          <u-button title=${messages.text('pngDownload')} @click=${this.handleDownloadPNG}>
             PNG
             <u-icon slot="suffix" lib="internal-chat" name="download"></u-icon>
           </u-button>
-          <u-button title="JSON Download" @click=${this.handleDownloadJSON}>
+          <u-button title=${messages.text('jsonDownload')} @click=${this.handleDownloadJSON}>
             JSON
             <u-icon slot="suffix" lib="internal-chat" name="download"></u-icon>
           </u-button>
-          <u-button title="Full Screen" aria-label=${messages.text('fullScreen')} @click=${this.handleFullscreen}>
+          <u-button class="fullscreen-btn" title=${messages.text('fullScreen')} aria-label=${messages.text('fullScreen')} @click=${this.handleFullscreen}>
             <u-icon lib="internal-chat" name="external-link"></u-icon>
           </u-button>
         </div>

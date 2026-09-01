@@ -18,7 +18,9 @@ export type ChatMessageKey =
   | 'sendMessage'
   | 'stopGenerating'
   | 'fullScreen'
-  | 'remove';
+  | 'remove'
+  | 'pngDownload'
+  | 'jsonDownload';
 
 export const messages = Locale.namespace<ChatMessageKey>('@iyulab/chat-components');
 
@@ -34,6 +36,8 @@ messages.register('en', {
   stopGenerating: 'Stop generating',
   fullScreen: 'Full screen',
   remove: 'Remove',
+  pngDownload: 'PNG Download',
+  jsonDownload: 'JSON Download',
 });
 
 messages.register('ko', {
@@ -48,4 +52,6 @@ messages.register('ko', {
   stopGenerating: '생성 중지',
   fullScreen: '전체 화면',
   remove: '제거',
+  pngDownload: 'PNG 다운로드',
+  jsonDownload: 'JSON 다운로드',
 });
