@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.11.8] - 2026-09-07
+
+### Fixed
+
+- **The table block's toolbar stayed English in every locale.** `UTableBlock`
+  was the only block component that never went through the message registry
+  at all — it did not even import it — so its search placeholder, row-count
+  label, and Excel/CSV download tooltips were English literals regardless of
+  the active locale. Routed all four through the existing registry. The
+  row-count label uses the registry's existing `{name}` interpolation
+  (`'{shown} / {total} Rows'`), so no new API was needed.
+
 ## [0.11.7] - 2026-09-01
 
 ### Fixed

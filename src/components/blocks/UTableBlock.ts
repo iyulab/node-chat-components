@@ -10,6 +10,7 @@ import { UInput } from "@iyulab/components/dist/components/input/UInput.js";
 import { UDataElement } from "../UDataElement.js";
 import "../../utilities/icons.js";
 import { styles } from "./UTableBlock.styles.js";
+import { messages } from "../../utilities/messages.js";
 
 /**
  * 테이블 셀 데이터 타입
@@ -65,22 +66,22 @@ export class UTableBlock extends UDataElement {
           <u-input
             class="toolbar-search"
             type="search"
-            placeholder="Search..."
+            placeholder=${messages.text('search')}
             .value=${this.search}
             @input=${this.handleSearchInput}
           >
             <u-icon slot="prefix" lib="internal" name="search"></u-icon>
           </u-input>
           <span class="toolbar-count">
-            ${rows.length} / ${this.rows.length} Rows
+            ${messages.text('rowCount', { shown: rows.length, total: this.rows.length })}
           </span>
         </div>
         <div class="toolbar-right">
-          <u-button @click=${this.handleDownloadXLS} title="Excel Download">
+          <u-button @click=${this.handleDownloadXLS} title=${messages.text('excelDownload')}>
             XLS
             <u-icon slot="suffix" lib="internal-chat" name="download"></u-icon>
           </u-button>
-          <u-button @click=${this.handleDownloadCSV} title="CSV Download">
+          <u-button @click=${this.handleDownloadCSV} title=${messages.text('csvDownload')}>
             CSV
             <u-icon slot="suffix" lib="internal-chat" name="download"></u-icon>
           </u-button>

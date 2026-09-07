@@ -20,7 +20,11 @@ export type ChatMessageKey =
   | 'fullScreen'
   | 'remove'
   | 'pngDownload'
-  | 'jsonDownload';
+  | 'jsonDownload'
+  | 'search'
+  | 'rowCount'
+  | 'excelDownload'
+  | 'csvDownload';
 
 export const messages = Locale.namespace<ChatMessageKey>('@iyulab/chat-components');
 
@@ -38,6 +42,12 @@ messages.register('en', {
   remove: 'Remove',
   pngDownload: 'PNG Download',
   jsonDownload: 'JSON Download',
+  search: 'Search...',
+  // ⚠보간 키 — `text('rowCount', { shown, total })`. `{name}` 치환은 `Locale` 이 이미
+  //   지원한다(`interpolate`), 그래서 함수형 등록 같은 새 표면이 필요 없다.
+  rowCount: '{shown} / {total} Rows',
+  excelDownload: 'Excel Download',
+  csvDownload: 'CSV Download',
 });
 
 messages.register('ko', {
@@ -54,4 +64,8 @@ messages.register('ko', {
   remove: '제거',
   pngDownload: 'PNG 다운로드',
   jsonDownload: 'JSON 다운로드',
+  search: '검색...',
+  rowCount: '{shown} / {total} 행',
+  excelDownload: 'Excel 다운로드',
+  csvDownload: 'CSV 다운로드',
 });
