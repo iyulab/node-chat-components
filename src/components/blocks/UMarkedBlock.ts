@@ -15,7 +15,7 @@ import { UElement } from "@iyulab/components/dist/components/UElement.js";
 import { escapeHtmlText, escapeHtmlAttr, escapeHtmlHref, stripZeroWidth } from "../../utilities/sanitizers.js";
 import { HtmlBuilder } from "../../utilities/HtmlBuilder.js";
 import type { ReferenceCitation } from "../../types/References.js";
-import { HtmlPlaceholder } from "../../utilities/HtmlPlaceholder.js";
+import { HtmlPlaceholder, stripRefPlaceholders } from "../../utilities/HtmlPlaceholder.js";
 import { styles } from "./UMarkedBlock.styles.js";
 
 /**
@@ -108,6 +108,7 @@ export class UMarkedBlock extends UElement {
     value = stripZeroWidth(value);
 
     // 참조객체가 있을 때만 refs 태그를 삽입하여 파싱 안정성 확보
+    // (삽입되는 것은 HTML이 아니라 파서가 평문으로만 보는 센티널이다 — HtmlPlaceholder 참조)
     if (this.refs?.length) {
       value = this.insertRefs(value, this.refs);
     }
@@ -130,8 +131,8 @@ export class UMarkedBlock extends UElement {
 
     // 코드블록은 refs 태그 제거 + HTML escape
     //
-    // ⚠순서 중요: escape를 먼저 하면 removeRefs가 찾는 `<u-ref-tag>`/`<!--ref:N-->`
-    // 패턴이 `&lt;u-ref-tag&gt;` 형태로 바뀌어 매칭되지 않는다 — 반드시 제거 후 escape.
+    // ⚠순서 중요: escape를 먼저 하면 removeRefs가 찾는 `<u-ref-tag>` 패턴이
+    // `&lt;u-ref-tag&gt;` 형태로 바뀌어 매칭되지 않는다 — 반드시 제거 후 escape.
     //
     // escape가 없으면 이 문자열이 `<u-code-block>` 라이트 DOM 콘텐츠로 그대로
     // HtmlBuilder.build에 들어가고, 그 결과 문자열 전체가 render()에서 unsafeHTML()로
@@ -198,7 +199,7 @@ export class UMarkedBlock extends UElement {
 
   /**
    * 인용/출처 참조객체가 있을때 ref 태그 HTML을 this.placeholder에 보관하고
-   * 마크다운 문자열의 해당 위치에 주석 플레이스홀더를 삽입합니다.
+   * 마크다운 문자열의 해당 위치에 플레이스홀더 센티널을 삽입합니다.
    */
   private insertRefs(value: string, refs: ReferenceCitation[]): string {
     // 참조객체를 endIndex 기준 내림차순으로 정렬하여 뒤에서부터 삽입
@@ -224,13 +225,18 @@ export class UMarkedBlock extends UElement {
   }
 
   /**
-   * 코드블록 내부의 <!--ref:idx--> 플레이스홀더와 그 외 refs 태그를 모두 제거하여 HTML이 코드로 렌더링되도록 합니다.   
+   * 코드블록 내부의 플레이스홀더 센티널과 그 외 refs 태그를 모두 제거하여 HTML이 코드로
+   * 렌더링되도록 합니다.
+   *
+   * ⚠**작성자가 쓴 `<!--ref:N-->` 는 더 이상 지우지 않는다.** 종전에는 그것이 우리 내부
+   * 플레이스홀더의 형태와 같아 함께 지워졌지만, 이제 그 문자열은 **작성자의 콘텐츠일 뿐**
+   * 이므로 코드블록 안에서 적힌 그대로 보이는 것이 옳다.
    */
   private removeRefs(value: string): string {
     // u-ref-tag 전체 블록 제거(내부 카드/그룹 포함)
     value = value.replace(/<u-ref-tag\b[^>]*>[\s\S]*?<\/u-ref-tag>/gi, "");
-    // <!--ref:idx--> 플레이스홀더 제거
-    value = value.replace(/<!--ref:\d+-->/g, "");
+    // 우리가 삽입한 플레이스홀더 센티널 제거 — 형태는 HtmlPlaceholder 가 단독으로 안다
+    value = stripRefPlaceholders(value);
     // 그 외 HTML은 모두 텍스트로
     return value;
   }
