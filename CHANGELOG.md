@@ -1,5 +1,35 @@
 # Changelog
 
+## [0.11.9] - 2026-09-08
+
+### Fixed
+
+- **Inline citation badges rendered as the literal placeholder text instead of a
+  `u-ref-tag`.** Any `u-marked-block` given a non-empty `refs` array was affected,
+  with no special content required, from `0.11.7` onward. The XSS hardening added
+  in that release escapes every raw HTML token, and the placeholder the component
+  splices into the markdown source was an HTML comment — which the markdown
+  parser classifies as exactly that. Escaping turned it into text that the restore
+  pass no longer recognised, so the marker survived into the DOM and appeared
+  mid-sentence.
+
+  The placeholder is now a private-use sentinel that markdown gives no meaning to,
+  so it tokenises as plain text and escaping is a no-op on it. This removes the
+  coupling between the sanitizer and the placeholder format rather than adding an
+  exemption to it: a future sanitizing hook cannot break the round trip again.
+  Exempting the comment form in the renderer would also have let author text
+  matching the internal format through unescaped.
+
+  **The hardening is unchanged.** Raw HTML written by an author is still escaped,
+  and a regression covers that alongside the round trip.
+
+### Changed
+
+- **A `<!--ref:N-->` written by an author inside a code block is no longer
+  stripped.** It used to collide with the component's internal placeholder format
+  and was removed with it; now it is ordinary content, and a code block shows what
+  was written.
+
 ## [0.11.8] - 2026-09-07
 
 ### Fixed
