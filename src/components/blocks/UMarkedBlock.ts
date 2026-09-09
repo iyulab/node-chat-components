@@ -3,7 +3,7 @@ import { customElement, property, state } from "lit/decorators.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 
 import { Marked, Parser, type Tokens } from "marked";
-import markedKatex from "marked-katex-extension";
+import { markedKatex } from "../../utilities/markedKatex.js";
 
 import "./UCodeBlock.js";
 import "../references/URefTag.js";
