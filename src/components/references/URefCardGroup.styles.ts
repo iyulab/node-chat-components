@@ -33,6 +33,11 @@ export const styles = css`
     color: inherit;
     font-size: 16px;
     cursor: pointer;
+    /* WCAG 2.2 SC 2.5.8 — 실측 16x16 이라 포인터 타깃이 모자랐다. 배경도 테두리도 없는
+       아이콘 버튼이라 상자를 키워도 **보이는 것은 그대로**다: 아이콘 치수는 위 font-size 가
+       정하고 여기서 늘어나는 것은 잡히는 영역뿐이다. */
+    min-inline-size: 24px;
+    min-block-size: 24px;
   }
   .nav-button:hover u-icon {
     opacity: 0.6;
