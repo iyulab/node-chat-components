@@ -1,5 +1,31 @@
 # Changelog
 
+## [0.12.0] - 2026-09-10
+
+### Changed
+
+- **`@iyulab/components` moved from `dependencies` to `peerDependencies`.** It owns
+  process-global state — the custom element registry and module-level singletons — so two
+  copies in one install tree split that state with no error raised. Consumers already
+  installing `@iyulab/components` are unaffected; the declaration now says that this package
+  uses the copy they installed rather than fetching one of its own.
+
+- **The KaTeX `marked` extension is now owned in-package**, replacing the third-party
+  `marked-katex-extension`, and `katex` moves to `^0.18.7`. No published version of that
+  extension satisfied both a `katex <0.19` peer range and compiled `.d.ts`/`.js` output, so
+  depending on it pinned `katex` to 0.17 and required an install-time override that does not
+  reach consumers of the published package at all. A browser regression pins the render
+  contract first — delimiter parsing, `displayMode` versus block placement, and the inputs that
+  must *not* be treated as maths (currency pairs, newlines inside inline maths) — so the
+  replacement is demonstrably equivalent rather than merely plausible. The `.katex` coupling
+  point is unchanged across both minors.
+
+### Fixed
+
+- **The reference carousel's navigation buttons presented a 16×16 pointer target**, below the
+  24×24 CSS px minimum (WCAG 2.2 SC 2.5.8). Nothing visible changes: the buttons carry no
+  border or background, and the icon size is still set by `font-size`.
+
 ## [0.11.9] - 2026-09-08
 
 ### Fixed
