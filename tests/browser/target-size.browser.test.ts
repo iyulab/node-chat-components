@@ -88,10 +88,8 @@ const NOT_A_TARGET = new Set<string>([
  * ⚠**이 목록은 「통과」가 아니라 「미판정」이다.**
  */
 const NEEDS_FIXTURE = new Set<string>([
-  // `u-file-block` 의 우리 소유 타깃은 미리보기 오버레이의 `.preview-close` 하나뿐인데,
-  // 그것은 카드를 눌러 오버레이를 연 뒤에만 렌더된다(`removable` 의 제거 버튼은 형제
-  // `u-button` 이라 위 사유로 대상 밖이다). ⚠**「통과」가 아니라 「미판정」이다.**
-  'u-file-block',
+  // (비어 있다) `u-file-block` 이 마지막이었다 — 그 타깃은 카드를 눌러 미리보기를 연 뒤에만
+  // 렌더되는데, 픽스처가 `prepare` 로 그 상태를 만들어 이제 잰다(아래 FIXTURES).
 ]);
 
 /**
@@ -126,6 +124,13 @@ interface Fixture {
   spacingIsOurs?: true;
   /** 렌더가 비동기인 블록(마크다운 파싱·이미지 로드 등)을 위한 추가 대기(ms). */
   settle?: number;
+  /**
+   * 🔴**타깃이 «열린 상태»에서만 렌더되면 재기 전에 그 상태를 만든다**(`HD-46`).
+   * 닫힌 상태로 재면 타깃이 없으므로 «타깃 0개» 단언이 빨강을 낸다 — 그것이 정상이다.
+   * ⚠사용자와 같은 경로(클릭·키)로 연다. 내부 상태를 직접 세우면 «그 경로로 열리는가»가
+   * 빠지고, 열리지 않는 오버레이를 재고 통과하는 미탐이 된다.
+   */
+  prepare?: (host: Element) => Promise<void>;
 }
 
 /** 실제로 재는 것 — 대표 픽스처와 그 안의 타깃. */
@@ -169,12 +174,26 @@ const FIXTURES: Record<string, Fixture> = {
   },
   'u-images-block': {
     // 썸네일이 우리 소유 타깃이다. ⚠라이트박스의 닫기·이전/다음은 «열린 상태»에서만
-    //   렌더되므로 이 픽스처가 재지 못한다 — 그 사실을 아래 커버리지 보고가 말한다.
+    //   렌더되므로 이 픽스처가 재지 못한다. 🔴**그리고 커버리지 보고는 이 공백을 세지 못한다**
+    //   — 태그 단위로 세므로 이 태그는 «판정»으로 잡힌다(종전 주석은 보고가 그것을 말한다고
+    //   적었다). 두 상태를 한 태그에서 재려면 태그당 여러 픽스처가 필요하다(`DL-534-1` 후속).
     html: `<u-images-block items='[{"url":"data:image/gif;base64,R0lGODlhAQABAAAAACw="},` +
       `{"url":"data:image/gif;base64,R0lGODlhAQABAAAAACw="}]'></u-images-block>`,
     targets: () => inShadow(document.querySelector('u-images-block')!, '.thumb, .item, img'),
     spacingIsOurs: true,
     settle: 200,
+  },
+  'u-file-block': {
+    // 우리 소유 타깃은 미리보기의 닫기 버튼뿐이다(제거 버튼은 형제 `u-button`).
+    // 미리보기는 `url` 이 있고 `type` 이 `image/*`·`video/*` 일 때만 열린다.
+    html: '<u-file-block name="a.gif" type="image/gif" size="1024" ' +
+      'url="data:image/gif;base64,R0lGODlhAQABAAAAACw="></u-file-block>',
+    prepare: async (host) => {
+      (host.shadowRoot!.querySelector('.card') as HTMLElement).click();
+      await (host as HTMLElement & { updateComplete: Promise<unknown> }).updateComplete;
+      // 열림 애니메이션(`preview-fadeIn`)은 opacity 만 바꿔 치수에 영향이 없다 — 기다리지 않는다.
+    },
+    targets: () => inShadow(document.querySelector('u-file-block')!, '.preview-close'),
   },
 };
 
@@ -269,7 +288,7 @@ describe('WCAG 2.2 SC 2.5.8 — 타깃 크기(최소) 게이트', () => {
       expect(
         `판정 ${Object.keys(FIXTURES).length} · 미판정 ${unjudged.length}(${unjudged.join(' ')})` +
         ` · 대상아님 ${NOT_A_TARGET.size} · 인라인예외 ${INLINE_PROSE.size}`,
-      ).toBe('판정 7 · 미판정 1(u-file-block) · 대상아님 8 · 인라인예외 1');
+      ).toBe('판정 8 · 미판정 0() · 대상아님 8 · 인라인예외 1');
     });
 
     it('규칙 표에 «등록되지 않은» 이름이 남아 있지 않다 (표가 낡지 않게)', () => {
@@ -291,6 +310,7 @@ describe('WCAG 2.2 SC 2.5.8 — 타깃 크기(최소) 게이트', () => {
           : 'SC 2.5.8 을 만족한다';
       it(`${tag}: ${label}`, async () => {
         await mount(fixture.html, fixture.settle);
+        if (fixture.prepare) await fixture.prepare(document.querySelector(tag)!);
         const targets = (fixture.targets ? fixture.targets(tag) : [document.querySelector(tag)!])
           .map(measure);
         expect(targets.length, '타깃을 하나도 못 찾으면 이 판정은 무의미하다').toBeGreaterThan(0);
