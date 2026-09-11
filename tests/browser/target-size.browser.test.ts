@@ -131,10 +131,16 @@ interface Fixture {
    * 빠지고, 열리지 않는 오버레이를 재고 통과하는 미탐이 된다.
    */
   prepare?: (host: Element) => Promise<void>;
+  /**
+   * 한 태그를 여러 상태로 잴 때 그 상태의 이름(테스트 이름에 붙는다).
+   * 🔴**커버리지는 태그가 아니라 상태 단위로 센다** — 태그 단위로 세면 닫힌 상태 하나만 재도
+   * «판정» 이 되어, 열린 상태의 타깃이 빠진 것을 아무것도 말하지 않는다(`u-images-block` 실례).
+   */
+  state?: string;
 }
 
-/** 실제로 재는 것 — 대표 픽스처와 그 안의 타깃. */
-const FIXTURES: Record<string, Fixture> = {
+/** 실제로 재는 것 — 대표 픽스처와 그 안의 타깃. 한 태그에 상태가 여럿이면 배열로 둔다. */
+const FIXTURES: Record<string, Fixture | Fixture[]> = {
   'u-ref-tag': {
     html: '<u-ref-tag href="https://example.com">1</u-ref-tag>',
     targets: () => inShadow(document.querySelector('u-ref-tag')!, 'a'),
@@ -172,17 +178,34 @@ const FIXTURES: Record<string, Fixture> = {
     targets: () => inShadow(document.querySelector('u-table-block')!, 'th'),
     spacingIsOurs: true,
   },
-  'u-images-block': {
-    // 썸네일이 우리 소유 타깃이다. ⚠라이트박스의 닫기·이전/다음은 «열린 상태»에서만
-    //   렌더되므로 이 픽스처가 재지 못한다. 🔴**그리고 커버리지 보고는 이 공백을 세지 못한다**
-    //   — 태그 단위로 세므로 이 태그는 «판정»으로 잡힌다(종전 주석은 보고가 그것을 말한다고
-    //   적었다). 두 상태를 한 태그에서 재려면 태그당 여러 픽스처가 필요하다(`DL-534-1` 후속).
-    html: `<u-images-block items='[{"url":"data:image/gif;base64,R0lGODlhAQABAAAAACw="},` +
-      `{"url":"data:image/gif;base64,R0lGODlhAQABAAAAACw="}]'></u-images-block>`,
-    targets: () => inShadow(document.querySelector('u-images-block')!, '.thumb, .item, img'),
-    spacingIsOurs: true,
-    settle: 200,
-  },
+  'u-images-block': [
+    {
+      state: '썸네일',
+      // 클릭 핸들러가 붙은 `.slide` 가 우리 소유 타깃이다.
+      // ⚠항목 키는 `src` 다(`ImageItem`) — 종전 픽스처는 `url` 을 넘겨 **이미지 없이** 그려지고
+      //   있었고, 셀렉터 `.thumb, .item` 은 현재 마크업에 없는 이름이었다(`img` 만 걸렸다).
+      html: `<u-images-block items='[{"src":"data:image/gif;base64,R0lGODlhAQABAAAAACw="},` +
+        `{"src":"data:image/gif;base64,R0lGODlhAQABAAAAACw="}]'></u-images-block>`,
+      targets: () => inShadow(document.querySelector('u-images-block')!, '.slide'),
+      spacingIsOurs: true,
+      settle: 200,
+    },
+    {
+      state: '라이트박스',
+      // 🔴**가운데 장을 연다** — 이전/다음은 첫 장·끝 장에서 `hidden` 이라 셋이 모두 보이는 것은
+      //   가운데뿐이다. 둘만 넣고 첫 장을 열면 «이전» 이 0×0 으로 잡혀 빨강이 난다.
+      html: `<u-images-block items='[{"src":"data:image/gif;base64,R0lGODlhAQABAAAAACw="},` +
+        `{"src":"data:image/gif;base64,R0lGODlhAQABAAAAACw="},` +
+        `{"src":"data:image/gif;base64,R0lGODlhAQABAAAAACw="}]'></u-images-block>`,
+      settle: 200,
+      prepare: async (host) => {
+        (host.shadowRoot!.querySelectorAll('.slide')[1] as HTMLElement).click();
+        await (host as HTMLElement & { updateComplete: Promise<unknown> }).updateComplete;
+      },
+      // 닫기(우상단)와 이전/다음(양 끝)은 서로 멀다 — 간격 예외를 켜면 미탐만 한다(`u-ref-card-group` 참조).
+      targets: () => inShadow(document.querySelector('u-images-block')!, '.lb-close, .lb-nav'),
+    },
+  ],
   'u-file-block': {
     // 우리 소유 타깃은 미리보기의 닫기 버튼뿐이다(제거 버튼은 형제 `u-button`).
     // 미리보기는 `url` 이 있고 `type` 이 `image/*`·`video/*` 일 때만 열린다.
@@ -285,10 +308,13 @@ describe('WCAG 2.2 SC 2.5.8 — 타깃 크기(최소) 게이트', () => {
       // ⚠이 단언은 «미판정이 늘지 않았는가»를 지킨다. 픽스처를 쓰면 이 수가 줄고 그때 이
       //   줄을 함께 고치는 것이 그 작업의 완료 신호다. 숫자를 문자열로 고정하는 이유는
       //   `components` 쪽과 같다 — 분류를 바꾸면 반드시 여기도 손대게 만든다.
+      // 🔴«판정» 은 태그 수와 **상태 수**를 함께 말한다 — 태그만 세면 한 태그의 열린 상태를
+      //   빠뜨려도 이 줄이 변하지 않는다(`u-images-block` 라이트박스가 그렇게 숨어 있었다).
+      const states = Object.values(FIXTURES).flat().length;
       expect(
-        `판정 ${Object.keys(FIXTURES).length} · 미판정 ${unjudged.length}(${unjudged.join(' ')})` +
+        `판정 ${Object.keys(FIXTURES).length}(${states}상태) · 미판정 ${unjudged.length}(${unjudged.join(' ')})` +
         ` · 대상아님 ${NOT_A_TARGET.size} · 인라인예외 ${INLINE_PROSE.size}`,
-      ).toBe('판정 8 · 미판정 0() · 대상아님 8 · 인라인예외 1');
+      ).toBe('판정 8(9상태) · 미판정 0() · 대상아님 8 · 인라인예외 1');
     });
 
     it('규칙 표에 «등록되지 않은» 이름이 남아 있지 않다 (표가 낡지 않게)', () => {
@@ -300,7 +326,9 @@ describe('WCAG 2.2 SC 2.5.8 — 타깃 크기(최소) 게이트', () => {
   });
 
   describe('실측 — 픽스처를 가진 모든 타깃', () => {
-    for (const [tag, fixture] of Object.entries(FIXTURES)) {
+    const CASES = Object.entries(FIXTURES).flatMap(([tag, entry]) =>
+      (Array.isArray(entry) ? entry : [entry]).map((fixture) => ({ tag, fixture })));
+    for (const { tag, fixture } of CASES) {
       const pinned = UNDERSIZED_PINS.has(tag);
       const inline = INLINE_PROSE.has(tag);
       const label = pinned
@@ -308,7 +336,7 @@ describe('WCAG 2.2 SC 2.5.8 — 타깃 크기(최소) 게이트', () => {
         : inline
           ? '「인라인」 예외 — 크기 하한을 적용하지 않되 실측은 보고한다'
           : 'SC 2.5.8 을 만족한다';
-      it(`${tag}: ${label}`, async () => {
+      it(`${tag}${fixture.state ? ` [${fixture.state}]` : ''}: ${label}`, async () => {
         await mount(fixture.html, fixture.settle);
         if (fixture.prepare) await fixture.prepare(document.querySelector(tag)!);
         const targets = (fixture.targets ? fixture.targets(tag) : [document.querySelector(tag)!])
