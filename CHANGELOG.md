@@ -22,6 +22,15 @@
 
 ### Fixed
 
+- **A `max-height` on `u-table-block` now actually constrains the table.** The scrolling table area
+  carried a fixed 480px maximum of its own, so a height set on the component shrank the component
+  without shrinking the table inside it: the surplus was clipped away by the block's own
+  `overflow: hidden` with no scrollbar left to reach it. Measured with 40 rows and a 200px
+  `max-height`, 330px of rows became unreachable. The header row and the table area now divide the
+  component's height by layout, so a constraint on the component reaches the table and the rows
+  stay reachable by scrolling. The 480px default is unchanged: left unconstrained, a long table
+  still stops there rather than swallowing the conversation.
+
 - **The reference carousel's navigation buttons presented a 16×16 pointer target**, below the
   24×24 CSS px minimum (WCAG 2.2 SC 2.5.8). Nothing visible changes: the buttons carry no
   border or background, and the icon size is still set by `font-size`.

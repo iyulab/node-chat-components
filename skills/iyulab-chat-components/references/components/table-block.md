@@ -37,6 +37,21 @@ Extends `UDataElement`, so data can also be injected via a `<script type="applic
 
 ---
 
+## Sizing
+
+The table area caps at **480px** and scrolls inside that cap; below it the block is content-sized.
+Measured at 600px wide: 40 rows give a 480px table area with ~1,000px to scroll, 2 rows give ~108px
+and no scrollbar. That default keeps a long table from swallowing the conversation.
+
+**A `max-height` (or `height`) on the host wins.** The table area shrinks to fit it and still
+scrolls, so no rows become unreachable:
+
+```css
+u-table-block { max-height: 200px; }
+```
+
+There is no size property or custom property for this — the host is the lever.
+
 ## Properties
 
 | Property | Type | Default | Description |

@@ -35,6 +35,14 @@ Tracks a `streaming` state internally (resets a 1500ms idle timer on every `valu
 
 ---
 
+## Sizing
+
+The block grows with its content — there is no cap, and the conversation around it does the
+scrolling.
+
+**Fenced code becomes a nested [`u-code-block`](code-block.md)**, not a plain `<pre>`, so fenced
+code follows that component's contract (no vertical cap; long lines scroll horizontally).
+
 ## Properties
 
 | Property | Type | Default | Description |

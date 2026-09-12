@@ -1,8 +1,12 @@
 import { css } from "lit";
 
 export const styles = css`
+  /* 세로 flex 인 이유: 소비자가 호스트에 높이·max-height 를 주면 그 제약이 .table-wrapper 까지
+     닿아야 한다. 종전에는 display:block + 래퍼의 max-height:480px 리터럴이라, 호스트를 200px 로
+     줄이면 래퍼가 480 을 유지해 330px 이 overflow:hidden 에 잘리고 스크롤바도 없었다. */
   :host {
-    display: block;
+    display: flex;
+    flex-direction: column;
     width: 100%;
     margin: 8px 0;
     border: 1px solid var(--u-border-color);
@@ -11,6 +15,7 @@ export const styles = css`
   }
 
   .toolbar {
+    flex: none;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -52,8 +57,12 @@ export const styles = css`
   }
 
   .table-wrapper {
+    flex: 1 1 auto;
+    min-height: 0;
     overflow-x: auto;
     overflow-y: auto;
+    /* 제약이 없을 때의 기본 상한 — 채팅 스트림에서 긴 표가 화면을 삼키지 않게 한다.
+       «최대» 이므로 위 flex 수축을 막지 않는다(호스트 제약이 이긴다). */
     max-height: 480px;
     width: 100%;
   }

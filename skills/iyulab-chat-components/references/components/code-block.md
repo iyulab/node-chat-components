@@ -23,6 +23,18 @@ Syntax-highlighted code block powered by Highlight.js. Shows a language label an
 
 ---
 
+## Sizing
+
+**There is no vertical cap.** Long code grows to its content rather than folding — measured: 200
+lines render about 4,100px tall, with no vertical scrollbar of its own. Only long *lines* scroll,
+horizontally, inside the code area.
+
+That is deliberate, and it differs from [`u-table-block`](table-block.md), which caps at 480px:
+folded code cannot be read, and the conversation the block sits in already scrolls.
+
+Fenced code inside [`u-marked-block`](marked-block.md) renders as a nested `u-code-block`, so it
+follows this same contract.
+
 ## Properties
 
 | Property | Type | Default | Reflect | Description |
