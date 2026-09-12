@@ -38,6 +38,16 @@ LLM output example (`block-json` code fence, rendered via `u-element-block`):
 
 ---
 
+## Sizing
+
+Height comes from width through `ratio` (`16:9` by default), capped at `max-width: 800px`. Measured
+at 600px wide, a 16:9 video is ~342px tall. This holds for both branches — the embed iframe
+(YouTube/Vimeo) and the native `<video>` element.
+
+⚠**A `max-height` on the host does *not* shrink the video, and that is deliberate** — the same
+reason as the image block: vertical squeezing would break the aspect ratio. The block overflows
+**visibly** rather than clipping. Use `ratio`, or a narrower column, to change its height.
+
 ## Properties
 
 | Property | Type | Default | Description |

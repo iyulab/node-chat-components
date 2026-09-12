@@ -38,6 +38,16 @@ LLM output example (`block-json` code fence):
 
 ---
 
+## Sizing
+
+Height comes from width: each slide is `4 / 3`, so the block is as tall as its column is wide.
+Measured at 600px wide, that is ~222px.
+
+⚠**A `max-height` on the host does *not* shrink the images, and that is deliberate.** Squeezing them
+vertically would break the aspect ratio and distort the picture, so the block overflows **visibly**
+instead — it never clips, and nothing becomes unreachable. To make it shorter, give it a narrower
+column rather than a shorter host.
+
 ## Properties
 
 | Property | Type | Default | Description |

@@ -41,6 +41,21 @@ LLM output example (`block-json` code fence, rendered via `u-element-block`):
 
 ---
 
+## Sizing
+
+The map is **300px tall when nothing constrains it** — that is a default, not a fixed height.
+
+**A `max-height` (or `height`) on the host wins**, and the map frame shrinks to fit it:
+
+```css
+u-map-block { max-height: 200px; }
+```
+
+Before this was fixed, the frame stayed at 300px regardless — against a 120px host, 180px of the map
+was clipped by the block's `overflow: hidden` with no scrollbar left to reach it.
+
+There is no size property or custom property for this — the host is the lever.
+
 ## Properties
 
 | Property | Type | Default | Description |

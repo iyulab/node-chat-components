@@ -47,6 +47,17 @@ prompt.submit();
 
 ---
 
+## Sizing
+
+The prompt does not grow with its value. `minRows`/`maxRows` bound the inner `u-text-block`, and the
+text scrolls **inside** that box — so the component stays short no matter how long the value is.
+Measured at 600px wide with a 40-line value and `maxRows: 40`, the whole block is 72px tall.
+
+⚠**Its behaviour under a host `max-height` is therefore untested.** A 200px or 120px constraint never
+engages, because the natural height is already below both. That is not the same as "it behaves
+correctly under a constraint" — it means the question has not been answered. Use `minRows`/`maxRows`
+to size this component.
+
 ## Slots
 
 | Name | Description |

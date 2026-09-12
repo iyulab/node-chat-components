@@ -22,6 +22,20 @@
 
 ### Fixed
 
+- **A `max-height` on `u-chart-block` or `u-map-block` now actually constrains the block.** Both
+  laid their inner box out independently of the host — the chart viewport kept its content height
+  and the map's frame kept a flat 300px — so a height set on the component shrank the component
+  without shrinking what was inside it, and the surplus was clipped away by the block's own
+  `overflow: hidden` with no scrollbar left to reach it. Measured at 600px wide against a 120px
+  host: 248px of the chart and 180px of the map were unreachable. The toolbar and the chart area
+  (and the map frame) now divide the component's height by layout, so a constraint on the component
+  reaches them. The map's 300px is unchanged as the height you get when nothing constrains it.
+  - `u-images-block`, `u-video-block` and `u-message` deliberately do **not** follow such a
+    constraint: the first two derive height from width through `aspect-ratio`, and squeezing a
+    message bubble hides content that the conversation itself already scrolls. They overflow
+    visibly rather than clipping, and a browser regression now pins that distinction — not
+    following a constraint and silently clipping are different things.
+
 - **A `max-height` on `u-table-block` now actually constrains the table.** The scrolling table area
   carried a fixed 480px maximum of its own, so a height set on the component shrank the component
   without shrinking the table inside it: the surplus was clipped away by the block's own

@@ -36,6 +36,14 @@ Chat message wrapper component. Arranges content blocks via slots, shows a loadi
 
 ---
 
+## Sizing
+
+Content-sized: the bubble is as tall as what you put in it.
+
+⚠**A `max-height` on the host does *not* fold the content, and that is deliberate.** A message that
+hides part of itself cannot be read, and the conversation stream around it already scrolls. The
+block overflows **visibly** rather than clipping. Constrain the stream, not the message.
+
 ## Slots
 
 | Name | Description |

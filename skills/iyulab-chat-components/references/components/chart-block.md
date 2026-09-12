@@ -48,6 +48,23 @@ LLM output example (`block-json` code fence, rendered via `u-element-block`):
 
 ---
 
+## Sizing
+
+Content-sized by default: the toolbar plus the chart area. Measured at 600px wide with a small
+bar chart, that is ~368px.
+
+**A `max-height` (or `height`) on the host wins.** The toolbar keeps its height and the chart area
+takes the rest, so nothing is clipped away:
+
+```css
+u-chart-block { max-height: 200px; }
+```
+
+Before this was fixed, the chart area kept its own height regardless — against a 120px host, 248px
+of it was clipped by the block's `overflow: hidden` with no scrollbar left to reach it.
+
+There is no size property or custom property for this — the host is the lever.
+
 ## Properties
 
 | Property | Type | Default | Description |

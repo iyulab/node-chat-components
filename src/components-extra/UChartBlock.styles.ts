@@ -1,9 +1,16 @@
 import { css } from "lit";
 
 export const styles = css`
+  /* 🔴호스트를 «세로 flex» 로 둔다 — display:block 이면 사슬이 여기서 끊긴다.
+     내부는 툴바(고정) + 뷰포트(가변) 구조인데, 호스트가 block 이면 그 둘이 호스트의
+     max-height 에 참여하지 못해 호스트만 줄고 뷰포트는 제 높이를 유지한다.
+     그러면 overflow:hidden 에 잘리고 스크롤도 없어 도달할 수 없다 — 실측(자연 368):
+     호스트 120 에서 뷰포트가 316 그대로였고 248px 이 잘렸다.
+     계약은 tests/browser/extra-block-size-model.browser.test.ts 가 고정한다. */
   :host {
     margin: 0.75em auto;
-    display: block;
+    display: flex;
+    flex-direction: column;
     width: 100%;
     background: var(--u-bg-color);
     border: 1px solid var(--u-border-color);
@@ -19,6 +26,8 @@ export const styles = css`
     background-color: var(--u-neutral-100);
     border-bottom: 1px solid var(--u-border-color);
     gap: 8px;
+    /* 툴바는 줄어들지 않는다 — 제약이 들어오면 차트가 양보한다. */
+    flex: none;
   }
 
   .toolbar-left {
@@ -42,6 +51,11 @@ export const styles = css`
   .viewport {
     position: relative;
     padding: 1em;
+    /* ⚠min-height:0 이 없으면 flex 아이템의 기본 min-height:auto 가 «줄어들지 않음» 이라
+       위 사슬이 그대로 무효가 된다(이 리포가 여러 번 밟은 자리). */
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
   }
 
   .viewport:fullscreen {
