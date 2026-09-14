@@ -112,6 +112,21 @@ markedBlock.value = llmResponse;
 
 ---
 
+## Accessibility
+
+The baseline is **WCAG 2.2**. The table lists what this package **measures in tests** — it is not a
+conformance claim for the success criteria it does not list.
+
+| Success criterion | Guarantee | Measured by |
+|---|---|---|
+| SC 2.5.8 Target Size (Minimum) | Every pointer target inside the registered blocks (`.` and `./extra` entries) is at least 24×24 CSS px or meets the spacing exception (24px between centers), and is actually hit at that position | `tests/browser/target-size.browser.test.ts` (real Chromium) |
+
+`u-ref-tag` uses the SC's **inline exception** — it is a citation badge set inside a sentence, where
+growing it to 24px would push the line height. It is still measured and reported.
+
+Color contrast comes from the `@iyulab/components` tokens this package renders with — see that
+package's Accessibility section.
+
 ## Documentation
 
 | File | Description |
