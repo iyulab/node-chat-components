@@ -57,26 +57,14 @@ export class UFileBlock extends UElement {
 
   render() {
     return html`
-      <div class="card" @click=${this.handleCardClick}>
-        <div class="thumbnail">
-          ${this.isImage
-            ? html`<img src=${this.url!} alt=${this.name || ''} loading="lazy" />`
-            : this.isVideo
-            ? html`<video src="${this.url}#t=0.1" preload="metadata" muted playsinline></video>`
-            : html`<u-icon lib="internal-chat" name=${this.resolveIcon(this.type)}></u-icon>`}
-        </div>
-
-        <div class="info">
-          <div class="name">${this.name}</div>
-          <div class="meta">
-            <span class="type">
-              ${this.resolveExt(this.name, this.type)}
-            </span>
-            <span class="size">
-              ${this.formatSize(this.size || 0)}
-            </span>
-          </div>
-        </div>
+      <div class="card" ?previewable=${this.previewable}>
+        ${this.previewable
+          // 미리볼 수 있는 파일은 카드 본문이 «미리보기» 버튼이다 — 클릭만 받는 div 는 키보드로 열 수 없었다.
+          //   제거 버튼은 그 밖의 형제로 둔다(버튼 안에 버튼을 넣지 않는다).
+          ? html`<button type="button" class="card-main" part="card-main"
+              aria-label=${messages.text('previewFile', { name: this.name || '' })}
+              @click=${this.handleCardClick}>${this.renderCardMain()}</button>`
+          : html`<span class="card-main">${this.renderCardMain()}</span>`}
 
         <u-button class="remove-btn"
           ?hidden=${!this.removable}
@@ -102,6 +90,26 @@ export class UFileBlock extends UElement {
           </div>
         </div>
       ` : nothing}
+    `;
+  }
+
+  /** 썸네일과 이름·메타 — 버튼 안에 들어가므로 구문 콘텐츠(`span`)로만 짓는다. */
+  private renderCardMain() {
+    return html`
+      <span class="thumbnail">
+        ${this.isImage
+          ? html`<img src=${this.url!} alt=${this.name || ''} loading="lazy" />`
+          : this.isVideo
+          ? html`<video src="${this.url}#t=0.1" preload="metadata" muted playsinline></video>`
+          : html`<u-icon lib="internal-chat" name=${this.resolveIcon(this.type)}></u-icon>`}
+      </span>
+      <span class="info">
+        <span class="name">${this.name}</span>
+        <span class="meta">
+          <span class="type">${this.resolveExt(this.name, this.type)}</span>
+          <span class="size">${this.formatSize(this.size || 0)}</span>
+        </span>
+      </span>
     `;
   }
 

@@ -51,18 +51,21 @@ export class UImagesBlock extends UElement {
         .gap=${8}
       >
         ${repeat(this.items, (item, i) => html`
-          <div class="slide"
+          <!-- 썸네일은 라이트박스를 여는 버튼이다 — 클릭만 받는 div 는 키보드로 열 수 없었다.
+               대체 텍스트가 있으면 그것이 이름이고, 없으면 «이미지 N 열기» 로 이름을 준다. -->
+          <button type="button" class="slide"
+            aria-label=${item.alt ? nothing : messages.text('openImage', { index: i + 1 })}
             @click=${() => this.open(i)}>
             <img
               src=${item.src}
               alt=${item.alt || ''}
               loading="lazy"
             />
-            <div class="caption"
+            <span class="caption"
               ?hidden=${!item.caption}>
               ${item.caption}
-            </div>
-          </div>
+            </span>
+          </button>
         `)}
       </u-carousel>
 

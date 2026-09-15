@@ -45,7 +45,7 @@ describe('chat-components 아이콘 전용 버튼 접근 가능한 이름', () =
     document.body.appendChild(block);
     await block.updateComplete;
 
-    block.shadowRoot!.querySelector('.card')!.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    block.shadowRoot!.querySelector('.card-main')!.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     await block.updateComplete;
 
     const closeBtn = block.shadowRoot!.querySelector('button.preview-close');

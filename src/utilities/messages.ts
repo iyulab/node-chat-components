@@ -24,7 +24,9 @@ export type ChatMessageKey =
   | 'search'
   | 'rowCount'
   | 'excelDownload'
-  | 'csvDownload';
+  | 'csvDownload'
+  | 'openImage'
+  | 'previewFile';
 
 export const messages = Locale.namespace<ChatMessageKey>('@iyulab/chat-components');
 
@@ -48,6 +50,9 @@ messages.register('en', {
   rowCount: '{shown} / {total} Rows',
   excelDownload: 'Excel Download',
   csvDownload: 'CSV Download',
+  // ⚠보간 키 — 이미지 대체 텍스트가 없을 때 썸네일 버튼의 이름. `{index}` 는 1부터.
+  openImage: 'Open image {index}',
+  previewFile: 'Preview {name}',
 });
 
 messages.register('ko', {
@@ -68,4 +73,6 @@ messages.register('ko', {
   rowCount: '{shown} / {total} 행',
   excelDownload: 'Excel 다운로드',
   csvDownload: 'CSV 다운로드',
+  openImage: '이미지 {index} 열기',
+  previewFile: '{name} 미리보기',
 });

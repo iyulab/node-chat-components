@@ -15,18 +15,37 @@ export const styles = css`
     flex-direction: row;
     align-items: center;
     min-width: 0;
-    gap: 10px;
-    padding: 8px 10px;
     border: 1px solid var(--u-border-color);
     border-radius: 8px;
     background-color: var(--u-neutral-50);
     overflow: visible;
-    cursor: pointer;
     transition: background-color 0.12s ease, border-color 0.12s ease;
   }
-  .card:hover {
+  .card[previewable]:hover {
     background-color: var(--u-neutral-100);
     border-color: var(--u-border-color-strong);
+  }
+
+  /* 카드 본문 — 미리볼 수 있으면 버튼, 아니면 span. 둘 다 같은 배치를 갖는다.
+     카드의 여백을 본문이 가져, 누를 면이 종전(카드 전체)과 같다 — 제거 버튼은 절대 배치라 흐름에 없다. */
+  .card-main {
+    all: unset;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 8px;
+  }
+  button.card-main {
+    cursor: pointer;
+  }
+  button.card-main:focus-visible {
+    outline: 2px solid var(--u-primary-color, #1976D2);
+    outline-offset: 1px;
   }
 
   .thumbnail {
@@ -62,6 +81,7 @@ export const styles = css`
   }
 
   .name {
+    display: block;
     font-size: 13px;
     font-weight: 500;
     color: var(--u-txt-color-strong);

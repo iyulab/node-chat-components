@@ -287,8 +287,7 @@ const INLINE_PROSE = new Set(['u-ref-tag']);
  * 고치면 빼는 것이 완료 신호다. 새로 넣을 때는 왜 지금 고치지 않는지를 함께 적는다.
  */
 const POINTER_ORPHAN_PINS = new Set<string>([
-  'div.slide', // u-images-block 썸네일 — 클릭하면 라이트박스가 열리지만 포커스를 받지 않는다(검사 도입 사이클에 발견 · 다음 사이클)
-  'div.card', //  u-file-block 파일 카드 — 클릭 동작이 키보드로 닿지 않는다(같은 사이클 발견)
+  // ✅비어 있다 — 도입 시점의 둘(이미지 썸네일 `div.slide` · 파일 카드 `div.card`)은 버튼으로 바꿔 해소했다.
 ]);
 
 interface Fixture {
@@ -391,7 +390,7 @@ const FIXTURES: Record<string, Fixture | Fixture[]> = {
     html: '<u-file-block name="a.gif" type="image/gif" size="1024" ' +
       'url="data:image/gif;base64,R0lGODlhAQABAAAAACw="></u-file-block>',
     prepare: async (host) => {
-      (host.shadowRoot!.querySelector('.card') as HTMLElement).click();
+      (host.shadowRoot!.querySelector('.card-main') as HTMLElement).click();
       await (host as HTMLElement & { updateComplete: Promise<unknown> }).updateComplete;
       // 열림 애니메이션(`preview-fadeIn`)은 opacity 만 바꿔 치수에 영향이 없다 — 기다리지 않는다.
     },

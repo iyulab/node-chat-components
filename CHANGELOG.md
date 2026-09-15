@@ -8,6 +8,11 @@
   listened for clicks, took no focus and exposed no sort state. Each header now holds a button that
   fills the cell (the pointer target is unchanged), Enter or Space toggles the sort, and the header
   carries `aria-sort`. The button is exposed as the `sort-button` part.
+- **`u-images-block` thumbnails and `u-file-block` previews could not be opened from the
+  keyboard.** Both were click-only `div`s. A thumbnail is now a button (named by the image's `alt`,
+  or "Open image N"); a previewable file card's body is a button named "Preview <name>", exposed as
+  the `card-main` part, with the remove button kept outside it. Cards that cannot be previewed no
+  longer show a pointer cursor or hover state. New locale keys: `openImage`, `previewFile`.
 
 ## [0.12.0] - 2026-09-10
 

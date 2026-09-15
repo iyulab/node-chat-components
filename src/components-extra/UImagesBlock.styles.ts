@@ -9,10 +9,23 @@ export const styles = css`
 
   .slide {
     position: relative;
+    display: block;
+    inline-size: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    color: inherit;
+    text-align: start;
     border-radius: 10px;
     overflow: hidden;
     cursor: pointer;
     aspect-ratio: 4 / 3;
+  }
+  .slide:focus-visible {
+    outline: 2px solid var(--u-primary-color, #1976D2);
+    outline-offset: 2px;
   }
   .slide img {
     display: block;
