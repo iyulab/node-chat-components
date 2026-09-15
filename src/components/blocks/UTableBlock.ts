@@ -97,14 +97,18 @@ export class UTableBlock extends UDataElement {
                   <th
                     ?active=${isActive}
                     align=${h.align ?? "left"}
-                    @click=${() => this.handleSortColumn(i)}
+                    aria-sort=${isActive ? (this.sort.dir === "asc" ? "ascending" : "descending") : "none"}
                   >
-                    ${unsafeHTML(h.text)}
-                    <u-icon
-                      class="sort-icon"
-                      lib="internal-chat"
-                      name=${isActive ? (this.sort.dir === "asc" ? "sort-ascending-letters" : "sort-descending-letters") : "arrows-sort"}
-                    ></u-icon>
+                    <!-- 정렬은 머리 칸 전체를 채우는 버튼이다 — 클릭만 받는 th 는 키보드로 닿지 않았다. -->
+                    <button type="button" class="sort-button" part="sort-button"
+                      @click=${() => this.handleSortColumn(i)}>
+                      ${unsafeHTML(h.text)}
+                      <u-icon
+                        class="sort-icon"
+                        lib="internal-chat"
+                        name=${isActive ? (this.sort.dir === "asc" ? "sort-ascending-letters" : "sort-descending-letters") : "arrows-sort"}
+                      ></u-icon>
+                    </button>
                   </th>
                 `;
               })}

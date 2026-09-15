@@ -83,13 +83,31 @@ export const styles = css`
   }
 
   th {
-    padding: 8px 12px;
+    padding: 0;
     font-weight: 600;
     text-align: left;
     border-bottom: 2px solid var(--u-border-color);
     white-space: nowrap;
-    cursor: pointer;
     user-select: none;
+  }
+
+  /* 칸 전체가 누를 면이다 — 여백을 th 가 아니라 버튼이 갖는다. */
+  .sort-button {
+    all: unset;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    inline-size: 100%;
+    padding: 8px 12px;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+  }
+  th[align="center"] .sort-button { justify-content: center; }
+  th[align="right"] .sort-button { justify-content: flex-end; }
+  .sort-button:focus-visible {
+    outline: 2px solid var(--u-primary-color, #1976D2);
+    outline-offset: -2px;
   }
   th:hover {
     background-color: var(--u-neutral-200);

@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.12.1] - 2026-09-15
+
+### Fixed
+
+- **`u-table-block` columns could not be sorted from the keyboard.** The sortable header cell only
+  listened for clicks, took no focus and exposed no sort state. Each header now holds a button that
+  fills the cell (the pointer target is unchanged), Enter or Space toggles the sort, and the header
+  carries `aria-sort`. The button is exposed as the `sort-button` part.
+
 ## [0.12.0] - 2026-09-10
 
 ### Changed
