@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+
+- **A reference card's favicon announced itself as "favicon".** The image sits next to the title it
+  belongs to and carries no information of its own, so a screen reader repeated an English word for
+  every card. It is now marked decorative and skipped.
+
 ## [0.12.1] - 2026-09-15
 
 ### Fixed

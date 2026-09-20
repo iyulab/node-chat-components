@@ -34,7 +34,8 @@ export class URefCard extends UDataElement {
         <div class="header">
           <img class="favicon" 
             src="${this.getFaviconUrl(this.url)}" 
-            alt="favicon"
+            alt=""
+            aria-hidden="true"
           />
           <div class="title">
             ${this.title || this.getDomainName(this.url)}
