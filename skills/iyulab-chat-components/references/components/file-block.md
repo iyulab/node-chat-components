@@ -38,6 +38,12 @@ Clicking anywhere on the card opens a full-size preview overlay, but only for im
 | `size` | `number` | `undefined` | — | File size in bytes; auto-formatted to KB/MB/GB |
 | `url` | `string` | `undefined` | — | File URL, used for the image/video thumbnail and preview overlay |
 
+## CSS Parts
+
+| Part | Description |
+|------|-------------|
+| `card-main` | The clickable card body (rendered only when the block is actionable) |
+
 ## Events
 
 | Event | Detail | Description |

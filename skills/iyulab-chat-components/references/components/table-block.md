@@ -59,6 +59,12 @@ There is no size property or custom property for this — the host is the lever.
 | `headers` | `TableCell[]` | `[]` | Header cells, each with `text` and `align` |
 | `rows` | `TableCell[][]` | `[]` | Row data; each row is an array of `TableCell` |
 
+## CSS Parts
+
+| Part | Description |
+|------|-------------|
+| `sort-button` | A column header's sort toggle |
+
 ## TableCell Type
 
 ```ts
