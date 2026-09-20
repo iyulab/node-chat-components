@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.12.3] - 2026-09-21
+
+### Documentation
+
+- **The file and table blocks now list the CSS parts they expose.** Neither reference page had
+  a `CSS Parts` section, so `card-main` (the file block's clickable card body) and
+  `sort-button` (a table column header's sort toggle) were styleable but undocumented.
+
 ## [0.12.2] - 2026-09-20
 
 ### Fixed
