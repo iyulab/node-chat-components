@@ -12,6 +12,16 @@
 
 ### Changed
 
+- 🔴 **Breaking — `u-ref-card` no longer requests a favicon unless you choose where from.** A web
+  card used to load `https://www.google.com/s2/favicons?domain=<host>` for every card, with no way to
+  point it elsewhere or turn it off — each card sent the site's host name to a third party, and on a
+  closed network every card made a request that failed. Cards now show no favicon by default. Set
+  `URefCard.defaultFaviconUrl` (every card, including those inside `u-ref-block` and
+  `u-ref-card-group`) or a card's `faviconUrl` property to a `(url) => string | undefined` resolver.
+  A card without a `url` no longer falls back to the app's own `/favicon.ico`.
+  Migration, to keep the previous look: `URefCard.defaultFaviconUrl = googleFaviconUrl;` (both
+  exported from `@iyulab/chat-components`).
+
 - The file preview and the image lightbox read `--u-layer-overlay` (9999, as before) — the shared
   stacking token from `@iyulab/components` — instead of their own number, so they stack in the
   same order as dialogs and drawers.

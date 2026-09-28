@@ -6,7 +6,7 @@ import '@iyulab/chat-components/dist/components/references/URefCard.js';
 
 **Tag:** `u-ref-card`
 
-Displays a single reference source as a card. Supports `web` and `document` types. For web sources, automatically fetches a favicon via the Google Favicon API.
+Displays a single reference source as a card. Supports `web` and `document` types. A web card shows a favicon only when you give it a resolver — by default it makes no request of its own (see [Favicon](#favicon)).
 
 Extends `UDataElement`, so data can also be injected via a `<script type="application/json">` slot.
 
@@ -46,3 +46,22 @@ Extends `UDataElement`, so data can also be injected via a `<script type="applic
 | `title` | `string` | `''` | — | Card title (falls back to domain name for web type) |
 | `snippet` | `string` | `undefined` | — | Excerpt text |
 | `tags` | `string[]` | `undefined` | — | Tag list. Pass as JSON array string via HTML attribute |
+| `faviconUrl` | `FaviconResolver` | `undefined` | — | Favicon resolver for this card (property only). Overrides `URefCard.defaultFaviconUrl` |
+
+---
+
+## Favicon
+
+```ts
+import { URefCard, googleFaviconUrl } from '@iyulab/chat-components';
+
+// type FaviconResolver = (url: string) => string | undefined
+URefCard.defaultFaviconUrl = (url) => `/favicons/${new URL(url).hostname}.png`; // your own host
+// or, where the public internet is reachable and sending host names to Google is acceptable:
+URefCard.defaultFaviconUrl = googleFaviconUrl;
+```
+
+- **Default: no favicon, no request.** The card never contacts a third party unless you choose one — safe on a closed network.
+- `URefCard.defaultFaviconUrl` applies to every card, including those rendered inside `u-ref-block`, `u-ref-card-group` and marked-block tooltips. Set it before cards render.
+- A card's own `faviconUrl` property wins over the module-wide one. Returning `undefined` draws the card without a favicon.
+- `googleFaviconUrl` sends each card's host name (not the full URL) to `www.google.com`.
