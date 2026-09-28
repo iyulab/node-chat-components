@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.12.4] - 2026-09-28
+
+### Changed
+
+- The file preview and the image lightbox read `--u-layer-overlay` (9999, as before) — the shared
+  stacking token from `@iyulab/components` — instead of their own number, so they stack in the
+  same order as dialogs and drawers.
+
 ## [0.12.3] - 2026-09-21
 
 ### Documentation

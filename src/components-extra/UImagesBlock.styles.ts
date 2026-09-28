@@ -58,7 +58,7 @@ export const styles = css`
   .lb-overlay {
     position: fixed;
     inset: 0;
-    z-index: 9999;
+    z-index: var(--u-layer-overlay, 9999);
     display: flex;
     flex-direction: column;
     background: rgba(0, 0, 0, 0.92);
