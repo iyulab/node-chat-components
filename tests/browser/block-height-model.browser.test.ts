@@ -5,7 +5,7 @@ import '../../src/components/blocks/UMarkedBlock.js';
 import type { UTableBlock } from '../../src/components/blocks/UTableBlock.js';
 
 /**
- * **블록의 높이·스크롤 계약**(cycle-567).
+ * **블록의 높이·스크롤 계약**.
  *
  * | 블록 | 제약이 없을 때 | 호스트에 `max-height` 를 줄 때 |
  * |---|---|---|

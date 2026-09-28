@@ -16,7 +16,7 @@ import { Locale } from '@iyulab/components/dist/utilities/Locale.js';
  *   함께 고정한다.
  *
  * ⚠로케일마다 **새 엘리먼트**를 만든다 — 같은 엘리먼트를 재사용하면 module-singleton
- *   `Locale` 상태 레이스가 생긴다(cycle-393 실측, `title-attribute-locale` 와 같은 이유).
+ *   `Locale` 상태 레이스가 생긴다(`title-attribute-locale` 와 같은 이유).
  */
 describe('u-table-block 툴바 로케일', () => {
   const seed = (el: UTableBlock) => {

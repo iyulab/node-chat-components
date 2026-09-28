@@ -4,7 +4,7 @@ import type { UMarkedBlock } from '../../src/components/blocks/UMarkedBlock.js';
 
 /**
  * `UMarkedBlock`이 마크다운 소스에 섞인 원시 HTML을 정화 없이 `unsafeHTML()`로
- * 렌더하던 XSS(`claudedocs/issues/ISSUE-chat-components-20260831-umarkedblock-unsafehtml-xss.md`).
+ * 렌더하던 XSS.
  * marked는 v5+에서 sanitize 옵션을 제거하고 이 판단을 소비자에게 위임한다 —
  * 이 컴포넌트가 `html`/`link`/`image` 렌더러를 오버라이드해 직접 책임진다.
  *

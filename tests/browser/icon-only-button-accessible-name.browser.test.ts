@@ -8,8 +8,7 @@ import { Locale } from '@iyulab/components/dist/utilities/Locale.js';
 
 /**
  * `u-ref-card-group`의 nav-button과 `u-file-block`의 미리보기 닫기 버튼은
- * 아이콘 전용인데 접근 가능한 이름이 아예 생성된 적이 없었다(cycle-345 실측 —
- * HD-17). 둘 다 native `<button>`이라 forwarding 문제는 없지만, `messages`
+ * 아이콘 전용인데 접근 가능한 이름이 아예 생성된 적이 없었다. 둘 다 native `<button>`이라 forwarding 문제는 없지만, `messages`
  * 네임스페이스 조회가 실제로 값을 반환해 렌더에 반영되는지 확인한다.
  */
 describe('chat-components 아이콘 전용 버튼 접근 가능한 이름', () => {

@@ -4,9 +4,9 @@ import '../../src/components/message/UMessage.js';
 import '../../src/components/prompt/UPrompt.js';
 
 /**
- * **extra 블록·메시지 표면의 크기 계약**(cycle-572).
+ * **extra 블록·메시지 표면의 크기 계약**.
  *
- * cycle-567 이 `u-table-block` 에서 고친 것과 **같은 부류가 둘 더 있었다** — 내부 상자가
+ * 앞서 `u-table-block` 에서 고친 것과 **같은 부류가 둘 더 있었다** — 내부 상자가
  * 호스트 제약에 참여하지 않아, 호스트를 줄이면 **잘리고 스크롤로도 도달할 수 없다.**
  *
  * | 블록 | 제약 없을 때 | 호스트에 `max-height` 를 줄 때 |
@@ -29,7 +29,7 @@ import '../../src/components/prompt/UPrompt.js';
  * `u-prompt` 는 `u-text-block` 에 `maxRows` 를 **상한**으로 넘기고 그 안이 스크롤하므로,
  * 값이 40줄이어도 자연 높이가 **72px** 이다(실측). 즉 200/120px 제약이 **발동조차 하지 않는다.**
  * 「어긋남 0」이 아니라 **미측정**이며, 더 세게 주려면 60px 대로 내려야 하고 그 크기가 실사용
- * 시나리오인지부터 물어야 한다(cycle-568 이 세운 규율).
+ * 시나리오인지부터 물어야 한다.
  */
 
 let wrap: HTMLDivElement;

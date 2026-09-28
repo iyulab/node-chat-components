@@ -3,7 +3,7 @@ import '../../src/components/blocks/UMarkedBlock.js';
 import type { UMarkedBlock } from '../../src/components/blocks/UMarkedBlock.js';
 
 /**
- * **수식 렌더의 «현행 출력»을 고정하는 회귀** (cycle-481).
+ * **수식 렌더의 «현행 출력»을 고정하는 회귀**.
  *
  * ## 왜 이 파일이 «먼저» 필요한가
  *
