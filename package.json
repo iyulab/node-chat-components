@@ -1,7 +1,7 @@
 {
   "name": "@iyulab/chat-components",
   "description": "llm chat components for building chat interfaces",
-  "version": "0.12.4",
+  "version": "0.13.0",
   "author": "iyulab",
   "license": "MIT",
   "keywords": [
@@ -67,7 +67,7 @@
     "marked": "^18.0.6"
   },
   "peerDependencies": {
-    "@iyulab/components": ">=1.23.0",
+    "@iyulab/components": ">=1.49.0",
     "@lit/react": ">=1.0.8",
     "chart.js": ">=4.5.1",
     "react": ">=18.0.0"

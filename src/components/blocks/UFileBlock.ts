@@ -1,10 +1,12 @@
 import { html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
+import type { PropertyValues } from "lit";
 
 import "@iyulab/components/dist/components/icon/UIcon.js";
 import "@iyulab/components/dist/components/button/UButton.js";
 import { RemoveEventDetail } from "@iyulab/components/dist/events/RemoveEvent.js";
 import { UElement } from "@iyulab/components/dist/components/UElement.js";
+import { OverlayManager } from "@iyulab/components/dist/utilities/OverlayManager.js";
 import "../../utilities/icons.js";
 import { messages } from "../../utilities/messages.js";
 import { styles } from "./UFileBlock.styles.js";
@@ -32,14 +34,17 @@ export class UFileBlock extends UElement {
   /** 미리보기 오버레이가 열려있는지 여부 */
   @state() private previewOpen = false;
 
-  connectedCallback(): void {
-    super.connectedCallback();
-    document.addEventListener('keydown', this.handleKeyDown);
+  disconnectedCallback(): void {
+    OverlayManager.closeLayer(this);
+    super.disconnectedCallback();
   }
 
-  disconnectedCallback(): void {
-    document.removeEventListener('keydown', this.handleKeyDown);
-    super.disconnectedCallback();
+  /** 열린 미리보기는 층이다 — Escape 는 components 의 층 스택이 «가장 나중에 연 층 하나» 에만 준다. */
+  protected updated(changed: PropertyValues): void {
+    super.updated(changed);
+    if (!changed.has('previewOpen')) return;
+    if (this.previewOpen) OverlayManager.openLayer(this, () => this.closePreview());
+    else OverlayManager.closeLayer(this);
   }
 
   private get isImage(): boolean {
@@ -122,10 +127,6 @@ export class UFileBlock extends UElement {
     e?.stopPropagation();
     this.previewOpen = false;
   }
-
-  private handleKeyDown = (e: KeyboardEvent) => {
-    if (this.previewOpen && e.key === 'Escape') this.closePreview();
-  };
 
   private handleRemoveClick = (e: Event) => {
     e.stopPropagation();

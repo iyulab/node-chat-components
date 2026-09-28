@@ -1,6 +1,14 @@
 # Changelog
 
-## [0.12.4] - 2026-09-28
+## [0.13.0] - 2026-09-28
+
+### Fixed
+
+- **Escape in a file preview or an image lightbox opened inside a dialog closes only the viewer.**
+  Both listened for Escape on the document themselves, so one press closed the viewer and the
+  dialog under it. They now join `@iyulab/components`' layer stack, where one Escape closes the
+  most recently opened layer. Arrow keys still page the lightbox. Requires `@iyulab/components`
+  1.49.0 or later.
 
 ### Changed
 

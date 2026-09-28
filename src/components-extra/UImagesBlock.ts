@@ -1,10 +1,12 @@
 import { html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
+import type { PropertyValues } from "lit";
 import { repeat } from "lit/directives/repeat.js";
 
 import "@iyulab/components/dist/components/carousel/UCarousel.js";
 import "@iyulab/components/dist/components/icon/UIcon.js";
 import { UElement } from "@iyulab/components/dist/components/UElement.js";
+import { OverlayManager } from "@iyulab/components/dist/utilities/OverlayManager.js";
 import { styles } from "./UImagesBlock.styles.js";
 import { messages } from "../utilities/messages.js";
 
@@ -34,7 +36,16 @@ export class UImagesBlock extends UElement {
 
   disconnectedCallback() {
     document.removeEventListener('keydown', this.handleKeyDown);
+    OverlayManager.closeLayer(this);
     super.disconnectedCallback();
+  }
+
+  /** 열린 라이트박스는 층이다 — Escape 는 components 의 층 스택이 «가장 나중에 연 층 하나» 에만 준다. */
+  protected updated(changed: PropertyValues): void {
+    super.updated(changed);
+    if (!changed.has('index')) return;
+    if (this.index !== null) OverlayManager.openLayer(this, () => this.close());
+    else OverlayManager.closeLayer(this);
   }
 
   render() {
@@ -167,8 +178,8 @@ export class UImagesBlock extends UElement {
 
   private handleKeyDown = (e: KeyboardEvent) => {
     if (this.index === null) return;
-    if (e.key === 'Escape') this.close();
-    else if (e.key === 'ArrowLeft') this.prev();
+    // Escape 는 층 스택이 다룬다(위 `updated`) — 여기는 넘기기 화살표만.
+    if (e.key === 'ArrowLeft') this.prev();
     else if (e.key === 'ArrowRight') this.next();
   };
 }
