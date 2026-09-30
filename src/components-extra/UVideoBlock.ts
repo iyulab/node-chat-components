@@ -6,9 +6,20 @@ import { UElement } from "@iyulab/components/dist/components/UElement.js";
 import { styles } from "./UVideoBlock.styles.js";
 import { registerElementBlock } from '../utilities/ElementRegistry.js';
 import schema from './UVideoBlock.schema.js';
+import { sanitizeHref } from '../utilities/sanitizers.js';
 
 // 이 모듈을 import 하면 block-json 으로 렌더할 수 있다(스키마가 허용 목록이다).
 registerElementBlock(schema);
+
+/** 자막·캡션 트랙(WebVTT) 하나. */
+export interface VideoTrack {
+  src: string;
+  /** 기본 `subtitles` */
+  kind?: 'subtitles' | 'captions' | 'descriptions' | 'chapters' | 'metadata';
+  srclang?: string;
+  label?: string;
+  default?: boolean;
+}
 
 /**
  * 비디오 플레이어 블록 컴포넌트
@@ -23,6 +34,11 @@ export class UVideoBlock extends UElement {
   @property({ type: String }) poster?: string;
   /** 비디오 비율 */
   @property({ type: String }) ratio: '16:9' | '4:3' | '1:1' = '16:9';
+  /**
+   * 직접 파일 영상의 자막·캡션 트랙(WebVTT). 영상이 섀도 안에 그려지므로 앱이 `<track>` 을
+   * 넣을 수 없다 — 이 속성이 유일한 자리다. YouTube·Vimeo 는 그 플레이어가 자막을 다룬다.
+   */
+  @property({ type: Array }) tracks: VideoTrack[] = [];
 
   protected updated(changedProperties: PropertyValues) {
     super.updated(changedProperties);
@@ -76,7 +92,15 @@ export class UVideoBlock extends UElement {
         poster=${ifDefined(this.poster)}
         controls
         playsinline
-      ></video>
+      >${this.tracks
+        .filter((t) => t && typeof t.src === 'string' && sanitizeHref(t.src) !== '#')
+        .map((t) => html`<track
+          src=${sanitizeHref(t.src)}
+          kind=${t.kind ?? 'subtitles'}
+          srclang=${ifDefined(t.srclang)}
+          label=${ifDefined(t.label)}
+          ?default=${t.default === true}
+        />`)}</video>
     `;
   }
 

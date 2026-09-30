@@ -100,6 +100,7 @@ Auto-detects YouTube, Vimeo, or direct video file from the URL.
 | `src` | `string` | ✓ | YouTube, Vimeo, or direct video URL |
 | `poster` | `string` | — | Poster image for direct files |
 | `ratio` | `'16:9'\|'4:3'\|'1:1'` | — | Aspect ratio (default: `'16:9'`) |
+| `tracks` | `VideoTrack[]` | — | Subtitle / caption tracks (WebVTT) for direct files — `{ src, kind?, srclang?, label?, default? }` |
 
 ---
 

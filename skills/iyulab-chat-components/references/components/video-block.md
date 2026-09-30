@@ -55,6 +55,7 @@ reason as the image block: vertical squeezing would break the aspect ratio. The 
 | `src` | `string` | `undefined` | Video URL: YouTube, Vimeo, or direct file |
 | `poster` | `string` | `undefined` | Poster image URL for direct video files |
 | `ratio` | `'16:9'\|'4:3'\|'1:1'` | `'16:9'` | Aspect ratio |
+| `tracks` | `VideoTrack[]` | `[]` | Subtitle / caption tracks (WebVTT) for a direct video file — `{ src, kind?, srclang?, label?, default? }`, `kind` defaults to `'subtitles'`. The video is inside the shadow tree, so this is the only way to add a `<track>`. Ignored for YouTube and Vimeo. Track files on another origin load only when that server allows CORS for the page |
 
 ## Supported Platforms
 

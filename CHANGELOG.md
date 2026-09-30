@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+### Added
+
+- **`u-video-block` takes subtitle / caption tracks** — `tracks: VideoTrack[]`
+  (`{ src, kind?, srclang?, label?, default? }`, WebVTT) for a direct video file. The `<video>` is
+  drawn inside the shadow tree, so an app had no way to add a `<track>`. Also in the block schema, so
+  block JSON can carry them. YouTube and Vimeo keep their own player's captions.
+
 ### Fixed
 
 - **Links that open a new tab now say so to screen readers.** `u-ref-tag`, `u-ref-card` and the
