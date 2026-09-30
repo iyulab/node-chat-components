@@ -16,6 +16,10 @@
   "(opens in a new tab)" (`opensInNewTab` in the message registry). The text is visually hidden —
   the external-link icon already shows it on screen.
 
+### Documentation
+
+- README: the Accessibility section links the KWCAG 2.2 table in `@iyulab/components`.
+
 ## [0.15.0] - 2026-09-30
 
 ### Changed

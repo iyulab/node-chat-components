@@ -129,6 +129,8 @@ growing it to 24px would push the line height. It is still measured and reported
 Color contrast comes from the `@iyulab/components` tokens this package renders with — see that
 package's Accessibility section.
 
+For **KWCAG 2.2** (the Korean web accessibility standard), the `@iyulab/components` README has a table of all 33 check items — which are guaranteed by a test across the sibling packages, which are shared with the app, and which do not apply: [KWCAG 2.2 대응표](https://github.com/iyulab/node-components#kwcag-22-대응표).
+
 ## Documentation
 
 | File | Description |
