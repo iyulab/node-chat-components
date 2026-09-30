@@ -17,7 +17,7 @@ import { resolveImageSource } from "../../utilities/imageSources.js";
 import { messages } from "../../utilities/messages.js";
 import { HtmlBuilder } from "../../utilities/HtmlBuilder.js";
 import type { ReferenceCitation } from "../../types/References.js";
-import { HtmlPlaceholder, stripRefPlaceholders } from "../../utilities/HtmlPlaceholder.js";
+import { HtmlPlaceholder, stripRefPlaceholders, extractRefPlaceholders } from "../../utilities/HtmlPlaceholder.js";
 import { styles } from "./UMarkedBlock.styles.js";
 
 /**
@@ -60,6 +60,7 @@ export class UMarkedBlock extends UElement {
       html: (token) => this.renderHtml(token),
       link: (token) => this.renderLink(token),
       image: (token) => this.renderImage(token),
+      codespan: (token) => this.renderCodespan(token),
     },
   }).use(markedKatex({ output: "mathml" }));
 
@@ -204,10 +205,13 @@ export class UMarkedBlock extends UElement {
    */
   private renderLink(token: Tokens.Link): string {
     const text = token.tokens ? Parser.parseInline(token.tokens, this.parser.defaults) : token.text;
-    let out = `<a href="${escapeHtmlHref(token.href)}"`;
-    if (token.title) out += ` title="${escapeHtmlAttr(token.title)}"`;
+    // 주소·제목 안에 떨어진 인용은 링크 뒤로 옮긴다(속성 값 안에 태그가 복원되지 않게).
+    const [href, inHref] = extractRefPlaceholders(token.href);
+    const [title, inTitle] = extractRefPlaceholders(token.title ?? "");
+    let out = `<a href="${escapeHtmlHref(href)}"`;
+    if (title) out += ` title="${escapeHtmlAttr(title)}"`;
     out += `>${text}</a>`;
-    return out;
+    return out + inHref + inTitle;
   }
 
   /**
@@ -216,17 +220,29 @@ export class UMarkedBlock extends UElement {
    * 요청 자체가 반출 경로이므로 대체 텍스트만 그린다.
    */
   private renderImage(token: Tokens.Image): string {
-    const src = resolveImageSource(token.href);
+    // 이미지의 속성(주소·대체 텍스트·제목)에 떨어진 인용은 이미지 뒤로 옮긴다.
+    const [href, inHref] = extractRefPlaceholders(token.href);
+    const [alt, inAlt] = extractRefPlaceholders(token.text);
+    const [title, inTitle] = extractRefPlaceholders(token.title ?? "");
+    const refs = inHref + inAlt + inTitle;
+
+    const src = resolveImageSource(href);
     if (src === null) {
-      const label = token.text
-        ? messages.text('imageBlockedNamed', { name: token.text })
+      const label = alt
+        ? messages.text('imageBlockedNamed', { name: alt })
         : messages.text('imageBlocked');
-      return `<span class="image-blocked" part="image-blocked">${escapeHtmlText(label)}</span>`;
+      return `<span class="image-blocked" part="image-blocked">${escapeHtmlText(label)}</span>` + refs;
     }
-    let out = `<img src="${escapeHtmlAttr(src)}" alt="${escapeHtmlAttr(token.text)}"`;
-    if (token.title) out += ` title="${escapeHtmlAttr(token.title)}"`;
+    let out = `<img src="${escapeHtmlAttr(src)}" alt="${escapeHtmlAttr(alt)}"`;
+    if (title) out += ` title="${escapeHtmlAttr(title)}"`;
     out += `>`;
-    return out;
+    return out + refs;
+  }
+
+  /** 인라인 코드 안에 떨어진 인용은 코드 뒤로 옮긴다 — 코드는 글자 그대로여야 한다. */
+  private renderCodespan(token: Tokens.Codespan): string {
+    const [text, refs] = extractRefPlaceholders(token.text);
+    return `<code>${escapeHtmlText(text)}</code>${refs}`;
   }
 
   /**
@@ -235,7 +251,11 @@ export class UMarkedBlock extends UElement {
    */
   private insertRefs(value: string, refs: ReferenceCitation[]): string {
     // 참조객체를 endIndex 기준 내림차순으로 정렬하여 뒤에서부터 삽입
-    const sorted = [...refs].sort((a, b) => b.endIndex - a.endIndex);
+    // 인덱스가 정수이고 지금 본문 안에 있는 인용만 넣는다. 스트리밍 중 본문보다 먼저 도착한 인용은
+    // 그 텍스트가 올 때까지 기다린다(끝에 붙였다가 제자리로 뛰지 않게). 음수는 `slice` 가 끝에서부터
+    // 세어 엉뚱한 자리에 들어가므로 버린다.
+    const placeable = refs.filter((r) => Number.isInteger(r.endIndex) && r.endIndex >= 0 && r.endIndex <= value.length);
+    const sorted = placeable.sort((a, b) => b.endIndex - a.endIndex);
 
     for (const ref of sorted) {
       const sources = ref.sources ?? [];

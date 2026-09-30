@@ -53,6 +53,19 @@ export function stripRefPlaceholders(value: string): string {
   return value.replace(sentinelPattern(), '');
 }
 
+/**
+ * 문자열에서 ref 플레이스홀더 센티널을 떼어 낸다 — `[센티널 없는 문자열, 떼어 낸 센티널들]`.
+ *
+ * 링크 주소·이미지 속성·인라인 코드처럼 **태그가 들어갈 수 없는 자리**에 인용이 떨어졌을 때 쓴다.
+ * 그 자리에 남기면 `restore()` 가 속성 값이나 `<code>` 안에 HTML 을 넣는다(링크가 깨지고 코드에
+ * 인용 태그가 섞인다). 지우면 인용을 잃으므로, 호출부가 떼어 낸 것을 그 구문 **바로 뒤**에 둔다.
+ */
+export function extractRefPlaceholders(value: string): [string, string] {
+  const keys = value.match(sentinelPattern());
+  if (!keys) return [value, ''];
+  return [value.replace(sentinelPattern(), ''), keys.join('')];
+}
+
 export class HtmlPlaceholder {
   private map: Record<string, string> = {};
   private idx = 0;

@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.14.1] - 2026-09-30
+
+### Fixed
+
+- **A citation whose index falls inside a link URL, an image, or inline code no longer breaks it.**
+  The citation markup was restored into the `href` attribute (the link pointed at a truncated URL
+  followed by markup) or into the `<code>` text. It is now placed right after the link, image, or code.
+- **A citation that points past the text received so far is held until that text arrives.** During
+  streaming it used to be drawn at the end of the partial text and then jump to its place.
+- A citation with a negative or non-integer index is ignored. A negative index used to be counted
+  from the end of the text and inserted mid-word.
+
 ## [0.14.0] - 2026-09-30
 
 ### Security

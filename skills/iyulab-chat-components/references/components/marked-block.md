@@ -79,6 +79,11 @@ Markdown images (table cells included) follow the page-wide image origin policy 
 
 ## ReferenceCitation Type
 
+A citation is drawn at `endIndex` in the markdown source. While a response streams, a citation whose
+`endIndex` is past the text received so far is held until that text arrives; a negative or non-integer
+index is ignored. If `endIndex` falls inside a link URL, an image, or inline code, the citation is drawn
+right after that element; inside a fenced code block it is dropped.
+
 ```ts
 interface ReferenceCitation {
   startIndex: number;    // Start character index in the markdown text
