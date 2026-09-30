@@ -23,6 +23,9 @@
 
 ### Fixed
 
+- **`u-prompt` no longer sends on the Enter that finishes an IME composition.** Typing Korean (or
+  another composed language) and pressing Enter sent the message and then left the last syllable in
+  the box, so it was sent again. Requires `@iyulab/components` 1.51.0 or later.
 - **Icons of `u-prompt`, `u-table-block`, `u-code-block` and the other components that use the
   bundled `internal-chat` set are drawn again.** The module that registers that set had no exports
   and was not declared in `sideEffects`, so the package build dropped it and those icons rendered at

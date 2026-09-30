@@ -14,6 +14,7 @@ import { SendEventDetail } from "../../events/SendEvent.js";
 import "../../utilities/icons.js";
 import { messages } from "../../utilities/messages.js";
 import { styles } from "./UPrompt.styles.js";
+import { isImeComposing } from '@iyulab/components/dist/utilities/keyboard.js';
 
 /**
  * 채팅 입력 컴포넌트입니다.
@@ -136,7 +137,8 @@ export class UPrompt extends UElement {
   }
 
   private handleTextBlockKeydown(e: KeyboardEvent) {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    // IME 조합을 확정하는 Enter 는 전송이 아니다 — 마지막 음절이 한 번 더 전송된다.
+    if (e.key === 'Enter' && !e.shiftKey && !isImeComposing(e)) {
       e.preventDefault();
       this.submit();
     }
