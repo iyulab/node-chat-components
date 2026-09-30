@@ -65,6 +65,12 @@ Vendored from GitHub's markdown theme — light values shown, dark auto-applies 
 | `--base-size-4` / `-8` / `-16` / `-24` / `-40` | Spacing scale used throughout (margins, padding, gaps) |
 | `--base-text-weight-normal` / `-medium` / `-semibold` | Font-weight scale (body / table header / heading) |
 
+## Images
+
+Markdown images (table cells included) follow the page-wide image origin policy set with
+`setAllowedImagePrefixes()`. A blocked image is not requested; its alt text is shown in a
+`part="image-blocked"` span (`Image blocked: …`, localized). See [../security.md](../security.md).
+
 ## ReferenceCitation Type
 
 ```ts

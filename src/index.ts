@@ -26,4 +26,5 @@ export * from './utilities/HtmlBuilder.js';
 export * from './utilities/PromptBuilder.js';
 export * from './utilities/ElementRegistry.js';
 export * from './utilities/sanitizers.js';
+export * from './utilities/imageSources.js';
 import './utilities/icons.js';

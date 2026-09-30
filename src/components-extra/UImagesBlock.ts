@@ -9,6 +9,7 @@ import { UElement } from "@iyulab/components/dist/components/UElement.js";
 import { OverlayManager } from "@iyulab/components/dist/utilities/OverlayManager.js";
 import { styles } from "./UImagesBlock.styles.js";
 import { messages } from "../utilities/messages.js";
+import { resolveImageSource } from "../utilities/imageSources.js";
 import { registerElementBlock } from '../utilities/ElementRegistry.js';
 import schema from './UImagesBlock.schema.js';
 
@@ -66,14 +67,17 @@ export class UImagesBlock extends UElement {
         .slidesPerView=${Math.min(count, 3)}
         .gap=${8}
       >
-        ${repeat(this.items, (item, i) => html`
+        ${repeat(this.items, (item, i) => resolveImageSource(item.src) === null ? html`
+          <!-- 출처 정책이 막은 이미지는 요청하지 않는다 — 열 것이 없으므로 버튼도 아니다. -->
+          <div class="slide blocked">${this.blockedLabel(item)}</div>
+        ` : html`
           <!-- 썸네일은 라이트박스를 여는 버튼이다 — 클릭만 받는 div 는 키보드로 열 수 없었다.
                대체 텍스트가 있으면 그것이 이름이고, 없으면 «이미지 N 열기» 로 이름을 준다. -->
           <button type="button" class="slide"
             aria-label=${item.alt ? nothing : messages.text('openImage', { index: i + 1 })}
             @click=${() => this.open(i)}>
             <img
-              src=${item.src}
+              src=${resolveImageSource(item.src)!}
               alt=${item.alt || ''}
               loading="lazy"
             />
@@ -87,6 +91,20 @@ export class UImagesBlock extends UElement {
 
       ${this.renderLightbox()}
     `;
+  }
+
+  /** 출처 정책(`setAllowedImagePrefixes`)이 막은 이미지 자리의 문구. */
+  private blockedLabel(item: ImageSlide): string {
+    return item.alt
+      ? messages.text('imageBlockedNamed', { name: item.alt })
+      : messages.text('imageBlocked');
+  }
+
+  private renderLightboxImage(img: ImageSlide) {
+    const src = resolveImageSource(img.src);
+    return src === null
+      ? html`<div class="lb-blocked">${this.blockedLabel(img)}</div>`
+      : html`<img src=${src} alt=${img.alt || ''} />`;
   }
 
   private renderLightbox() {
@@ -121,7 +139,7 @@ export class UImagesBlock extends UElement {
             <div class="lb-track" style="transform:translateX(${translateX})">
               ${repeat(this.items, (img, i) => html`
                 <div class="lb-slide" ?active=${i === idx}>
-                  <img src=${img.src} alt=${img.alt || ''} />
+                  ${this.renderLightboxImage(img)}
                 </div>
               `)}
             </div>

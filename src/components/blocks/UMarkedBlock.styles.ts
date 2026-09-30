@@ -327,6 +327,16 @@ export const styles = css`
     background-color: transparent;
   }
 
+  /* 이미지 출처 정책이 막은 자리 — 요청 없이 대체 텍스트만 보인다. */
+  .image-blocked {
+    display: inline-block;
+    padding: 0 var(--base-size-4);
+    border: 1px dashed var(--borderColor-default);
+    border-radius: 6px;
+    color: var(--fgColor-muted);
+    font-size: 0.875em;
+  }
+
   .emoji {
     max-width: none;
     vertical-align: text-top;

@@ -49,11 +49,11 @@ describe('UMarkedBlock XSS 방어', () => {
     expect(link!.textContent).toBe('click me');
   });
 
-  it('markdown 이미지의 javascript: src를 무력화한다', async () => {
+  it('markdown 이미지의 javascript: src를 무력화한다 — <img> 를 만들지 않는다', async () => {
+    // `src="#"` 은 무해하지 않다 — 페이지 자신을 이미지로 다시 요청한다. 막힌 이미지는 대체 텍스트로 그린다.
     const el = await render('![x](javascript:alert(1))');
-    const img = el.shadowRoot!.querySelector('img');
-    expect(img).not.toBeNull();
-    expect(img!.getAttribute('src')).toBe('#');
+    expect(el.shadowRoot!.querySelector('img')).toBeNull();
+    expect(el.shadowRoot!.querySelector('.image-blocked')?.textContent).toBe('Image blocked: x');
   });
 
   it('autolink의 javascript: protocol을 무력화한다', async () => {

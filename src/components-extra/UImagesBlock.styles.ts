@@ -40,6 +40,19 @@ export const styles = css`
     filter: brightness(0.92);
   }
 
+  /* 출처 정책이 막은 이미지 — 요청 없이 대체 텍스트만. */
+  .slide.blocked {
+    display: grid;
+    place-items: center;
+    padding: 8px;
+    box-sizing: border-box;
+    border: 1px dashed var(--u-border-color, #E0E0E0);
+    color: var(--u-txt-color-weak, #616161);
+    font-size: 0.8em;
+    text-align: center;
+    cursor: default;
+  }
+
   .caption {
     position: absolute;
     bottom: 0;
@@ -159,6 +172,12 @@ export const styles = css`
     border-radius: 6px;
     user-select: none;
     pointer-events: none;
+  }
+  .lb-blocked {
+    padding: 16px 24px;
+    border: 1px dashed rgba(255, 255, 255, 0.5);
+    border-radius: 6px;
+    color: white;
   }
 
   .lb-nav {

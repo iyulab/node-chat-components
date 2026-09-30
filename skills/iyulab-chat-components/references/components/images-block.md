@@ -71,3 +71,4 @@ interface ImageSlide {
 | Carousel | Up to 3 slides visible; draggable |
 | Lightbox | Full-screen modal on image click |
 | Keyboard | `←` `→` to navigate, `Esc` to close |
+| Image origin policy | `setAllowedImagePrefixes()` applies — a blocked item shows its alt text and is not requested (see [../security.md](../security.md)) |

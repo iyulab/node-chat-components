@@ -17,6 +17,18 @@
   - New `registerElementBlock(schema)` for blocks you describe in your own prompt, and
     `getElementBlockProperties(tag)`.
   - The `blacklist` property of `u-element-block` is removed.
+- **New `setAllowedImagePrefixes(prefixes)` — an origin policy for images in model output.** Markdown
+  images in `u-marked-block` (table cells included) and the items of `u-images-block` load the URL the
+  model wrote as soon as they render, so a prompt-injected response can send data to a third party in
+  an image URL's query string. With a list set, only images whose resolved absolute URL starts with one
+  of the prefixes are requested; any other image is drawn as its alt text (`Image blocked: …`,
+  localized) and no request is made. The default (`undefined`) keeps loading every image; `[]` blocks
+  all, `['*']` allows all. `getAllowedImagePrefixes()` and `resolveImageSource(src)` are exported too.
+  - `data:image/…` URLs make no request and are shown under any policy — markdown images with such a
+    URL used to be replaced by `#`.
+  - A markdown image with a blocked protocol (`javascript:` and the like) is drawn as its alt text
+    instead of `<img src="#">`, which requested the page itself as an image.
+  - `u-images-block` now applies the same protocol check to `src` as markdown images do.
 - New `docs/security.md` (and a skill reference) — what each input is trusted to contain, the requests
   the components make, and what is left to the application.
 - New `sanitizeHref(url)` — the protocol check without HTML escaping, for property bindings.

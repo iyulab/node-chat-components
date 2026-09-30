@@ -26,7 +26,9 @@ export type ChatMessageKey =
   | 'excelDownload'
   | 'csvDownload'
   | 'openImage'
-  | 'previewFile';
+  | 'previewFile'
+  | 'imageBlocked'
+  | 'imageBlockedNamed';
 
 export const messages = Locale.namespace<ChatMessageKey>('@iyulab/chat-components');
 
@@ -53,6 +55,9 @@ messages.register('en', {
   // ⚠보간 키 — 이미지 대체 텍스트가 없을 때 썸네일 버튼의 이름. `{index}` 는 1부터.
   openImage: 'Open image {index}',
   previewFile: 'Preview {name}',
+  // 이미지 출처 정책(`setAllowedImagePrefixes`)이 막은 이미지 자리. `{name}` 은 대체 텍스트.
+  imageBlocked: 'Image blocked',
+  imageBlockedNamed: 'Image blocked: {name}',
 });
 
 messages.register('ko', {
@@ -75,4 +80,6 @@ messages.register('ko', {
   csvDownload: 'CSV 다운로드',
   openImage: '이미지 {index} 열기',
   previewFile: '{name} 미리보기',
+  imageBlocked: '차단된 이미지',
+  imageBlockedNamed: '차단된 이미지: {name}',
 });

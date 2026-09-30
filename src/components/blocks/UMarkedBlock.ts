@@ -13,6 +13,8 @@ import { UTableBlock } from "./UTableBlock.js";
 import { UElementBlock } from "./UElementBlock.js";
 import { UElement } from "@iyulab/components/dist/components/UElement.js";
 import { escapeHtmlText, escapeHtmlAttr, escapeHtmlHref, stripZeroWidth } from "../../utilities/sanitizers.js";
+import { resolveImageSource } from "../../utilities/imageSources.js";
+import { messages } from "../../utilities/messages.js";
 import { HtmlBuilder } from "../../utilities/HtmlBuilder.js";
 import type { ReferenceCitation } from "../../types/References.js";
 import { HtmlPlaceholder, stripRefPlaceholders } from "../../utilities/HtmlPlaceholder.js";
@@ -30,6 +32,8 @@ import { styles } from "./UMarkedBlock.styles.js";
  * - 마크다운 링크/이미지(`[..](href)`, `![..](src)`, autolink)의 href/src는
  *   `escapeHtmlHref`로 protocol을 검사합니다(javascript:/data:/vbscript: 차단) —
  *   marked 자신은 URL을 encodeURI할 뿐 protocol을 걸러내지 않습니다.
+ * - 이미지 src는 그 위에 출처 정책(`setAllowedImagePrefixes`)을 거칩니다 — 막힌 이미지는
+ *   요청하지 않고 대체 텍스트로 그립니다(이미지 URL은 데이터 반출 경로다).
  * - 테이블 셀 인라인 콘텐츠(renderTable)도 위 두 규칙과 같은 렌더러 설정을 공유합니다
  *   — `Parser.parseInline`을 옵션 없이 호출하면 기본(비-sanitize) 렌더러로 되돌아가므로
  *   반드시 `this.parser.defaults`를 함께 넘겨야 합니다.
@@ -206,9 +210,20 @@ export class UMarkedBlock extends UElement {
     return out;
   }
 
-  /** 마크다운 이미지의 src도 `renderLink`와 동일하게 protocol을 검사합니다. */
+  /**
+   * 마크다운 이미지의 src도 `renderLink`와 동일하게 protocol을 검사하고, 이미지 출처 정책
+   * (`setAllowedImagePrefixes`)에 대어 봅니다. 막힌 이미지는 `<img>` 를 만들지 않는다 —
+   * 요청 자체가 반출 경로이므로 대체 텍스트만 그린다.
+   */
   private renderImage(token: Tokens.Image): string {
-    let out = `<img src="${escapeHtmlHref(token.href)}" alt="${escapeHtmlAttr(token.text)}"`;
+    const src = resolveImageSource(token.href);
+    if (src === null) {
+      const label = token.text
+        ? messages.text('imageBlockedNamed', { name: token.text })
+        : messages.text('imageBlocked');
+      return `<span class="image-blocked" part="image-blocked">${escapeHtmlText(label)}</span>`;
+    }
+    let out = `<img src="${escapeHtmlAttr(src)}" alt="${escapeHtmlAttr(token.text)}"`;
     if (token.title) out += ` title="${escapeHtmlAttr(token.title)}"`;
     out += `>`;
     return out;
