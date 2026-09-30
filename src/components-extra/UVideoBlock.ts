@@ -4,6 +4,11 @@ import { ifDefined } from "lit/directives/if-defined.js";
 
 import { UElement } from "@iyulab/components/dist/components/UElement.js";
 import { styles } from "./UVideoBlock.styles.js";
+import { registerElementBlock } from '../utilities/ElementRegistry.js';
+import schema from './UVideoBlock.schema.js';
+
+// 이 모듈을 import 하면 block-json 으로 렌더할 수 있다(스키마가 허용 목록이다).
+registerElementBlock(schema);
 
 /**
  * 비디오 플레이어 블록 컴포넌트

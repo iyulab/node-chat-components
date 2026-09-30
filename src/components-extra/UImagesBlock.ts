@@ -9,6 +9,11 @@ import { UElement } from "@iyulab/components/dist/components/UElement.js";
 import { OverlayManager } from "@iyulab/components/dist/utilities/OverlayManager.js";
 import { styles } from "./UImagesBlock.styles.js";
 import { messages } from "../utilities/messages.js";
+import { registerElementBlock } from '../utilities/ElementRegistry.js';
+import schema from './UImagesBlock.schema.js';
+
+// 이 모듈을 import 하면 block-json 으로 렌더할 수 있다(스키마가 허용 목록이다).
+registerElementBlock(schema);
 
 export interface ImageSlide {
   src: string;

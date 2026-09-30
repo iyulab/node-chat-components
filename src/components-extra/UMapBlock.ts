@@ -3,6 +3,11 @@ import { customElement, property } from "lit/decorators.js";
 
 import { UElement } from "@iyulab/components/dist/components/UElement.js";
 import { styles } from "./UMapBlock.styles.js";
+import { registerElementBlock } from '../utilities/ElementRegistry.js';
+import schema from './UMapBlock.schema.js';
+
+// 이 모듈을 import 하면 block-json 으로 렌더할 수 있다(스키마가 허용 목록이다).
+registerElementBlock(schema);
 
 /**
  * 지도 블록 컴포넌트 (OpenStreetMap embed)

@@ -186,13 +186,19 @@ const def: ElementSchema = {
 ElementPromptBuilder.instance.add(def);
 ```
 
-The element just needs to accept standard property assignments — `u-element-block` binds `properties` keys directly to element properties.
+The element just needs to accept standard property assignments. `add()` also registers the schema as a renderable block: `u-element-block` binds only the property names listed in the schema's `properties` and ignores any other key. If you write your own prompt instead of using `ElementPromptBuilder`, register the schema directly:
+
+```ts
+import { registerElementBlock } from '@iyulab/chat-components';
+
+registerElementBlock(def);
+```
 
 ---
 
 ## Error Handling
 
-If the LLM outputs a `tag` that isn't registered (e.g. you forgot to import `@iyulab/chat-components/extra`, or a custom extra's element isn't defined yet), `u-element-block` does **not** show an error card — it renders nothing and logs a warning to the console instead. This avoids surprising error UI in the chat when an extra simply hasn't been wired up yet; check the console during development.
+If the LLM outputs a `tag` that isn't a registered block (e.g. you forgot to import `@iyulab/chat-components/extra`, or a custom extra's schema was never registered or its element isn't defined yet), `u-element-block` does **not** show an error card — it renders nothing and logs a warning to the console instead. This avoids surprising error UI in the chat when an extra simply hasn't been wired up yet; check the console during development.
 
 Genuine data errors (invalid `properties`, assignment failures) are also console-only for the same reason.
 
@@ -200,13 +206,12 @@ Genuine data errors (invalid `properties`, assignment failures) are also console
 
 ## Security
 
-`u-element-block` maintains a `blacklist` of dangerous property names that are never bound (prevents XSS via `innerHTML`, `outerHTML`, etc.):
+`block-json` is model output, so treat it as untrusted: a prompt-injected document, attachment, or tool result can put any JSON there. `u-element-block` therefore only renders what you have registered:
 
-```ts
-const DEFAULT_BLACKLIST = ['innerHTML', 'outerHTML', 'textContent', 'innerText', 'outerText', 'srcdoc'];
-```
+- **Tags** — only blocks registered with `ElementPromptBuilder.add()` or `registerElementBlock()`. The four built-in extras register themselves when their module is imported. Any other element, even one defined on the page, is not created.
+- **Properties** — only the names in that block's schema `properties`. Other keys (including `style`, `id`, or event-handler names) are not assigned and are logged to the console.
 
-Custom elements registered as extras should only accept well-typed, data-only properties.
+A custom extra should accept data only. If one of its properties is rendered as HTML, sanitize it inside the element — the schema allows the name, not the content.
 
 ---
 
@@ -215,5 +220,7 @@ Custom elements registered as extras should only accept well-typed, data-only pr
 | Method | Description |
 |--------|-------------|
 | `ElementPromptBuilder.instance` | Singleton accessor |
-| `.add(definition: ElementSchema)` | Register a custom extra (throws on tag conflict) |
+| `.add(definition: ElementSchema)` | Register a custom extra (throws on tag conflict). Also registers it as a renderable block |
 | `.build(): string` | Generate system prompt instruction string |
+
+`registerElementBlock(schema)` registers a block without adding it to a prompt — use it when you write the prompt yourself. `getElementBlockProperties(tag)` returns the property names a registered block accepts, or `undefined`.

@@ -1,5 +1,6 @@
 import template from '../assets/prompts/element-prompt.md?raw';
 import { type ElementSchema } from '../types/Schema.js';
+import { registerElementBlock } from './ElementRegistry.js';
 
 /**
  * Element(부가 렌더링 블록) 등록, LLM 인스트럭션 빌드, HTML 렌더링을 통합 제공하는 유틸리티
@@ -20,6 +21,9 @@ export class ElementPromptBuilder {
 
   /**
    * Element 정의를 등록합니다. 같은 태그가 이미 등록되어 있으면 에러를 던집니다.
+   *
+   * LLM 에게 알리는 스키마가 곧 `u-element-block` 의 허용 목록이므로, 여기서 추가한 블록은
+   * `block-json` 으로도 렌더할 수 있게 함께 등록됩니다(`registerElementBlock`).
    * @throws {Error} 같은 태그가 이미 등록된 경우
    */
   public add(schema: ElementSchema): ElementPromptBuilder {
@@ -28,6 +32,7 @@ export class ElementPromptBuilder {
     }
 
     this.elements.set(schema.tag, schema);
+    registerElementBlock(schema);
     return this;
   }
 

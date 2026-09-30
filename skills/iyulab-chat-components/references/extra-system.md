@@ -76,20 +76,20 @@ const def: ElementSchema = {
 ElementPromptBuilder.instance.add(def);
 ```
 
-The element just needs to accept standard property assignments — `u-element-block` binds `properties` keys directly to element properties.
+The element just needs to accept standard property assignments. `add()` also registers the schema as a renderable block — `u-element-block` assigns only the names in the schema's `properties`. If you write your own prompt instead, call `registerElementBlock(def)` (exported from `@iyulab/chat-components`).
 
 ## Error Handling
 
-If the LLM outputs a `tag` that isn't registered (e.g. missing `@iyulab/chat-components/extra` import, or a custom extra's element isn't defined yet), `u-element-block` does **not** show an error card — it renders nothing and logs to the console instead. Genuine data errors (invalid `properties`, assignment failures) are also console-only.
+If the LLM outputs a `tag` that isn't a registered block (e.g. missing `@iyulab/chat-components/extra` import, or a custom extra's schema was never registered or its element isn't defined yet), `u-element-block` does **not** show an error card — it renders nothing and logs to the console instead. Genuine data errors (invalid `properties`, assignment failures) are also console-only.
 
 ## Security
 
-`u-element-block` maintains a `blacklist` of dangerous property names that are never bound: `innerHTML`, `outerHTML`, `textContent`, `innerText`, `outerText`, `srcdoc`. Custom elements registered as extras should only accept well-typed, data-only properties.
+`block-json` is model output and is treated as untrusted. `u-element-block` creates only registered blocks (`ElementPromptBuilder.add()` or `registerElementBlock()`; built-in extras register on import) and assigns only the property names in the block's schema `properties` — other keys, including `style`, are dropped and logged. Custom extras should accept data only; if a property is rendered as HTML, sanitize it inside the element.
 
 ## `ElementPromptBuilder` API
 
 | Method | Description |
 |--------|-------------|
 | `ElementPromptBuilder.instance` | Singleton accessor |
-| `.add(definition: ElementSchema)` | Register a custom extra (throws on tag conflict) |
+| `.add(definition: ElementSchema)` | Register a custom extra (throws on tag conflict). Also registers it as a renderable block |
 | `.build(): string` | Generate system prompt instruction string |

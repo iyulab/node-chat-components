@@ -8,6 +8,11 @@ import "@iyulab/components/dist/components/button/UButton.js";
 import { UElement } from "@iyulab/components/dist/components/UElement.js";
 import "../utilities/icons.js";
 import { styles } from "./UChartBlock.styles.js";
+import { registerElementBlock } from '../utilities/ElementRegistry.js';
+import schema from './UChartBlock.schema.js';
+
+// 이 모듈을 import 하면 block-json 으로 렌더할 수 있다(스키마가 허용 목록이다).
+registerElementBlock(schema);
 
 /**
  * Chart.js를 사용하여 다양한 차트를 렌더링하는 블록 컴포넌트입니다.

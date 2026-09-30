@@ -3,13 +3,17 @@ import { customElement, property, state } from "lit/decorators.js";
 
 import "@iyulab/components/dist/components/skeleton/USkeleton.js";
 import { UDataElement } from "../UDataElement.js";
+import { getElementBlockProperties } from "../../utilities/ElementRegistry.js";
 
 import { styles } from "./UElementBlock.styles.js";
 
-const DEFAULT_BLACKLIST = ["innerHTML", "outerHTML", "textContent", "innerText", "outerText", "srcdoc"];
-
 /**
- * `block-json` 코드펜스에서 지정한 커스텀 엘리먼트를 동적으로 렌더링하는 컴포넌트입니다.
+ * `block-json` 코드펜스에서 지정한 블록을 동적으로 렌더링하는 컴포넌트입니다.
+ *
+ * 만들 수 있는 것은 **블록으로 등록된 태그뿐**이고(`registerElementBlock` ·
+ * `ElementPromptBuilder.add`), 대입하는 것은 **그 스키마의 `properties` 에 적힌 이름뿐**입니다.
+ * `tag`·`properties` 는 LLM 출력에서 오므로 신뢰할 수 없는 입력으로 다룹니다 — 스키마 밖의
+ * 이름은 대입하지 않고 콘솔에 기록합니다.
  * 대상 태그가 등록되어 있지 않거나 데이터가 유효하지 않은 경우, 에러 카드 없이 콘솔에만 기록하고 아무것도 렌더링하지 않습니다.
  */
 @customElement('u-element-block')
@@ -18,12 +22,10 @@ export class UElementBlock extends UDataElement {
 
   /** 로딩 상태입니다. `true`인 경우, 위젯이 로딩 중임을 나타냅니다. */
   @property({ type: Boolean, reflect: true }) loading = false;
-  /** `tag` 프로퍼티에 등록된 커스텀 엘리먼트를 렌더링하는 컴포넌트입니다. */
+  /** 렌더링할 블록의 태그입니다. 블록으로 등록된 태그만 렌더링됩니다. */
   @property({ type: String }) tag?: string;
-  /** `properties` 객체의 키가 렌더링된 엘리먼트의 프로퍼티 이름과 일치하면 자동으로 할당됩니다. */
+  /** 블록에 대입할 값입니다. 블록 스키마의 `properties` 에 적힌 이름만 대입됩니다. */
   @property({ type: Object }) properties?: Record<string, unknown>;
-  /** `properties` 객체에서 위험한 프로퍼티 이름을 지정하여 차단할 수 있습니다. */
-  @property({ type: Array }) blacklist: string[] = DEFAULT_BLACKLIST;
 
   /** 실제 렌더링된 엘리먼트입니다. `tag` 프로퍼티가 변경될 때마다 업데이트됩니다. */
   @state() private element: HTMLElement | null = null;
@@ -34,10 +36,8 @@ export class UElementBlock extends UDataElement {
     if (changedProperties.has("tag")) {
       this.updateElement(this.tag);
     }
-    if (changedProperties.has("properties") && this.element) {
-      this.updateProperties(this.element, this.properties);
-    }
-    if (changedProperties.has("blacklist") && this.element && this.properties) {
+    // 태그가 바뀌면 새 엘리먼트에도 값을 다시 대입한다.
+    if ((changedProperties.has("properties") || changedProperties.has("tag")) && this.element && this.properties) {
       this.updateProperties(this.element, this.properties);
     }
   }
@@ -73,9 +73,8 @@ export class UElementBlock extends UDataElement {
   }
 
   /**
-   * `tag` 프로퍼티에 등록된 커스텀 엘리먼트를 렌더링하는 컴포넌트입니다.
-   * `tag`가 변경될 때마다 등록된 커스텀 엘리먼트를 새로 생성하여 렌더링합니다.
-   * `tag`가 유효하지 않거나 등록된 커스텀 엘리먼트가 아닌 경우, 에러 처리합니다.
+   * `tag`가 변경될 때마다 블록 엘리먼트를 새로 생성합니다.
+   * 블록으로 등록되지 않은 태그나 아직 정의되지 않은 커스텀 엘리먼트는 만들지 않고 기록만 합니다.
    * JSON 자체는 이미 파싱에 성공한 상태이므로(스트리밍 중 파싱 실패와는 다른 케이스),
    * `loading` 여부와 무관하게 항상 기록합니다.
    */
@@ -89,7 +88,17 @@ export class UElementBlock extends UDataElement {
       return;
     }
 
-    // 등록된 커스텀 엘리먼트만 허용
+    // 블록으로 등록된 태그만 허용 — «정의된 커스텀 엘리먼트» 는 기준이 아니다.
+    // 페이지에는 신뢰된 HTML 을 받는 엘리먼트도 정의돼 있다.
+    if (!getElementBlockProperties(tag)) {
+      this.element = null;
+      this.reportError(new Error(
+        `"${tag}" is not a registered element block — register its schema with registerElementBlock() or ElementPromptBuilder.add()`
+      ));
+      return;
+    }
+
+    // 등록은 됐지만 아직 정의되지 않은 커스텀 엘리먼트(모듈 미로드)
     if (!customElements.get(tag)) {
       this.element = null;
       this.reportError(new Error(`Unknown tag: ${tag}`));
@@ -100,40 +109,32 @@ export class UElementBlock extends UDataElement {
   }
 
   /**
-   * `properties` 객체의 키가 렌더링된 엘리먼트의 프로퍼티 이름과 일치하면 자동으로 할당됩니다.
-   * `properties` 객체에 위험한 프로퍼티가 포함되어 있는지 검증하여, 유효한 경우에만 할당합니다.
-   * 할당 중 오류가 발생한 경우, 에러 처리합니다.
+   * 블록 스키마에 적힌 이름만 대입합니다. 스키마 밖의 이름은 대입하지 않고 기록합니다 —
+   * 블록 하나를 통째로 버리지 않는 것은 LLM 이 무해한 여분 키를 붙이는 일이 흔하기 때문입니다.
    */
   private updateProperties(element: HTMLElement, props: unknown) {
-    if (this.validateProperties(props)) {
-      try {
-        // element내부에서 업데이트가 발생합니다.
-        Object.assign(element, props);
-      } catch (error) {
-        // 프로퍼티 할당 중 오류가 발생한 경우, 에러 처리합니다.
-        this.reportError(error);
-      }
-    } else {
-      // `properties` 객체가 유효하지 않은 경우, 에러 처리합니다.
-      this.reportError(new Error(`Not allowed properties: ${JSON.stringify(props)}`));
-    }
-  }
-
-  /**
-   * `properties` 객체에 위험한 프로퍼티가 포함되어 있는지 검증합니다.
-   * DOM 조작이나 이벤트 핸들러로 악용될 수 있는 프로퍼티를 최소한으로 차단합니다.
-   */
-  private validateProperties(props: unknown): boolean {
-    if (typeof props !== "object" || props === null || Array.isArray(props)){
-      return false;
+    if (typeof props !== "object" || props === null || Array.isArray(props)) {
+      this.reportError(new Error(`Properties must be an object: ${JSON.stringify(props)}`));
+      return;
     }
 
-    const obj = props as Record<string, unknown>;
-    for (const key of Object.keys(obj)) {
-      if (this.blacklist.includes(key)) return false; // 위험한 프로퍼티 차단
-      // if (key.startsWith("on")) return false; // onclick 등 차단
+    const allowed = getElementBlockProperties(element.localName) ?? new Set<string>();
+    const accepted: Record<string, unknown> = {};
+    const rejected: string[] = [];
+    for (const [key, value] of Object.entries(props)) {
+      if (allowed.has(key)) accepted[key] = value;
+      else rejected.push(key);
     }
-    return true;
+
+    if (rejected.length > 0) {
+      this.reportError(new Error(`Not in the "${element.localName}" schema, not assigned: ${rejected.join(", ")}`));
+    }
+
+    try {
+      Object.assign(element, accepted);
+    } catch (error) {
+      this.reportError(error);
+    }
   }
 
   /**

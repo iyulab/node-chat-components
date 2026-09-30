@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.14.0] - 2026-09-30
+
+### Security
+
+- 🔴 **Breaking — `block-json` renders only registered blocks and assigns only their schema's
+  properties.** `u-element-block` used to create any element defined on the page and assign every
+  property except six names (`innerHTML`, `outerHTML`, …). `block-json` is model output, so a
+  prompt-injected document could create an element that renders a property as HTML (for example
+  `u-table-block`'s cell text) and run script. Now a tag must be registered as a block, and only the
+  names in that block's schema `properties` are assigned; other keys (including `style`) are dropped
+  and logged to the console.
+  - The four built-in extras register themselves when their module is imported, and
+    `ElementPromptBuilder.add()` registers the schema it is given — extras set up as documented keep
+    working.
+  - New `registerElementBlock(schema)` for blocks you describe in your own prompt, and
+    `getElementBlockProperties(tag)`.
+  - The `blacklist` property of `u-element-block` is removed.
+  - Migration: a custom element that `block-json` should render needs its schema registered with
+    `ElementPromptBuilder.add()` or `registerElementBlock()`, and every property the model may set
+    must be listed in that schema's `properties`.
+
+### Fixed
+
+- `@iyulab/chat-components/extra` registers the built-in extras on `ElementPromptBuilder.instance`,
+  as documented. Adding your own extras there and calling `build()` again now returns the built-ins
+  too; it used to return only yours.
+
 ## [0.13.0] - 2026-09-28
 
 ### Fixed
