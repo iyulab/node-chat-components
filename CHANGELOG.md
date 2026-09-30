@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.15.0] - 2026-09-30
+
+### Changed
+
+- **`u-chart-block` no longer changes Chart.js global defaults.** Its theme colors (text, ticks,
+  grid, tooltip) used to be written to `Chart.defaults`, which also recolored any other Chart.js chart
+  on the page. They are now options of that chart instance, merged under the `options` you pass —
+  your values win, down to a single key.
+- **`u-chart-block` uses the design-token chart palette.** Datasets that set no `backgroundColor` or
+  `borderColor` take `--u-chart-color-1..N` (one color per slice for `pie`, `doughnut`, and
+  `polarArea`), matching dashboards and `@iyulab/u-widgets`. Colors you set are kept, and the `data`
+  object you pass is not modified. Without the token sheet, Chart.js defaults apply as before.
+- **Peer ranges promise only tested majors:** `chart.js` is `^4.5.1` (was `>=4.5.1`), `@lit/react`
+  `^1.0.8` (was `>=1.0.8`), and `react` `^18.0.0 || ^19.0.0` (was `>=18.0.0`).
+
 ## [0.14.1] - 2026-09-30
 
 ### Fixed

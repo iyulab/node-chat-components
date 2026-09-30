@@ -105,7 +105,7 @@ Auto-detects YouTube, Vimeo, or direct video file from the URL.
 
 ### `u-chart-block` — Chart
 
-Chart.js chart with PNG/JSON download and automatic dark/light theme sync.
+Chart.js chart with PNG/JSON download and automatic dark/light theme sync. Dataset colors follow the `--u-chart-color-*` palette unless the data sets them; theme colors apply to that chart only (`Chart.defaults` is untouched).
 
 ```json
 {

@@ -108,15 +108,15 @@ export class UChartBlock extends UElement {
     }
 
     try {
-      this.applyTheme();
+      const theme = this.readTheme();
       this.chartjs = new Chart(ctx, {
         type: this.type,
-        data: this.data,
-        options: {
+        data: paintDatasets(this.type, this.data, theme),
+        options: mergeOptions(themeOptions(this.type, this.data, this.options, theme), {
           responsive: true,
           maintainAspectRatio: true,
           ...this.options,
-        },
+        }) as ChartOptions,
       });
     } catch (e) {
       this.error = e instanceof Error ? e.message : String(e);
@@ -131,25 +131,26 @@ export class UChartBlock extends UElement {
     }
   }
 
-  /** 현재 테마의 CSS 변수를 읽어 Chart.defaults에 전역 적용 */
-  private applyTheme() {
-    const css = (v: string) => getComputedStyle(this).getPropertyValue(v).trim();
-    const textColor   = css('--u-txt-color');
-    const weakColor   = css('--u-txt-color-weak');
-    const borderColor = css('--u-border-color');
-    const bgColor     = css('--u-bg-color');
-
-    Chart.defaults.color       = textColor;
-    Chart.defaults.borderColor = borderColor;
-
-    Chart.defaults.plugins.tooltip.backgroundColor = bgColor;
-    Chart.defaults.plugins.tooltip.titleColor      = textColor;
-    Chart.defaults.plugins.tooltip.bodyColor       = weakColor;
-    Chart.defaults.plugins.tooltip.borderColor     = borderColor;
-    Chart.defaults.plugins.tooltip.borderWidth     = 1;
-
-    Chart.defaults.scale.ticks.color = weakColor;
-    Chart.defaults.scale.grid.color  = borderColor;
+  /**
+   * 현재 테마의 CSS 변수를 읽는다. ⚠`Chart.defaults` 를 바꾸지 않는다 — 전역이라 같은 페이지에서
+   * 소비자가 직접 만든 chart.js 차트의 색까지 바꿨다. 값은 이 인스턴스의 옵션으로만 들어간다.
+   */
+  private readTheme(): ChartTheme {
+    const style = getComputedStyle(this);
+    const css = (v: string) => style.getPropertyValue(v).trim();
+    const palette: string[] = [];
+    for (let i = 1; i <= PALETTE_MAX; i++) {
+      const c = css(`--u-chart-color-${i}`);
+      if (!c) break;
+      palette.push(c);
+    }
+    return {
+      text: css('--u-txt-color'),
+      weak: css('--u-txt-color-weak'),
+      border: css('--u-border-color'),
+      background: css('--u-bg-color'),
+      palette,
+    };
   }
 
   private handleDownloadPNG() {
@@ -181,6 +182,101 @@ export class UChartBlock extends UElement {
       target.requestFullscreen?.();
     }
   }
+}
+
+/** 읽어 볼 팔레트 토큰의 상한 — 시트는 여덟을 선언한다. 비어 있는 첫 번호에서 멈춘다. */
+const PALETTE_MAX = 12;
+
+interface ChartTheme {
+  text: string;
+  weak: string;
+  border: string;
+  background: string;
+  /** `--u-chart-color-1..N` — 시트가 없으면 비어 있고, 그때는 chart.js 기본 색을 둔다. */
+  palette: string[];
+}
+
+type Plain = Record<string, unknown>;
+
+function isPlain(v: unknown): v is Plain {
+  return typeof v === 'object' && v !== null && !Array.isArray(v);
+}
+
+/** `base` 위에 `over` 를 깊게 덮는다 — 소비자가 준 값이 항상 이긴다. 입력은 바꾸지 않는다. */
+function mergeOptions(base: Plain, over: Plain): Plain {
+  const out: Plain = { ...base };
+  for (const [k, v] of Object.entries(over)) {
+    out[k] = isPlain(v) && isPlain(out[k]) ? mergeOptions(out[k] as Plain, v) : v;
+  }
+  return out;
+}
+
+const CARTESIAN = new Set(['bar', 'line', 'scatter', 'bubble']);
+const RADIAL = new Set(['radar', 'polarArea']);
+const PER_POINT = new Set(['pie', 'doughnut', 'polarArea']);
+
+/**
+ * 테마 색을 담은 인스턴스 옵션. 축은 «이 차트에 실제로 생길 축» 에만 준다 — 원형 차트에 `x`/`y`
+ * 설정을 주면 축이 생길 수 있어서다. 축 id 는 차트 종류의 기본 축 · 소비자가 선언한 축 · 데이터셋이
+ * 가리키는 축의 합집합이다.
+ */
+function themeOptions(type: string, data: ChartData, options: ChartOptions | undefined, t: ChartTheme): Plain {
+  const tooltip = {
+    backgroundColor: t.background,
+    titleColor: t.text,
+    bodyColor: t.weak,
+    borderColor: t.border,
+    borderWidth: 1,
+  };
+  const ids = new Set<string>(Object.keys((options as Plain | undefined)?.scales ?? {}));
+  if (CARTESIAN.has(type)) { ids.add('x'); ids.add('y'); }
+  if (RADIAL.has(type)) ids.add('r');
+  for (const ds of data.datasets ?? []) {
+    const d = ds as unknown as Plain;
+    for (const key of ['xAxisID', 'yAxisID', 'rAxisID']) {
+      if (typeof d[key] === 'string') ids.add(d[key] as string);
+    }
+  }
+  const scales: Plain = {};
+  for (const id of ids) {
+    scales[id] = {
+      ticks: { color: t.weak },
+      grid: { color: t.border },
+      ...(RADIAL.has(type) && id === 'r'
+        ? { angleLines: { color: t.border }, pointLabels: { color: t.text } }
+        : {}),
+    };
+  }
+  return {
+    color: t.text,
+    borderColor: t.border,
+    plugins: { tooltip, legend: { labels: { color: t.text } } },
+    ...(ids.size ? { scales } : {}),
+  };
+}
+
+/**
+ * 색을 지정하지 않은 데이터셋에 팔레트를 입힌다. 소비자가 준 `backgroundColor`/`borderColor` 는
+ * 건드리지 않고, 입력 객체도 바꾸지 않는다(사본을 돌려준다). 원형 차트는 조각마다 한 색이다.
+ */
+function paintDatasets(type: string, data: ChartData, t: Pick<ChartTheme, 'palette' | 'background'>): ChartData {
+  const p = t.palette;
+  if (!p.length || !data.datasets) return data;
+  const datasets = data.datasets.map((ds, i) => {
+    const d = { ...(ds as unknown as Plain) };
+    const has = (k: string) => d[k] !== undefined;
+    if (PER_POINT.has(type)) {
+      const n = Array.isArray(d.data) ? (d.data as unknown[]).length : 0;
+      if (!has('backgroundColor')) d.backgroundColor = Array.from({ length: n }, (_, j) => p[j % p.length]);
+      if (!has('borderColor') && t.background) d.borderColor = t.background;
+    } else {
+      const c = p[i % p.length];
+      if (!has('borderColor')) d.borderColor = c;
+      if (!has('backgroundColor')) d.backgroundColor = c;
+    }
+    return d;
+  });
+  return { ...data, datasets } as unknown as ChartData;
 }
 
 declare global {

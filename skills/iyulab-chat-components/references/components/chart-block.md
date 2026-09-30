@@ -65,6 +65,23 @@ of it was clipped by the block's `overflow: hidden` with no scrollbar left to re
 
 There is no size property or custom property for this — the host is the lever.
 
+## Colors and theme
+
+Text, tick, grid, and tooltip colors come from the design tokens (`--u-txt-color`,
+`--u-txt-color-weak`, `--u-border-color`, `--u-bg-color`), and dataset colors from the chart palette
+`--u-chart-color-1..N` — the same palette dashboards and `@iyulab/u-widgets` use. Both apply to **this
+chart only**: `Chart.defaults` is not modified, so other Chart.js charts on the page keep their own
+look.
+
+Anything you pass wins: a dataset's own `backgroundColor`/`borderColor` is kept, and `options` are
+merged over the theme (`options.scales.x.ticks.color` overrides just that value). Without the token
+sheet the palette is empty and Chart.js defaults apply.
+
+```css
+/* Recolour the palette for one area */
+.report u-chart-block { --u-chart-color-1: #0b6e4f; }
+```
+
 ## Properties
 
 | Property | Type | Default | Description |
@@ -80,6 +97,7 @@ There is no size property or custom property for this — the host is the lever.
 | Download | Export chart as PNG or raw JSON data |
 | Full screen | Toggle the chart viewport into full-screen mode |
 | Theme sync | Watches `document.documentElement[theme]` and re-renders on change |
+| Palette | Datasets without `backgroundColor`/`borderColor` take `--u-chart-color-1..N` from the design-token sheet (per slice for `pie`/`doughnut`/`polarArea`) |
 
 ## Requires
 
