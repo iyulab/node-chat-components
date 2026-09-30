@@ -68,9 +68,20 @@ export class UMarkedBlock extends UElement {
   @state() private streaming: boolean = false;
   private streamingTimer?: number;
 
+  connectedCallback(): void {
+    super.connectedCallback();
+    // 떨어져 있던 동안 막혀 있던 갱신을 다시 건다(아래 disconnectedCallback 참조).
+    this.requestUpdate();
+  }
+
   disconnectedCallback(): void {
+    // 타이머만 지우면 그 타이머가 되돌려야 할 상태가 그대로 남는다 — `queued` 가 참으로 남으면
+    // `shouldUpdate` 가 영원히 갱신을 막아 스트림 중간 프레임에 굳고, `streaming` 이 참으로 남으면
+    // block-json 이 스켈레톤에 굳는다. 타이머와 함께 그 상태도 되돌린다.
     clearTimeout(this.queuedTimer);
     clearTimeout(this.streamingTimer);
+    this.queued = false;
+    this.streaming = false;
     super.disconnectedCallback();
   }
 
@@ -126,7 +137,8 @@ export class UMarkedBlock extends UElement {
     // Extra 코드블록 감지
     // 블록 자체가 닫혔더라도 메시지가 아직 스트리밍 중이면 loading을 유지합니다.
     if (lang === 'block-json') {
-      return UElementBlock.buildHTML(token.text, { loading: this.streaming });
+      // JSON 페이로드 안에 인용 센티널이 남으면 전체 복원이 그 자리에 HTML 을 넣어 JSON 을 깨뜨린다.
+      return UElementBlock.buildHTML(stripRefPlaceholders(token.text), { loading: this.streaming });
     }
 
     // 코드블록은 refs 태그 제거 + HTML escape
@@ -154,13 +166,18 @@ export class UMarkedBlock extends UElement {
    * 반드시 `this.parser.defaults`(우리 렌더러가 병합된 설정)를 함께 넘긴다.
    */
   private renderTable(token: Tokens.Table): string {
+    // 셀 안의 인용 센티널은 **JSON 직렬화 전에** 태그로 되돌린다. 직렬화 뒤 `render()` 의
+    // 전체 복원에 맡기면 ref 태그의 따옴표와 중첩 `<script>` 가 JSON 문자열 안에 그대로 들어가
+    // 표 데이터가 파싱되지 않는다(표가 통째로 빈다). 여기서 되돌리면 `JSON.stringify` 가 escape 한다.
+    const cellHtml = (cell: Tokens.TableCell) =>
+      this.placeholder.restore(cell.tokens ? Parser.parseInline(cell.tokens, this.parser.defaults) : cell.text);
     const headers = token.header.map((h: Tokens.TableCell) => ({
-      text: h.tokens ? Parser.parseInline(h.tokens, this.parser.defaults) : h.text,
+      text: cellHtml(h),
       align: h.align
     }));
     const rows = token.rows.map((row: Tokens.TableCell[]) =>
       row.map((cell) => ({
-        text: cell.tokens ? Parser.parseInline(cell.tokens, this.parser.defaults) : cell.text,
+        text: cellHtml(cell),
         align: cell.align
       }))
     );

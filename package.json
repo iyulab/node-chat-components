@@ -38,6 +38,8 @@
     "./src/extra.ts",
     "./dist/index.js",
     "./src/index.ts",
+    "./dist/utilities/icons.js",
+    "./src/utilities/icons.ts",
     "./dist/react/index.js"
   ],
   "exports": {

@@ -23,6 +23,18 @@
 
 ### Fixed
 
+- **Icons of `u-prompt`, `u-table-block`, `u-code-block` and the other components that use the
+  bundled `internal-chat` set are drawn again.** The module that registers that set had no exports
+  and was not declared in `sideEffects`, so the package build dropped it and those icons rendered at
+  0×0 (0.11.1 – 0.13.0).
+- **A table whose cell carries a citation keeps its rows.** The citation markup was inserted into the
+  table's JSON payload after it had been serialized, which broke the JSON, and the table rendered
+  empty. Citations inside `block-json` payloads are removed for the same reason.
+- **`u-marked-block` keeps updating after it is detached and re-attached while a render or the
+  streaming indicator is pending.** It used to stop updating for good, showing an intermediate
+  frame, or leave a `block-json` block on its loading skeleton.
+- Blocks that read their data from a `<script type="application/json">` child no longer log a
+  "Missing script" error when they are moved in the DOM after loading.
 - `@iyulab/chat-components/extra` registers the built-in extras on `ElementPromptBuilder.instance`,
   as documented. Adding your own extras there and calling `build()` again now returns the built-ins
   too; it used to return only yours.

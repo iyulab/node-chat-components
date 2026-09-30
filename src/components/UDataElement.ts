@@ -22,6 +22,9 @@ import { HtmlBuilder } from '../utilities/HtmlBuilder.js';
 export class UDataElement extends UElement {
   static styles = super.styles;
 
+  /** 데이터를 한 번이라도 읽었는가 — 재연결 때 «스크립트 없음» 을 오류로 보지 않기 위해. */
+  private loaded = false;
+
   connectedCallback() {
     super.connectedCallback();
     queueMicrotask(() => this.load());
@@ -77,6 +80,8 @@ export class UDataElement extends UElement {
         );
 
         if (!script) {
+          // 스크립트는 읽은 뒤 지운다 — 다시 붙을 때는 이미 읽은 값을 그대로 쓴다.
+          if (this.loaded) return;
           throw new Error('Missing <script type="application/json">');
         }
 
@@ -91,6 +96,7 @@ export class UDataElement extends UElement {
 
       // JSON 객체의 키를 컴포넌트 프로퍼티에 할당합니다.
       Object.assign(this, data);
+      this.loaded = true;
     } catch (error) {
       await this.error(error);
     }
