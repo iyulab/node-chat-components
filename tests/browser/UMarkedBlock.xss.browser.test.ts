@@ -117,3 +117,33 @@ describe('UMarkedBlock XSS 방어', () => {
     expect(root.querySelector('u-table-block')).not.toBeNull();
   });
 });
+
+describe('인용 링크의 위험 프로토콜', () => {
+  it('인용 카드와 태그가 refs 의 javascript: URL 을 # 로 무력화한다 — 카드는 태그와 같은 규칙을 따른다', async () => {
+    document.body.innerHTML = '';
+    const el = document.createElement('u-marked-block') as UMarkedBlock;
+    el.value = 'hello world';
+    el.refs = [{ label: '[1]', startIndex: 5, endIndex: 5, sources: [{ type: 'web', title: 'x', url: 'javascript:alert(1)' }] }] as UMarkedBlock['refs'];
+    document.body.appendChild(el);
+    await new Promise((r) => setTimeout(r, 400));
+    const tag = el.shadowRoot!.querySelector('u-ref-tag') as HTMLElement & { updateComplete: Promise<boolean> };
+    const card = tag.querySelector('u-ref-card') as HTMLElement & { updateComplete: Promise<boolean> };
+    await tag.updateComplete;
+    await card.updateComplete;
+    expect(tag.shadowRoot!.querySelector('a')!.getAttribute('href')).toBe('#');
+    expect(card.shadowRoot!.querySelector('a')!.getAttribute('href')).toBe('#');
+  });
+
+  it('직접 바인딩한 u-ref-card 의 url 도 같다 · 정상 URL 은 그대로다', async () => {
+    document.body.innerHTML = '';
+    const bad = document.createElement('u-ref-card') as HTMLElement & { url: string; updateComplete: Promise<boolean> };
+    bad.url = ' JavaScript:alert(1)';
+    const ok = document.createElement('u-ref-card') as HTMLElement & { url: string; updateComplete: Promise<boolean> };
+    ok.url = 'https://example.com/a?b=1&c=2';
+    document.body.append(bad, ok);
+    await bad.updateComplete;
+    await ok.updateComplete;
+    expect(bad.shadowRoot!.querySelector('a')!.getAttribute('href')).toBe('#');
+    expect(ok.shadowRoot!.querySelector('a')!.getAttribute('href')).toBe('https://example.com/a?b=1&c=2');
+  });
+});

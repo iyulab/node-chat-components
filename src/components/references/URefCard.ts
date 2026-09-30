@@ -7,6 +7,7 @@ import { arrayAttrConverter } from '@iyulab/components/dist/utilities/converters
 import { UDataElement } from '../UDataElement.js';
 import '../../utilities/icons.js';
 import { styles } from './URefCard.styles.js';
+import { sanitizeHref } from '../../utilities/sanitizers.js';
 
 /**
  * 웹 참조 카드의 파비콘 이미지 URL 을 정한다. `undefined` 를 돌려주면 파비콘 없이 그린다.
@@ -57,7 +58,7 @@ export class URefCard extends UDataElement {
 
   render() {
     return html`
-      <a href="${ifDefined(this.url)}" target="_blank" rel="noopener noreferrer"
+      <a href="${ifDefined(this.url ? sanitizeHref(this.url) : undefined)}" target="_blank" rel="noopener noreferrer"
         @click=${this.handleAnchorClick}>
         <div class="header">
           ${this.renderFavicon()}

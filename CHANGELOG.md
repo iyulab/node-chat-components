@@ -17,12 +17,18 @@
   - New `registerElementBlock(schema)` for blocks you describe in your own prompt, and
     `getElementBlockProperties(tag)`.
   - The `blacklist` property of `u-element-block` is removed.
+- New `docs/security.md` (and a skill reference) — what each input is trusted to contain, the requests
+  the components make, and what is left to the application.
+- New `sanitizeHref(url)` — the protocol check without HTML escaping, for property bindings.
   - Migration: a custom element that `block-json` should render needs its schema registered with
     `ElementPromptBuilder.add()` or `registerElementBlock()`, and every property the model may set
     must be listed in that schema's `properties`.
 
 ### Fixed
 
+- **`u-ref-card` checks the protocol of its `url`, like `u-ref-tag` already did.** A citation source URL
+  such as `javascript:…` became `#` in the inline citation but stayed as written in the card inside its
+  tooltip. Both now use the same check.
 - **`u-prompt` no longer sends on the Enter that finishes an IME composition.** Typing Korean (or
   another composed language) and pressing Enter sent the message and then left the last syllable in
   the box, so it was sent again. Requires `@iyulab/components` 1.51.0 or later.

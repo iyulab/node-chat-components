@@ -99,12 +99,14 @@ const HREF_STRIP_CHARS_REGEX = /[\u0000-\u001F\u007F\s]+/g;
 const HREF_UNSAFE_PROTOCOL_REGEX = /^(?:javascript|data|vbscript):/i;
 
 /**
- * href / src attribute용 문자열 처리
+ * URL 의 프로토콜을 검사해 안전한 URL 문자열을 돌려줍니다 — HTML escape 는 하지 않습니다.
+ * Lit 의 속성 바인딩처럼 escape 를 스스로 하는 자리에서 씁니다(두 번 escape 하면 `&` 가 `&amp;amp;` 가 된다).
+ * 위험한 URL(javascript:/data:/vbscript:, protocol-relative)은 `#` 가 됩니다.
  *
  * 예:
- *  <a href="{value}">
+ *  html`<a href=${sanitizeHref(url)}>`
  */
-export function escapeHtmlHref(value: string): string {
+export function sanitizeHref(value: string): string {
   // 1) zero-width 제거 + trim
   let normalized = value.replace(ZERO_WIDTH_STRICT_REGEX, '').trim();
 
@@ -126,6 +128,15 @@ export function escapeHtmlHref(value: string): string {
     return '#';
   }
 
-  // 6) attribute에 안전하게 넣을 수 있도록 escape
-  return escapeHtmlAttr(normalized);
+  return normalized;
+}
+
+/**
+ * href / src attribute용 문자열 처리 — HTML 문자열을 직접 조립하는 자리에서 씁니다.
+ *
+ * 예:
+ *  <a href="{value}">
+ */
+export function escapeHtmlHref(value: string): string {
+  return escapeHtmlAttr(sanitizeHref(value));
 }

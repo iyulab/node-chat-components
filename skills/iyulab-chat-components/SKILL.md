@@ -31,6 +31,7 @@ import '@iyulab/chat-components/dist/components/prompt/UPrompt.js';
 ```
 
 > For detailed setup and usage patterns, see [./references/usage.md](./references/usage.md).
+> Model output is untrusted — see [./references/security.md](./references/security.md) for what each input may contain.
 
 ---
 

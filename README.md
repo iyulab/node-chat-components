@@ -137,6 +137,7 @@ package's Accessibility section.
 | [docs/block-system.md](./docs/block-system.md) | Block components and `BlockItem` types in depth |
 | [docs/extras-system.md](./docs/extras-system.md) | Extras system setup and custom extras |
 | [docs/events.md](./docs/events.md) | Full event reference |
+| [docs/security.md](./docs/security.md) | What each input is trusted to contain, requests the components make, and your application's part |
 
 ---
 

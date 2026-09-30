@@ -7,6 +7,7 @@ import '@iyulab/components/dist/components/icon/UIcon.js';
 import { UElement } from '@iyulab/components/dist/components/UElement.js';
 import '../../utilities/icons.js';
 import { styles } from './URefTag.styles.js';
+import { sanitizeHref } from '../../utilities/sanitizers.js';
 
 /**
  * 인용 태그 컴포넌트입니다.
@@ -20,7 +21,7 @@ export class URefTag extends UElement {
 
   render() {
     return html`
-      <a href="${ifDefined(this.href)}" target="_blank" rel="noopener noreferrer"
+      <a href="${ifDefined(this.href ? sanitizeHref(this.href) : undefined)}" target="_blank" rel="noopener noreferrer"
         @click=${this.handleAnchorClick}>
         <slot></slot>
       </a>
