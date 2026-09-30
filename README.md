@@ -121,6 +121,7 @@ conformance claim for the success criteria it does not list.
 |---|---|---|
 | SC 2.5.8 Target Size (Minimum) | Every pointer target inside the registered blocks (`.` and `./extra` entries) is at least 24×24 CSS px or meets the spacing exception (24px between centers), and is actually hit at that position | `tests/browser/target-size.browser.test.ts` (real Chromium) |
 | SC 2.1.1 Keyboard (pointer-cursor check) | Nothing a block renders shows a pointer cursor without being an interactive element — table sort headers, image thumbnails and previewable file cards are buttons | `tests/browser/target-size.browser.test.ts` · `tests/browser/table-block-sort-keyboard.browser.test.ts` |
+| SC 3.2.5 Change on Request (new tabs) | Links that open a new tab — `u-ref-tag`, `u-ref-card`, the `u-map-block` caption — end their accessible name with a localized "(opens in a new tab)" | `tests/browser/new-tab-link-name.browser.test.ts` |
 
 `u-ref-tag` uses the SC's **inline exception** — it is a citation badge set inside a sentence, where
 growing it to 24px would push the line height. It is still measured and reported.

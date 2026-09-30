@@ -1,5 +1,14 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+
+- **Links that open a new tab now say so to screen readers.** `u-ref-tag`, `u-ref-card` and the
+  `u-map-block` caption open in a new tab; their accessible name now ends with a localized
+  "(opens in a new tab)" (`opensInNewTab` in the message registry). The text is visually hidden —
+  the external-link icon already shows it on screen.
+
 ## [0.15.0] - 2026-09-30
 
 ### Changed

@@ -28,7 +28,8 @@ export type ChatMessageKey =
   | 'openImage'
   | 'previewFile'
   | 'imageBlocked'
-  | 'imageBlockedNamed';
+  | 'imageBlockedNamed'
+  | 'opensInNewTab';
 
 export const messages = Locale.namespace<ChatMessageKey>('@iyulab/chat-components');
 
@@ -58,6 +59,8 @@ messages.register('en', {
   // 이미지 출처 정책(`setAllowedImagePrefixes`)이 막은 이미지 자리. `{name}` 은 대체 텍스트.
   imageBlocked: 'Image blocked',
   imageBlockedNamed: 'Image blocked: {name}',
+  // 새 창으로 여는 링크의 접근성 이름 끝에 붙는다(화면에는 보이지 않는다).
+  opensInNewTab: '(opens in a new tab)',
 });
 
 messages.register('ko', {
@@ -82,4 +85,5 @@ messages.register('ko', {
   previewFile: '{name} 미리보기',
   imageBlocked: '차단된 이미지',
   imageBlockedNamed: '차단된 이미지: {name}',
+  opensInNewTab: '(새 창에서 열림)',
 });

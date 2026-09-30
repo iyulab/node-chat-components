@@ -5,6 +5,7 @@ import { UElement } from "@iyulab/components/dist/components/UElement.js";
 import { styles } from "./UMapBlock.styles.js";
 import { registerElementBlock } from '../utilities/ElementRegistry.js';
 import schema from './UMapBlock.schema.js';
+import { messages } from '../utilities/messages.js';
 
 // 이 모듈을 import 하면 block-json 으로 렌더할 수 있다(스키마가 허용 목록이다).
 registerElementBlock(schema);
@@ -48,6 +49,7 @@ export class UMapBlock extends UElement {
       >
         <strong>${this.label}</strong>
         <span>${this.description}</span>
+        <span class="new-tab-hint">${messages.text('opensInNewTab')}</span>
       </a>
     `;
   }

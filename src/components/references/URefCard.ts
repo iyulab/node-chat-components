@@ -8,6 +8,7 @@ import { UDataElement } from '../UDataElement.js';
 import '../../utilities/icons.js';
 import { styles } from './URefCard.styles.js';
 import { sanitizeHref } from '../../utilities/sanitizers.js';
+import { messages } from '../../utilities/messages.js';
 
 /**
  * 웹 참조 카드의 파비콘 이미지 URL 을 정한다. `undefined` 를 돌려주면 파비콘 없이 그린다.
@@ -84,6 +85,7 @@ export class URefCard extends UDataElement {
         <div class="footer" ?hidden=${!this.tags || this.tags.length === 0}>
           ${this.tags?.map(tag => html`<span class="tag">${tag}</span>`)}
         </div>
+        <span class="new-tab-hint">${messages.text('opensInNewTab')}</span>
       </a>
     `;
   }

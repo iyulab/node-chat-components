@@ -8,6 +8,7 @@ import { UElement } from '@iyulab/components/dist/components/UElement.js';
 import '../../utilities/icons.js';
 import { styles } from './URefTag.styles.js';
 import { sanitizeHref } from '../../utilities/sanitizers.js';
+import { messages } from '../../utilities/messages.js';
 
 /**
  * 인용 태그 컴포넌트입니다.
@@ -24,6 +25,7 @@ export class URefTag extends UElement {
       <a href="${ifDefined(this.href ? sanitizeHref(this.href) : undefined)}" target="_blank" rel="noopener noreferrer"
         @click=${this.handleAnchorClick}>
         <slot></slot>
+        <span class="new-tab-hint">${messages.text('opensInNewTab')}</span>
       </a>
 
       <u-icon lib="internal-chat" name="external-link"></u-icon>
