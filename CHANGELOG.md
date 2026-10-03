@@ -1,5 +1,16 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- **Transitions follow the motion tokens, so reduced motion stops them.** Hover, expand and fade
+  transitions in the blocks, reference cards and image gallery took fixed durations and kept moving for
+  users who prefer reduced motion. They now read `--u-duration-*` from `@iyulab/components`, which drops
+  to zero under `prefers-reduced-motion: reduce`. Some speeds move to the nearest step of the scale.
+- **`u-prompt[loading]`'s sweeping border holds still under reduced motion** — the coloured band stays,
+  so the busy state is still visible.
+
 ## [0.16.0] - 2026-09-30
 
 ### Added

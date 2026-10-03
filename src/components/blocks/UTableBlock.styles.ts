@@ -127,7 +127,7 @@ export const styles = css`
     margin-left: 4px;
     font-size: 12px;
     opacity: 0.3;
-    transition: opacity 0.15s;
+    transition: opacity var(--u-duration-fast, 140ms);
   }
 
   tbody tr {

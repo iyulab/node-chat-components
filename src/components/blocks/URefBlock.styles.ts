@@ -30,7 +30,7 @@ export const styles = css`
   u-icon {
     color: inherit;
     font-size: 1em;
-    transition: transform 0.2s ease-in-out;
+    transition: transform var(--u-duration-normal, 220ms) ease-in-out;
   }
   u-icon[collapsed] {
     transform: rotate(-90deg);
@@ -61,7 +61,7 @@ export const styles = css`
     flex-direction: column;
     gap: 0.75em;
     margin-top: 0.75em;
-    transition: all 0.3s ease-in-out;
+    transition: all var(--u-duration-slow, 320ms) ease-in-out;
   }
   .body[collapsed] {
     height: 0;

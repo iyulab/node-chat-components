@@ -19,7 +19,7 @@ export const styles = css`
     border-radius: 8px;
     background-color: var(--u-neutral-50);
     overflow: visible;
-    transition: background-color 0.12s ease, border-color 0.12s ease;
+    transition: background-color var(--u-duration-fast, 140ms) ease, border-color var(--u-duration-fast, 140ms) ease;
   }
   .card[previewable]:hover {
     background-color: var(--u-neutral-100);
@@ -60,7 +60,7 @@ export const styles = css`
     font-size: 16px;
     border-radius: 6px;
     background-color: var(--u-neutral-200);
-    transition: background 0.15s ease;
+    transition: background var(--u-duration-fast, 140ms) ease;
     overflow: hidden;
   }
   .thumbnail img,
@@ -123,7 +123,7 @@ export const styles = css`
     color: var(--u-neutral-0);
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.12s ease, background-color 0.12s ease;
+    transition: opacity var(--u-duration-fast, 140ms) ease, background-color var(--u-duration-fast, 140ms) ease;
   }
   .card:hover .remove-btn {
     opacity: 1;
@@ -143,7 +143,7 @@ export const styles = css`
     flex-direction: column;
     background: rgba(0, 0, 0, 0.92);
     cursor: default;
-    animation: preview-fadeIn 0.2s ease;
+    animation: preview-fadeIn var(--u-duration-normal, 220ms) ease;
   }
 
   .preview-header {
@@ -174,7 +174,7 @@ export const styles = css`
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: background var(--u-duration-normal, 220ms);
   }
   .preview-close:hover  { background: rgba(255, 255, 255, 0.18); }
   .preview-close:active { background: rgba(255, 255, 255, 0.28); }

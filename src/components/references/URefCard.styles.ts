@@ -16,7 +16,7 @@ export const styles = css`
     padding: 6px;
     color: inherit;
     text-decoration: none;
-    transition: all 0.2s ease;
+    transition: all var(--u-duration-normal, 220ms) ease;
   }
   a:hover {
     color: var(--u-txt-color-hover, #1565C0);

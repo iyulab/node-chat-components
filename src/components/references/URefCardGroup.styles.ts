@@ -61,7 +61,7 @@ export const styles = css`
     flex-direction: row;
     width: 100%;
     will-change: transform;
-    transition: transform 260ms ease;
+    transition: transform var(--u-duration-normal, 220ms) ease;
   }
 
   /* slot 안의 각 카드가 한 페이지(100%)를 차지하도록 */

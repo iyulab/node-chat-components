@@ -12,7 +12,7 @@ export const styles = css`
     border-radius: 9999px;
     background-color: var(--u-neutral-100);
     padding: 2px 6px;
-    transition: background-color 0.2s ease-in-out;
+    transition: background-color var(--u-duration-normal, 220ms) ease-in-out;
     cursor: pointer;
   }
   :host(:hover) {

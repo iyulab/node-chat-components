@@ -70,6 +70,14 @@ export const styles = css`
     border-radius: 50%;
   }
 
+  /* 동작 줄이기 — 흐르는 테두리를 멈춘다. 색 띠는 그대로 남아 «응답 중» 은 계속 보인다(메시지의 점 로더와 같은 처리). */
+  @media (prefers-reduced-motion: reduce) {
+    :host([loading])::before {
+      animation: none;
+      background-position: 50% 0;
+    }
+  }
+
   @keyframes border-shimmer {
     0%   { background-position: 100% 0; }
     100% { background-position: 0% 0; }

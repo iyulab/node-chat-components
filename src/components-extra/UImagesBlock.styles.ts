@@ -33,7 +33,7 @@ export const styles = css`
     height: 100%;
     object-fit: cover;
     pointer-events: none;
-    transition: transform 0.3s ease, filter 0.3s ease;
+    transition: transform var(--u-duration-slow, 320ms) ease, filter var(--u-duration-slow, 320ms) ease;
   }
   .slide:hover img {
     transform: scale(1.05);
@@ -75,7 +75,7 @@ export const styles = css`
     display: flex;
     flex-direction: column;
     background: rgba(0, 0, 0, 0.92);
-    animation: overlay-fadeIn 0.2s ease;
+    animation: overlay-fadeIn var(--u-duration-normal, 220ms) ease;
   }
 
   /* 상단 헤더: 카운터(중앙) + 닫기(우측) */
@@ -112,7 +112,7 @@ export const styles = css`
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: background var(--u-duration-normal, 220ms);
   }
   .lb-close:hover  {
     background: rgba(255, 255, 255, 0.18);
@@ -147,7 +147,7 @@ export const styles = css`
     flex-direction: row;
     align-items: center;
     gap: 16px;
-    transition: transform 0.45s cubic-bezier(0.25, 0.1, 0.25, 1);
+    transition: transform var(--u-duration-slow, 320ms) cubic-bezier(0.25, 0.1, 0.25, 1);
     will-change: transform;
   }
 
@@ -159,7 +159,7 @@ export const styles = css`
     justify-content: center;
     opacity: 0.5;
     transform: scale(0.9);
-    transition: opacity 0.4s ease, transform 0.4s ease;
+    transition: opacity var(--u-duration-slow, 320ms) ease, transform var(--u-duration-slow, 320ms) ease;
   }
   .lb-slide[active] {
     opacity: 1;
@@ -192,7 +192,7 @@ export const styles = css`
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: background 0.25s;
+    transition: background var(--u-duration-normal, 220ms);
   }
   .lb-nav.prev {
     left: 0;
@@ -218,7 +218,7 @@ export const styles = css`
     padding: 12px;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.15);
-    transition: background 0.2s, transform 0.15s;
+    transition: background var(--u-duration-normal, 220ms), transform var(--u-duration-fast, 140ms);
   }
   .lb-nav:hover u-icon {
     background: rgba(255, 255, 255, 0.3);
