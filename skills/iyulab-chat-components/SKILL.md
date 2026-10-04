@@ -4,7 +4,6 @@ description: LLM chat UI component library. Covers all u-* custom elements for b
 license: MIT
 metadata:
   author: iyulab
-  version: "0.7.0"
 ---
 
 # @iyulab/chat-components
