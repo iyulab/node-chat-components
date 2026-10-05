@@ -103,8 +103,9 @@ export const styles = css`
     right: 16px;
     top: 50%;
     transform: translateY(-50%);
-    width: 36px;
-    height: 36px;
+    /* 호스트 하한(--u-target-size)이 더 크면 그 값. */
+    width: max(36px, var(--u-target-size, 0px));
+    height: max(36px, var(--u-target-size, 0px));
     border: none;
     border-radius: 12px;
     background: transparent;

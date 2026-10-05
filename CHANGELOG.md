@@ -1,5 +1,14 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- **Press targets follow `--u-target-size`** (the host's minimum target size from `@iyulab/components`).
+  When it is set, the reference block header, reference card navigation, table sort buttons, the map
+  caption link and the image/file preview close buttons are at least that size. Unset, nothing changes.
+  Inline citation markers keep their size — they sit in a line of text.
+
 ## [0.16.1] - 2026-10-03
 
 ### Changed

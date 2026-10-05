@@ -99,6 +99,7 @@ export const styles = css`
     align-items: center;
     inline-size: 100%;
     padding: 8px 12px;
+    min-block-size: var(--u-target-size, 0px);
     font: inherit;
     color: inherit;
     cursor: pointer;

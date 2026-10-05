@@ -15,6 +15,9 @@ export const styles = css`
     align-items: center;
     justify-content: space-between;
     gap: 0.5em;
+    /* 호스트 하한(--u-target-size, 미설정 = 0). */
+    box-sizing: border-box;
+    min-height: var(--u-target-size, 0px);
     color: var(--u-txt-color-strong);
     user-select: none;
     cursor: pointer;

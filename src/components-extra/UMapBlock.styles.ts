@@ -37,6 +37,10 @@ export const styles = css`
     flex-direction: column;
     gap: 0.25em;
     padding: 0.25em 0.5em;
+    /* 호스트 하한(--u-target-size, 미설정 = 0) — 상자는 border-box(기반 스타일)라 여백을 포함한다. */
+    min-height: var(--u-target-size, 0px);
+    min-width: var(--u-target-size, 0px);
+    justify-content: center;
     color: #fff;
     background: rgba(0, 0, 0, 0.6);
     border-radius: 6px;
