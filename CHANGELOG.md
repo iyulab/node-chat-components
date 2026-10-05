@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.17.1] - 2026-10-05
+
+### Changed
+
+- **KaTeX 0.19** (was 0.18). Math renders as before. KaTeX now reports a character it has no metrics
+  for through its `strict` option (code `symbolNotInFont`): with the default `strict: "warn"` it is a
+  console warning, with `strict: "error"` it is a render error — set `strict` in the markdown math
+  options if you rely on either. A `strict` callback that returns nothing now warns; return `false`
+  or `"ignore"` to stay quiet.
+
 ## [0.17.0] - 2026-10-05
 
 ### Added
