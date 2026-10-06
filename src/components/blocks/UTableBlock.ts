@@ -6,7 +6,9 @@ import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import "@iyulab/components/dist/components/icon/UIcon.js";
 import "@iyulab/components/dist/components/button/UButton.js";
 import "@iyulab/components/dist/components/skeleton/USkeleton.js";
-import { UInput } from "@iyulab/components/dist/components/input/UInput.js";
+// 부수효과 import — 이 모듈이 그리는 `<u-input>` 을 등록한다(타입만 가져오면 빌드가 import 를 지워 등록되지 않는다).
+import "@iyulab/components/dist/components/input/UInput.js";
+import type { UInput } from "@iyulab/components/dist/components/input/UInput.js";
 import { UDataElement } from "../UDataElement.js";
 import "../../utilities/icons.js";
 import { styles } from "./UTableBlock.styles.js";
@@ -67,6 +69,7 @@ export class UTableBlock extends UDataElement {
             class="toolbar-search"
             type="search"
             placeholder=${messages.text('search')}
+            aria-label=${messages.text('searchLabel')}
             .value=${this.search}
             @input=${this.handleSearchInput}
           >

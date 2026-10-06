@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.17.5] - 2026-10-07
+
+### Fixed
+
+- **Deep imports register what they render.** `u-prompt` renders its input as `<u-text-block>` and `u-table-block`
+  its search box as `<u-input>`, but each imported the class for a type only, so the build dropped both imports:
+  importing either component by its own module path left the prompt without an input and the table without a
+  search box. The package entry hid it (it registers every component).
+- **`u-table-block`'s search box has a name** (new locale key `searchLabel` — en *Search rows*, ko *행 검색*); it had
+  only its placeholder, which disappears as you type.
+
 ## [0.17.4] - 2026-10-07
 
 ### Fixed

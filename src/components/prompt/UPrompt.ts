@@ -7,7 +7,9 @@ import "@iyulab/components/dist/components/button/UButton.js";
 import { RemoveEvent } from "@iyulab/components/dist/events/RemoveEvent.js";
 import { UElement } from "@iyulab/components/dist/components/UElement.js";
 import "../blocks/UFileBlock.js";
-import { UTextBlock } from "../blocks/UTextBlock.js";
+// 부수효과 import — 이 모듈이 그리는 `<u-text-block>` 을 등록한다(타입만 가져오면 빌드가 import 를 지워 등록되지 않는다).
+import "../blocks/UTextBlock.js";
+import type { UTextBlock } from "../blocks/UTextBlock.js";
 import type { FileBlockItem } from "../../types/BlockItem.js";
 import { StopEventDetail } from "../../events/StopEvent.js";
 import { SendEventDetail } from "../../events/SendEvent.js";

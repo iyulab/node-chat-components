@@ -21,7 +21,7 @@ export type ChatMessageKey =
   | 'remove'
   | 'pngDownload'
   | 'jsonDownload'
-  | 'search'
+  | 'search' | 'searchLabel'
   | 'rowCount'
   | 'excelDownload'
   | 'csvDownload'
@@ -50,6 +50,7 @@ messages.register('en', {
   pngDownload: 'PNG Download',
   jsonDownload: 'JSON Download',
   search: 'Search...',
+  searchLabel: 'Search rows',
   textBlock: 'Text',
   references: 'References',
   // ⚠보간 키 — `text('rowCount', { shown, total })`. `{name}` 치환은 `Locale` 이 이미
@@ -82,6 +83,7 @@ messages.register('ko', {
   pngDownload: 'PNG 다운로드',
   jsonDownload: 'JSON 다운로드',
   search: '검색...',
+  searchLabel: '행 검색',
   textBlock: '텍스트',
   references: '참조',
   rowCount: '{shown} / {total} 행',
