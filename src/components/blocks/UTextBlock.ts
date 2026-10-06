@@ -3,6 +3,7 @@ import { customElement, property, query } from "lit/decorators.js";
 
 import { UElement } from "@iyulab/components/dist/components/UElement.js";
 import { styles } from "./UTextBlock.styles.js";
+import { messages } from "../../utilities/messages.js";
 
 /**
  * 텍스트를 표시하거나 편집할 수 있는 블록 컴포넌트입니다.
@@ -53,6 +54,7 @@ export class UTextBlock extends UElement {
       <div class="container">
         <textarea
           name="message"
+          aria-label=${this.getAttribute('aria-label') ?? messages.text('textBlock')}
           placeholder=${this.placeholder || ''}
           spellcheck=${this.spellcheck}
           .readOnly=${!this.editable}

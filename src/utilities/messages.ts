@@ -29,7 +29,8 @@ export type ChatMessageKey =
   | 'previewFile'
   | 'imageBlocked'
   | 'imageBlockedNamed'
-  | 'opensInNewTab';
+  | 'opensInNewTab'
+  | 'textBlock';
 
 export const messages = Locale.namespace<ChatMessageKey>('@iyulab/chat-components');
 
@@ -48,6 +49,7 @@ messages.register('en', {
   pngDownload: 'PNG Download',
   jsonDownload: 'JSON Download',
   search: 'Search...',
+  textBlock: 'Text',
   // ⚠보간 키 — `text('rowCount', { shown, total })`. `{name}` 치환은 `Locale` 이 이미
   //   지원한다(`interpolate`), 그래서 함수형 등록 같은 새 표면이 필요 없다.
   rowCount: '{shown} / {total} Rows',
@@ -78,6 +80,7 @@ messages.register('ko', {
   pngDownload: 'PNG 다운로드',
   jsonDownload: 'JSON 다운로드',
   search: '검색...',
+  textBlock: '텍스트',
   rowCount: '{shown} / {total} 행',
   excelDownload: 'Excel 다운로드',
   csvDownload: 'CSV 다운로드',

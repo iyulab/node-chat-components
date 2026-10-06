@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.17.2] - 2026-10-06
+
+### Fixed
+
+- **`u-text-block`'s text area is named.** It had only its placeholder, which disappears as soon as
+  text is typed. It now takes the host's `aria-label`, or "Text" from the locale (new key
+  `textBlock`, English and Korean built in).
+
 ## [0.17.1] - 2026-10-05
 
 ### Changed
