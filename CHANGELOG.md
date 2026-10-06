@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.17.3] - 2026-10-06
+
+### Fixed
+
+- **`u-ref-block`'s default title follows the locale.** Without a `title` it showed a fixed English
+  "References" in every language; it now comes from the locale (new key `references`, English and
+  Korean built in).
+
 ## [0.17.2] - 2026-10-06
 
 ### Fixed

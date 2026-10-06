@@ -5,6 +5,7 @@ import '../references/URefCard.js';
 import { UElement } from '@iyulab/components/dist/components/UElement.js';
 import type { ReferenceSource } from '../../types/References.js';
 import { styles } from './URefBlock.styles.js';
+import { messages } from '../../utilities/messages.js';
 import { repeat } from 'lit/directives/repeat.js';
 
 /**
@@ -31,7 +32,7 @@ export class URefBlock extends UElement {
           name="chevron-down"
         ></u-icon>
         <div class="title">
-          ${this.title || 'References'}
+          ${this.title || messages.text('references')}
         </div>
         <div style="flex: 1;"></div>
         <div class="count">
