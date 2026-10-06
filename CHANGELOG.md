@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.17.4] - 2026-10-07
+
+### Fixed
+
+- **`u-chart-block`'s "canvas unavailable" message follows a runtime locale switch** — it is looked up when drawn
+  instead of stored as text. (With `@iyulab/components` 2.8.0 every component re-renders on `Locale.set()`.)
+
 ## [0.17.3] - 2026-10-06
 
 ### Fixed

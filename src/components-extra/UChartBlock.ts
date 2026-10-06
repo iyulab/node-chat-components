@@ -32,7 +32,8 @@ export class UChartBlock extends UElement {
   @query('.viewport') private viewport?: HTMLElement;
 
   /** 차트 생성 에러 메시지 */
-  @state() private error: string | null = null;
+  /** 차트를 못 그린 이유 — 우리 문장은 «그릴 때 찾는» 함수로(런타임 로캘 전환에 따라오게), Chart.js 의 예외 문장은 그대로. */
+  @state() private error: string | (() => string) | null = null;
 
   private chartjs: Chart | null = null;
   private observer?: MutationObserver;
@@ -87,7 +88,7 @@ export class UChartBlock extends UElement {
         <canvas></canvas>
         <div class="error-overlay" ?hidden=${!this.error}>
           <u-icon lib="internal-chat" name="alert-triangle-fill"></u-icon>
-          <span>${this.error}</span>
+          <span>${typeof this.error === 'function' ? this.error() : this.error}</span>
         </div>
       </div>
     `;
@@ -103,7 +104,7 @@ export class UChartBlock extends UElement {
 
     const ctx = this.canvas.getContext('2d');
     if (!ctx) {
-      this.error = messages.text('canvasUnavailable');
+      this.error = () => messages.text('canvasUnavailable');
       return;
     }
 
