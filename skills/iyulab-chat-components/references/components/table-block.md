@@ -58,6 +58,22 @@ sideways (a second vertical scroll inside a scrolling list takes the wheel and t
 .transcript u-table-block { --table-block-max-height: none; }
 ```
 
+### Narrow and dense hosts
+
+The block takes its type size from where it sits: text is sized in `em`, so a chat panel that sets
+`font-size: 13px` on the surrounding `u-marked-block` (or any ancestor) gets a proportionally smaller table and
+toolbar. In a 16px context the sizes are 14px (cells) and 12px (toolbar).
+
+Columns take their content width and the table scrolls sideways when it is wider than the host, so a long column
+off to the right does not squeeze into a narrow column and make every row several lines tall. A cell wraps only
+past `--table-block-cell-max-width` (default `32em`); `none` keeps every cell on one line. On a wide host the table
+still fills the width. The toolbar wraps: when the search, the row count and the download buttons do not fit on
+one line, the download buttons move to a second line.
+
+```css
+.chat-panel u-table-block { --table-block-cell-max-width: 24em; }
+```
+
 ## Properties
 
 | Property | Type | Default | Description |
@@ -70,6 +86,7 @@ sideways (a second vertical scroll inside a scrolling list takes the wheel and t
 | Property | Default | Description |
 |----------|---------|-------------|
 | `--table-block-max-height` | `480px` | The table area's height cap; `none` turns it off. A host `max-height` still wins when smaller |
+| `--table-block-cell-max-width` | `32em` | The widest a body cell grows before its text wraps; `none` keeps cells on one line |
 
 ## CSS Parts
 

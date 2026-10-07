@@ -6,7 +6,7 @@ export const styles = css`
     display: block;
     min-width: 0;
     max-width: 200px;
-    font-size: 14px;
+    font-size: calc(14em / 16);
   }
 
   .card {
@@ -57,7 +57,7 @@ export const styles = css`
     align-items: center;
     justify-content: center;
     color: var(--u-icon-color);
-    font-size: 16px;
+    font-size: calc(16em / 14);
     border-radius: 6px;
     background-color: var(--u-neutral-200);
     transition: background var(--u-duration-fast, 140ms) ease;
@@ -82,7 +82,7 @@ export const styles = css`
 
   .name {
     display: block;
-    font-size: 13px;
+    font-size: calc(13em / 14);
     font-weight: 500;
     color: var(--u-txt-color-strong);
     white-space: nowrap;
@@ -96,7 +96,7 @@ export const styles = css`
     align-items: center;
     gap: 6px;
     color: var(--u-txt-color-weak);
-    font-size: 10px;
+    font-size: calc(10em / 14);
   }
 
   .type {
@@ -118,7 +118,7 @@ export const styles = css`
     top: -8px;
     right: -8px;
     border-radius: 50%;
-    font-size: 10px;
+    font-size: calc(10em / 14);
     background-color: var(--u-neutral-600);
     color: var(--u-neutral-0);
     opacity: 0;

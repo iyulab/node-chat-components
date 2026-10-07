@@ -75,14 +75,18 @@ export const styles = css`
   }
   .header .status {
     display: inline-flex;
-    font-size: 12px;
+    font-size: calc(12em / 16);
     color: var(--u-txt-color-strong);
   }
   .header .lang {
     font-family: Arial, Helvetica, sans-serif;
-    font-size: 12px;
+    font-size: calc(12em / 16);
     font-weight: 300;
     color: var(--u-txt-color-strong);
+  }
+  /* 복사 버튼의 기본 크기(18px)는 블록의 글자 크기를 따라 줄고 는다 — 머리 줄의 다른 글자와 같은 비례다. */
+  .header u-copy-button {
+    font-size: calc(18em / 16);
   }
 
   /* highlight.js styles */
@@ -92,7 +96,7 @@ export const styles = css`
     padding: 0;
     color: var(--hljs-text-color);
     font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
-    font-size: 14px;
+    font-size: calc(14em / 16);
     line-height: 1.45;
     white-space: pre;
     overflow: auto;

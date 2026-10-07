@@ -352,12 +352,6 @@ export const styles = css`
     font-size: 1em;
   }
 
-  tt,
-  code,
-  samp {
-    font-size: 12px;
-  }
-
   code,
   tt {
     padding: .2em .4em;
@@ -385,7 +379,6 @@ export const styles = css`
   pre {
     margin-top: 0;
     margin-bottom: 0;
-    font-size: 12px;
     word-wrap: normal;
   }
 

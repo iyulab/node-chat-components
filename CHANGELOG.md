@@ -1,5 +1,22 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+
+- Blocks follow the type size of the place they sit in. `u-table-block`, `u-code-block`, `u-file-block`,
+  `u-ref-card`, `u-ref-card-group`, `u-ref-tag` and `u-chart-block` sized their text in fixed pixels, so a dense host
+  (a chat panel at 13px) got a table and toolbars larger than the surrounding text. Sizes are now relative (`em`) and
+  unchanged in a 16px context.
+- `u-table-block` on a narrow host: the toolbar wraps instead of drawing the download buttons over the row count, and
+  columns take their content width with a horizontal scroll instead of squeezing a long column until every row is
+  several lines tall. On a wide host the table still fills the width.
+
+### Added
+
+- **`--table-block-cell-max-width`** on `u-table-block` — the widest a body cell grows before its text wraps
+  (default `32em`); `none` keeps cells on one line.
+
 ## [0.20.0] - 2026-10-07
 
 ### Added

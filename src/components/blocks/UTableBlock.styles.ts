@@ -20,33 +20,40 @@ export const styles = css`
     color: MarkText;
   }
 
+  /* 글자 크기는 전부 em 이다 — 블록은 놓인 자리(채팅 패널 13px · 페이지 16px)의 글자 크기를 따른다.
+     값은 16px 문맥에서 종전 리터럴과 같게 calc(<px>em / <부모 px>) 로 적는다.
+     툴바는 줄바꿈한다 — 폭이 모자라면 내려받기 묶음이 다음 줄로 가고, 종전처럼 행 수 표기 위에 겹쳐 그려지지 않는다. */
   .toolbar {
     flex: none;
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     padding: 6px 12px;
     background-color: var(--u-neutral-100);
     border-bottom: 1px solid var(--u-border-color);
-    gap: 8px;
+    gap: 4px 8px;
   }
 
   .toolbar-left {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 8px;
-    flex: 1;
+    gap: 4px 8px;
+    flex: 1 1 12em;
     min-width: 0;
   }
 
   .toolbar-search {
-    flex: 1;
+    flex: 1 1 8em;
+    min-width: 0;
     max-width: 200px;
-    font-size: 12px;
+    font-size: calc(12em / 16);
   }
 
   .toolbar-count {
-    font-size: 12px;
+    font-size: calc(12em / 16);
+    white-space: nowrap;
     color: var(--u-txt-color-weak);
   }
 
@@ -54,11 +61,12 @@ export const styles = css`
     display: flex;
     align-items: center;
     gap: 8px;
-    flex-shrink: 0;
+    flex: none;
+    margin-inline-start: auto;
   }
 
   .toolbar-right u-button {
-    font-size: 12px;
+    font-size: calc(12em / 16);
     padding: 0.25em 0.5em;
   }
 
@@ -74,10 +82,19 @@ export const styles = css`
     width: 100%;
   }
 
+  /* 열은 내용 폭을 갖고(넓은 호스트에서는 폭을 채운다) 표가 넘치면 래퍼가 가로로 스크롤한다.
+     종전 width:100% 는 좁은 호스트에서 열을 짜내, 화면 밖 열의 긴 글이 그 좁은 폭 안에서 줄바꿈돼
+     모든 행이 몇 줄 높이가 됐다. 칸 하나의 최대 폭은 --table-block-cell-max-width(기본 32em) —
+     none 이면 줄바꿈 없이 한 줄이다. */
   table {
-    width: 100%;
+    width: max-content;
+    min-width: 100%;
     border-collapse: collapse;
-    font-size: 14px;
+    font-size: calc(14em / 16);
+  }
+
+  .cell {
+    max-inline-size: var(--table-block-cell-max-width, 32em);
   }
 
   thead {
@@ -133,7 +150,7 @@ export const styles = css`
   th .sort-icon {
     display: inline-flex;
     margin-left: 4px;
-    font-size: 12px;
+    font-size: calc(12em / 14);
     opacity: 0.3;
     transition: opacity var(--u-duration-fast, 140ms);
   }

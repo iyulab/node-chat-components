@@ -163,7 +163,8 @@ export class UTableBlock extends UDataElement {
                 <tr>
                   ${repeat(row, (_, j) => j, cell => html`
                     <td align=${cell.align ?? "left"}>
-                      ${this.cellContent(cell)}
+                      <!-- 칸 최대 폭은 안쪽 상자가 갖는다 — 표 칸의 max-width 는 CSS 상 정의되지 않는다. -->
+                      <div class="cell">${this.cellContent(cell)}</div>
                     </td>
                   `)}
                 </tr>

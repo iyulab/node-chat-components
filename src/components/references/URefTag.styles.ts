@@ -7,7 +7,7 @@ export const styles = css`
     align-items: center;
     gap: 4px;
     color: var(--u-txt-color, #212121);
-    font-size: 10px;
+    font-size: calc(10em / 16);
     border: 1px solid var(--u-border-color, #E0E0E0);
     border-radius: 9999px;
     background-color: var(--u-neutral-100);

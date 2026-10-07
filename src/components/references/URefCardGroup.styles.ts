@@ -31,7 +31,7 @@ export const styles = css`
     border: none;
     background-color: transparent;
     color: inherit;
-    font-size: 16px;
+    font-size: 1em;
     cursor: pointer;
     /* WCAG 2.2 SC 2.5.8 — 실측 16x16 이라 포인터 타깃이 모자랐다. 배경도 테두리도 없는
        아이콘 버튼이라 상자를 키워도 **보이는 것은 그대로**다: 아이콘 치수는 위 font-size 가
@@ -47,7 +47,7 @@ export const styles = css`
   }
 
   .page-indicator {
-    font-size: 12px;
+    font-size: calc(12em / 16);
     font-weight: 600;
   }
 
