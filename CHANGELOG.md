@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.18.1] - 2026-10-07
+
+### Documentation
+
+- The security guide still listed `u-table-block` cell `text` as trusted HTML. It now lists `text` as untrusted
+  (rendered as text) and the new `html` field as the trusted-markup input, as 0.18.0 changed — in `docs/security.md`
+  and the skill security reference.
+
 ## [0.18.0] - 2026-10-07
 
 ### Changed (breaking)

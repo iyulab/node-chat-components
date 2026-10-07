@@ -8,7 +8,8 @@ is trusted to contain:
 | `u-marked-block` `value` | untrusted | Raw HTML shown as text · link/image URLs protocol-checked (`javascript:`/`data:`/`vbscript:`/`//host` → `#`) · code fences escaped · table cells same rules |
 | `block-json` fences | untrusted | Only registered blocks; only the schema's property names are assigned |
 | `refs` | untrusted | Text rendered as text · URLs protocol-checked in `u-ref-tag` and `u-ref-card` |
-| `u-table-block` cell `text` bound directly | **trusted HTML** | Sanitize before binding. `block-json` cannot reach it |
+| `u-table-block` cell `text` bound directly | untrusted | Rendered as text; search, sort and downloads use it |
+| `u-table-block` cell `html` bound directly | **trusted HTML** | Display only. Sanitize before binding. `block-json` cannot reach it |
 | Your custom block | your element's contract | The schema allows names, not content — sanitize HTML-rendered properties inside the element |
 
 Requests: markdown images and `u-images-block` load the `http:`/`https:` URL the model writes as soon as they

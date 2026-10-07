@@ -17,7 +17,8 @@ This page lists what the components do with each input, and what is left to your
 | `block-json` fences in `value` | untrusted | Only **registered blocks** are created, and only the property names in that block's schema are assigned — see [extras-system.md](./extras-system.md#security). Any other tag or key is ignored and logged. |
 | `u-marked-block` `refs` | untrusted | Labels, titles and snippets are rendered as text. Source URLs pass the same protocol check in both the inline citation (`u-ref-tag`) and its card (`u-ref-card`). |
 | `u-ref-card` / `u-ref-tag` properties you bind directly | untrusted | Text is rendered as text; `url` / `href` pass the protocol check. |
-| `u-table-block` `headers[].text` / `rows[][].text` bound directly | **trusted HTML** | Rendered as HTML. `u-marked-block` fills these from its own sanitized renderer; if you bind them yourself, sanitize first. `block-json` cannot reach them. |
+| `u-table-block` `headers[].text` / `rows[][].text` bound directly | untrusted | Rendered as text; search, sort and the CSV/XLS downloads use it. |
+| `u-table-block` `headers[].html` / `rows[][].html` bound directly | **trusted HTML** | Rendered as HTML (display only). `u-marked-block` fills these from its own sanitized renderer; if you bind them yourself, sanitize first. `block-json` cannot reach them. |
 | Your own block registered for `block-json` | depends on your element | The schema decides which **names** can be set, not what the **values** contain. If your element renders a property as HTML, sanitize it inside the element. |
 
 ## Requests the components make
@@ -48,7 +49,7 @@ This page lists what the components do with each input, and what is left to your
 
 1. Pass model output only through `u-marked-block` (or the other block components); do not insert it with
    `innerHTML` yourself.
-2. Do not bind unsanitized strings to `u-table-block` cell text.
+2. Do not bind unsanitized strings to a `u-table-block` cell's `html` — put plain text in `text`.
 3. Register only blocks that accept data. Keep each schema's `properties` to what the model needs.
 4. If the model reads content you do not control, call `setAllowedImagePrefixes()` with the image sources
    you accept.
