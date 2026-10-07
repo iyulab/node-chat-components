@@ -4,6 +4,10 @@
 
 ### Fixed
 
+- `u-ref-tag` and `u-ref-card` keep their visually hidden "opens in a new tab" hint inside the element. The hint is
+  an absolutely positioned 1px box and the element was not positioned, so inside a scroll container that is not
+  positioned (a chat transcript) it escaped the host's overflow clipping and stretched the document — the page grew a
+  document scrollbar.
 - Blocks follow the type size of the place they sit in. `u-table-block`, `u-code-block`, `u-file-block`,
   `u-ref-card`, `u-ref-card-group`, `u-ref-tag` and `u-chart-block` sized their text in fixed pixels, so a dense host
   (a chat panel at 13px) got a table and toolbars larger than the surrounding text. Sizes are now relative (`em`) and
