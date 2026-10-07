@@ -82,6 +82,23 @@ export const styles = css`
     margin-top: 8px;
   }
 
+  /* 출처 미리보기 — 본문 위, 카드 폭 안. 도표·그림이 잘리지 않게 담는다(contain). */
+  .preview {
+    display: block;
+    align-self: flex-start;
+    max-width: 100%;
+    max-height: 160px;
+    margin-top: 8px;
+    object-fit: contain;
+    border-radius: 4px;
+  }
+  .preview-blocked {
+    margin-top: 8px;
+    color: var(--u-txt-color-weak);
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
   .footer {
     display: flex;
     gap: 4px;

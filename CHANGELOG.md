@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.19.0] - 2026-10-07
+
+### Added
+
+- **A citation source can carry a preview image** — `ReferenceSource.image` (`{ src, alt? }`, the shape of a
+  `u-images-block` item). `u-ref-card` draws it above the snippet, in `u-ref-block` and in the cards of an inline
+  citation's tooltip. Use it when the evidence is visual: a figure or chart taken from a document, a page
+  thumbnail, a web page's lead image. It passes the same origin policy as markdown images
+  (`setAllowedImagePrefixes`); a blocked image makes no request and its alt text shows as *Image blocked*.
+
 ## [0.18.1] - 2026-10-07
 
 ### Documentation

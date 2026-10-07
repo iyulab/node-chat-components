@@ -47,6 +47,7 @@ Extends `UDataElement`, so data can also be injected via a `<script type="applic
 | `snippet` | `string` | `undefined` | — | Excerpt text |
 | `tags` | `string[]` | `undefined` | — | Tag list. Pass as JSON array string via HTML attribute |
 | `faviconUrl` | `FaviconResolver` | `undefined` | — | Favicon resolver for this card (property only). Overrides `URefCard.defaultFaviconUrl` |
+| `image` | `ReferenceImage` | `undefined` | — | Preview image (`{ src, alt? }`), drawn above the snippet. Passes the image origin policy (`setAllowedImagePrefixes`); a blocked image makes no request and shows its alt text as *Image blocked* |
 
 ---
 

@@ -41,5 +41,11 @@ interface ReferenceSource {
   title?: string;     // Card title
   snippet?: string;   // Excerpt text
   tags?: string[];    // Tag list
+  image?: ReferenceImage; // Preview image of the source (a figure, a page thumbnail, a page's lead image)
+}
+
+interface ReferenceImage {
+  src: string;
+  alt?: string;
 }
 ```

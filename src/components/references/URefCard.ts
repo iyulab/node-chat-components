@@ -8,6 +8,8 @@ import { UDataElement } from '../UDataElement.js';
 import '../../utilities/icons.js';
 import { styles } from './URefCard.styles.js';
 import { sanitizeHref } from '../../utilities/sanitizers.js';
+import { resolveImageSource } from '../../utilities/imageSources.js';
+import type { ReferenceImage } from '../../types/References.js';
 import { messages } from '../../utilities/messages.js';
 
 /**
@@ -56,6 +58,8 @@ export class URefCard extends UDataElement {
   @property({ type: Array, converter: arrayAttrConverter(v => v) }) tags?: string[];
   /** 이 카드의 파비콘 리졸버 — `URefCard.defaultFaviconUrl` 보다 우선한다. */
   @property({ attribute: false }) faviconUrl?: FaviconResolver;
+  /** 출처의 미리보기 이미지(`ReferenceSource.image`) — 이미지 출처 정책을 거친다. */
+  @property({ type: Object }) image?: ReferenceImage;
 
   render() {
     return html`
@@ -77,6 +81,8 @@ export class URefCard extends UDataElement {
             ${this.type.toUpperCase()}
           </div>
         </div>
+
+        ${this.renderImage()}
 
         <div class="body">
           ${this.snippet}
@@ -115,6 +121,22 @@ export class URefCard extends UDataElement {
     const src = this.url && resolve ? resolve(this.url) : undefined;
     if (!src) return nothing;
     return html`<img class="favicon" src=${src} alt="" aria-hidden="true" />`;
+  }
+
+  /**
+   * 미리보기 이미지 — 모델 출력의 이미지와 같은 출처 정책을 거친다. 막힌 이미지는 `<img>` 를 만들지 않는다(요청이 곧 반출
+   * 경로다) — 대체 텍스트를 «차단된 이미지» 로 보인다.
+   */
+  private renderImage() {
+    const image = this.image;
+    if (!image?.src) return nothing;
+    const src = resolveImageSource(image.src);
+    if (src === null) {
+      return html`<div class="preview-blocked" part="preview-blocked">${image.alt
+        ? messages.text('imageBlockedNamed', { name: image.alt })
+        : messages.text('imageBlocked')}</div>`;
+    }
+    return html`<img class="preview" part="preview" src=${src} alt=${image.alt ?? ''} loading="lazy" />`;
   }
 
   /** URL에서 도메인 사이트 주소를 반환합니다. */

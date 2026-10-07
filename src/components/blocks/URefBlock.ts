@@ -49,6 +49,7 @@ export class URefBlock extends UElement {
               .title=${source.title || ''}
               .snippet=${source.snippet || ''}
               .tags=${source.tags}
+              .image=${source.image}
             ></u-ref-card>
           `;
         })}

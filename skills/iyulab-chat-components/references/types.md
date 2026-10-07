@@ -68,6 +68,13 @@ interface ReferenceSource {
   title?: string;
   snippet?: string;
   tags?: string[];
+  image?: ReferenceImage;
+}
+
+/** Preview image of a source — the same shape as a `u-images-block` item. Passes the image origin policy. */
+interface ReferenceImage {
+  src: string;
+  alt?: string;   // say what a figure shows; omit for a decorative image (the card title names the card)
 }
 
 interface ReferenceCitation {

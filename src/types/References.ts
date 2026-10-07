@@ -12,6 +12,20 @@ export interface ReferenceSource {
   snippet?: string;
   /** 태그 */
   tags?: string[];
+  /**
+   * 출처의 미리보기 이미지 — 인용한 그림·도표 자체, 문서 쪽의 축소판, 웹 문서의 대표 이미지.
+   * 카드가 본문 위에 그린다. 모델 출력의 이미지와 같은 출처 정책(`setAllowedImagePrefixes`)을 거치며,
+   * 막히면 요청하지 않고 대체 텍스트를 «차단된 이미지» 로 보인다.
+   */
+  image?: ReferenceImage;
+}
+
+/** 출처의 미리보기 이미지 — `u-images-block` 의 항목과 같은 모양이다. */
+export interface ReferenceImage {
+  /** 이미지 URL */
+  src: string;
+  /** 대체 텍스트 — 이미지가 근거 자체(도표·그림)면 무엇을 보여 주는지 적는다. 없으면 장식으로 다룬다(카드 제목이 이름을 나른다). */
+  alt?: string;
 }
 
 /**

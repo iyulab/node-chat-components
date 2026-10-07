@@ -15,7 +15,7 @@ This page lists what the components do with each input, and what is left to your
 |---|---|---|
 | `u-marked-block` `value` (markdown) | untrusted | Raw HTML in the markdown is shown as text, not rendered. Link `href` passes a protocol check — `javascript:`, `data:`, `vbscript:` and protocol-relative (`//host`) URLs become `#`. Images pass the same check (`data:image/…` excepted) and then the image origin policy; a blocked image is shown as its alt text. Code fences are escaped. Table cells use the same rules. |
 | `block-json` fences in `value` | untrusted | Only **registered blocks** are created, and only the property names in that block's schema are assigned — see [extras-system.md](./extras-system.md#security). Any other tag or key is ignored and logged. |
-| `u-marked-block` `refs` | untrusted | Labels, titles and snippets are rendered as text. Source URLs pass the same protocol check in both the inline citation (`u-ref-tag`) and its card (`u-ref-card`). |
+| `u-marked-block` `refs` | untrusted | Labels, titles and snippets are rendered as text. Source URLs pass the same protocol check in both the inline citation (`u-ref-tag`) and its card (`u-ref-card`). A source's preview `image` passes the image origin policy below, like a markdown image. |
 | `u-ref-card` / `u-ref-tag` properties you bind directly | untrusted | Text is rendered as text; `url` / `href` pass the protocol check. |
 | `u-table-block` `headers[].text` / `rows[][].text` bound directly | untrusted | Rendered as text; search, sort and the CSV/XLS downloads use it. |
 | `u-table-block` `headers[].html` / `rows[][].html` bound directly | **trusted HTML** | Rendered as HTML (display only). `u-marked-block` fills these from its own sanitized renderer; if you bind them yourself, sanitize first. `block-json` cannot reach them. |
@@ -23,7 +23,7 @@ This page lists what the components do with each input, and what is left to your
 
 ## Requests the components make
 
-- **Images in markdown and `u-images-block`** load the `http:`/`https:` URL the model writes as soon as they
+- **Images in markdown, `u-images-block` and citation previews (`ReferenceSource.image`)** load the `http:`/`https:` URL the model writes as soon as they
   render. A prompt-injected response can use an image URL to send data to a third party (the query string
   is the payload) without the user doing anything. If your model reads content you do not control, limit
   where images may come from:
