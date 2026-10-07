@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.19.1] - 2026-10-07
+
+### Documentation
+
+- `u-ref-card` lists its two new CSS parts, `preview` and `preview-blocked` (added in 0.19.0), in the skill reference
+  and the component's own documentation.
+
 ## [0.19.0] - 2026-10-07
 
 ### Added

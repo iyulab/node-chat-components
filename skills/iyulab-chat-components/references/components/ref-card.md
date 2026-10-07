@@ -49,6 +49,13 @@ Extends `UDataElement`, so data can also be injected via a `<script type="applic
 | `faviconUrl` | `FaviconResolver` | `undefined` | — | Favicon resolver for this card (property only). Overrides `URefCard.defaultFaviconUrl` |
 | `image` | `ReferenceImage` | `undefined` | — | Preview image (`{ src, alt? }`), drawn above the snippet. Passes the image origin policy (`setAllowedImagePrefixes`); a blocked image makes no request and shows its alt text as *Image blocked* |
 
+## CSS Parts
+
+| Part | Description |
+|------|-------------|
+| `preview` | The source's preview image (`image`) |
+| `preview-blocked` | The *Image blocked* line where the origin policy stopped the preview |
+
 ---
 
 ## Favicon
