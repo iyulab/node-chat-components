@@ -6,6 +6,7 @@ import '../../src/components/blocks/UMarkedBlock.js';
 import '../../src/components/references/URefCard.js';
 import '../../src/components/references/URefTag.js';
 import '../../src/components/references/URefCardGroup.js';
+import '../../src/components-extra/UChartBlock.js';
 import type { UTableBlock, TableCell } from '../../src/components/blocks/UTableBlock.js';
 
 /**
@@ -92,6 +93,7 @@ const blocks: Array<[string, Record<string, unknown>]> = [
   ['u-ref-card', { type: 'web', title: 'Title', url: 'https://example.com', snippet: 'Snippet', tags: ['a'] }],
   ['u-ref-tag', { href: 'https://example.com' }],
   ['u-ref-card-group', {}],
+  ['u-chart-block', { type: 'bar', data: { labels: ['a', 'b'], datasets: [{ label: 'n', data: [1, 2] }] } }],
 ];
 
 describe('글자 크기는 호스트를 따른다', () => {
