@@ -11,6 +11,9 @@
 - `u-table-block` on a narrow host: the toolbar wraps instead of drawing the download buttons over the row count, and
   columns take their content width with a horizontal scroll instead of squeezing a long column until every row is
   several lines tall. On a wide host the table still fills the width.
+- `u-table-block` keeps its search box's committed search inside the block — with `@iyulab/components` 2.17 a
+  `search` event would otherwise leave the table, and a list source listening on an ancestor would take the table's own
+  filtering as its search.
 
 ### Added
 
