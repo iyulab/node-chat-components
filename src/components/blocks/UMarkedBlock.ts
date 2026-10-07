@@ -130,6 +130,7 @@ export class UMarkedBlock extends UElement {
     }
 
     const html = this.parser.parse(value, { async: false }) as string;
+    // html-sink: 파서 출력 — 원시 HTML 토큰은 글자로, 링크는 프로토콜 검사(모듈 주석 «렌더러 설정» 참조)
     return unsafeHTML(this.placeholder.restore(html));
   }
 
@@ -174,18 +175,15 @@ export class UMarkedBlock extends UElement {
     // 셀 안의 인용 센티널은 **JSON 직렬화 전에** 태그로 되돌린다. 직렬화 뒤 `render()` 의
     // 전체 복원에 맡기면 ref 태그의 따옴표와 중첩 `<script>` 가 JSON 문자열 안에 그대로 들어가
     // 표 데이터가 파싱되지 않는다(표가 통째로 빈다). 여기서 되돌리면 `JSON.stringify` 가 escape 한다.
-    const cellHtml = (cell: Tokens.TableCell) =>
-      this.placeholder.restore(cell.tokens ? Parser.parseInline(cell.tokens, this.parser.defaults) : cell.text);
-    const headers = token.header.map((h: Tokens.TableCell) => ({
-      text: cellHtml(h),
-      align: h.align
-    }));
-    const rows = token.rows.map((row: Tokens.TableCell[]) =>
-      row.map((cell) => ({
-        text: cellHtml(cell),
-        align: cell.align
-      }))
-    );
+    // 셀마다 서식 마크업(`html`, 화면)과 그 글자(`text`, 검색·정렬·내려받기)를 함께 싣는다 — 글자는 마크업을
+    // 비활성 문서로 파싱해 읽는다(스크립트·이벤트가 돌지 않는다).
+    const cell = (c: Tokens.TableCell) => {
+      const markup = this.placeholder.restore(c.tokens ? Parser.parseInline(c.tokens, this.parser.defaults) : c.text);
+      const text = new DOMParser().parseFromString(markup, 'text/html').body.textContent ?? '';
+      return { text, html: markup, align: c.align };
+    };
+    const headers = token.header.map(cell);
+    const rows = token.rows.map((row: Tokens.TableCell[]) => row.map(cell));
     return UTableBlock.buildHTML({ headers, rows });
   }
 

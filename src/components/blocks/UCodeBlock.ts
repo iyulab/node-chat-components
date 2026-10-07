@@ -43,7 +43,7 @@ export class UCodeBlock extends UElement {
           .value=${value}
         ></u-copy-button>
       </div>
-
+      <!-- html-sink: highlight.js output — it escapes the source text and adds only its own span markup -->
       <pre class="hljs">${unsafeHTML(hljs.highlight(value, { 
         language: lang
       }).value)}</pre>

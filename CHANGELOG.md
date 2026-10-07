@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.18.0] - 2026-10-07
+
+### Changed (breaking)
+
+- **`u-table-block` cell `text` is plain text.** It was rendered as HTML, so a string meant as text — a name, a
+  server value — injected markup, and search, sort and the CSV/XLS downloads read the tags too (a bold `9` sorted
+  after `10`; searching `strong` matched every bold cell; downloads carried `<strong>`). A formatted cell now gives
+  its markup in the new optional `html` field, used only for display. `u-marked-block` fills both, so markdown
+  tables look the same. **Migration:** if you passed markup in `text`, move it to `html` and put the plain text in
+  `text`.
+
+### Fixed
+
+- **Search highlighting no longer cuts markup.** It inserted `<mark>` into the cell's HTML string, splitting tags and
+  entities (searching `amp` broke `&amp;`). Matches are now painted with the CSS Custom Highlight API over the
+  rendered text; the DOM is unchanged.
+
 ## [0.17.5] - 2026-10-07
 
 ### Fixed

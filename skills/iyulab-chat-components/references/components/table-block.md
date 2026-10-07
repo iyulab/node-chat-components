@@ -56,7 +56,7 @@ There is no size property or custom property for this — the host is the lever.
 
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
-| `headers` | `TableCell[]` | `[]` | Header cells, each with `text` and `align` |
+| `headers` | `TableCell[]` | `[]` | Header cells, each with `text`, optional `html` and `align` |
 | `rows` | `TableCell[][]` | `[]` | Row data; each row is an array of `TableCell` |
 
 ## CSS Parts
@@ -70,15 +70,21 @@ There is no size property or custom property for this — the host is the lever.
 ```ts
 interface TableCell {
   text: string;
+  html?: string;
   align: 'left' | 'center' | 'right' | null;
 }
 ```
+
+`text` is plain text: it is shown as written (markup in it appears as characters), and search, sort and the
+CSV/XLS downloads use it. For a formatted cell, also give `html` — trusted markup that only the screen uses; search,
+sort and downloads still read `text`. `u-marked-block` fills both from its markdown renderer. Never put an untrusted
+string in `html`.
 
 ## Features
 
 | Feature | Description |
 |---------|-------------|
 | Column sort | Click a header to sort asc/desc |
-| Search filter | Search bar filters rows (debounced) |
+| Search filter | Search bar filters rows by `text` (debounced) and highlights the matches without changing the cell markup (CSS Custom Highlight API; no highlight where the browser lacks it) |
 | CSV download | Downloads current filtered/sorted data as CSV |
 | XLS download | Downloads as Excel file |

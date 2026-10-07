@@ -14,6 +14,12 @@ export const styles = css`
     overflow: hidden;
   }
 
+  /* 검색어 하이라이트(UTableBlock 의 공유 Highlight) — 종전 <mark> 와 같은 시스템 색. */
+  ::highlight(u-table-block-search) {
+    background-color: Mark;
+    color: MarkText;
+  }
+
   .toolbar {
     flex: none;
     display: flex;
