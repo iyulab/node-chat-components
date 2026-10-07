@@ -107,6 +107,27 @@ describe('u-table-block — 기본 상한 480px, 호스트 제약이 이긴다',
   });
 });
 
+describe('u-table-block — 상한은 --table-block-max-height 로 바꾼다', () => {
+  // 호스트 max-height 는 줄이기만 한다 — 래퍼의 상한(480)보다 크게 주거나 none 을 주어도 래퍼가 480 에서 멈춘다.
+  // 이미 스크롤되는 채팅 기록 안에서는 표가 펼쳐지는 것이 맞는데(중첩 스크롤은 휠·터치를 가로챈다) 끌 길이 없었다.
+  it('🔴none 이면 표가 펼쳐진다 — 표 영역에 세로 스크롤이 없다', async () => {
+    const el = await mountTable(40, '--table-block-max-height:none');
+    const wrapper = part(el, '.table-wrapper');
+    expect(h(wrapper), '상한 없음').toBeGreaterThan(CAP);
+    expect(wrapper.scrollHeight - wrapper.clientHeight, '세로로 넘치지 않는다').toBeLessThanOrEqual(1);
+  });
+
+  it('🔴더 큰 값이면 그 값에서 멈춘다', async () => {
+    const el = await mountTable(40, '--table-block-max-height:640px');
+    expect(h(part(el, '.table-wrapper'))).toBe(640);
+  });
+
+  it('NEGATIVE 호스트에 상한보다 큰 max-height 만 주면 여전히 기본 상한이다(그 지렛대는 줄이기만 한다)', async () => {
+    const el = await mountTable(40, 'max-height:900px');
+    expect(h(part(el, '.table-wrapper'))).toBe(CAP);
+  });
+});
+
 describe('u-code-block — 세로 상한이 없다(의도)', () => {
   it('긴 코드는 접히지 않고 내용만큼 자란다 — 세로 스크롤을 만들지 않는다', async () => {
     const el = document.createElement('u-code-block') as El & { value?: string; lang?: string };

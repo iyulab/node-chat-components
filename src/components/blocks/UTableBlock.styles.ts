@@ -68,8 +68,9 @@ export const styles = css`
     overflow-x: auto;
     overflow-y: auto;
     /* 제약이 없을 때의 기본 상한 — 채팅 스트림에서 긴 표가 화면을 삼키지 않게 한다.
-       «최대» 이므로 위 flex 수축을 막지 않는다(호스트 제약이 이긴다). */
-    max-height: 480px;
+       «최대» 이므로 위 flex 수축을 막지 않는다(호스트 제약이 이긴다). 호스트 max-height 는 줄이기만 하므로
+       상한을 늘리거나 끄는 자리는 커스텀 속성이다 — 이미 스크롤되는 기록 안에서는 none(중첩 스크롤 없음). */
+    max-height: var(--table-block-max-height, 480px);
     width: 100%;
   }
 

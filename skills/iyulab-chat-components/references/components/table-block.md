@@ -50,7 +50,13 @@ scrolls, so no rows become unreachable:
 u-table-block { max-height: 200px; }
 ```
 
-There is no size property or custom property for this — the host is the lever.
+The host can only shrink the table. To raise the cap or turn it off, set `--table-block-max-height` —
+`none` inside a list that already scrolls, such as a chat transcript, so the table unfolds and only scrolls
+sideways (a second vertical scroll inside a scrolling list takes the wheel and touch scroll from the page):
+
+```css
+.transcript u-table-block { --table-block-max-height: none; }
+```
 
 ## Properties
 
@@ -58,6 +64,12 @@ There is no size property or custom property for this — the host is the lever.
 |----------|------|---------|-------------|
 | `headers` | `TableCell[]` | `[]` | Header cells, each with `text`, optional `html` and `align` |
 | `rows` | `TableCell[][]` | `[]` | Row data; each row is an array of `TableCell` |
+
+## CSS Custom Properties
+
+| Property | Default | Description |
+|----------|---------|-------------|
+| `--table-block-max-height` | `480px` | The table area's height cap; `none` turns it off. A host `max-height` still wins when smaller |
 
 ## CSS Parts
 

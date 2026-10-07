@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.20.0] - 2026-10-07
+
+### Added
+
+- **`--table-block-max-height`** on `u-table-block` — the table area's height cap (default `480px`). A host
+  `max-height` could shrink the table but not raise the cap or turn it off, so inside a list that already scrolls
+  (a chat transcript) a long table always got a second vertical scroll of its own. `none` unfolds it.
+
 ## [0.19.1] - 2026-10-07
 
 ### Documentation
