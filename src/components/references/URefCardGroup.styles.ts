@@ -47,7 +47,7 @@ export const styles = css`
   }
 
   .page-indicator {
-    font-size: calc(12em / 16);
+    font-size: max(var(--chat-min-font-size, 0px), calc(12em / 16));
     font-weight: 600;
   }
 

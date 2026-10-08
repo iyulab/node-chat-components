@@ -75,12 +75,12 @@ export const styles = css`
   }
   .header .status {
     display: inline-flex;
-    font-size: calc(12em / 16);
+    font-size: max(var(--chat-min-font-size, 0px), calc(12em / 16));
     color: var(--u-txt-color-strong);
   }
   .header .lang {
     font-family: Arial, Helvetica, sans-serif;
-    font-size: calc(12em / 16);
+    font-size: max(var(--chat-min-font-size, 0px), calc(12em / 16));
     font-weight: 300;
     color: var(--u-txt-color-strong);
   }
@@ -96,7 +96,7 @@ export const styles = css`
     padding: 0;
     color: var(--hljs-text-color);
     font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
-    font-size: calc(14em / 16);
+    font-size: max(var(--chat-min-font-size, 0px), calc(14em / 16));
     line-height: 1.45;
     white-space: pre;
     overflow: auto;

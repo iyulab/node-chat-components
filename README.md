@@ -112,6 +112,22 @@ markedBlock.value = llmResponse;
 
 ---
 
+## Type size
+
+Blocks size their text in `em`, so they follow the type size of the place they sit in (a chat panel at 13px gets
+proportionally smaller blocks). Secondary text — table toolbars, code-block headers, file metadata, citation badges,
+captions — is smaller than the surrounding text. A host with a minimum type size sets one property and no block
+text goes below it:
+
+```css
+.chat-panel { --chat-min-font-size: 12px; }
+```
+
+It is unset by default (no floor). It applies to text, not to icon sizes, and reaches blocks inside `u-marked-block`
+by inheritance. `u-table-block` also exposes its two sizes — see its reference.
+
+---
+
 ## Accessibility
 
 The baseline is **WCAG 2.2**. The table lists what this package **measures in tests** — it is not a

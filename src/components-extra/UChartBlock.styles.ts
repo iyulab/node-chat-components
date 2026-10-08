@@ -42,7 +42,7 @@ export const styles = css`
   }
 
   .toolbar-right u-button {
-    font-size: calc(12em / 16);
+    font-size: max(var(--chat-min-font-size, 0px), calc(12em / 16));
   }
   .toolbar-right u-button.fullscreen-btn {
     font-size: calc(15em / 16);
@@ -87,7 +87,7 @@ export const styles = css`
     border: 1px solid var(--u-danger-color-weakest, #EF9A9A);
     border-radius: 6px;
     color: var(--u-danger-color-strong, #C62828);
-    font-size: calc(12em / 16);
+    font-size: max(var(--chat-min-font-size, 0px), calc(12em / 16));
     pointer-events: none;
   }
 

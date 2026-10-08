@@ -1,5 +1,16 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- **`--chat-min-font-size`** — a floor for every block's text (unset by default). Secondary text is a fixed smaller
+  ratio of the surrounding text — `u-ref-tag` 10/16, file metadata 10/14, code-block headers, table toolbars and
+  `u-ref-card` badges and tags 12/16 — so a host with a minimum type size could not keep it above that minimum: a
+  citation badge in a 14px chat was 8.75px. Set on the host or an ancestor, it reaches every block's text, including
+  blocks inside `u-marked-block`; icon sizes are not floored. It also bounds `u-table-block`'s
+  `--table-block-font-size` and `--table-block-meta-font-size` from below.
+
 ## [0.22.0] - 2026-10-08
 
 ### Added

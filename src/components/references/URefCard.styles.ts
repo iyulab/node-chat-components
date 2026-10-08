@@ -41,7 +41,7 @@ export const styles = css`
   }
 
   .title {
-    font-size: calc(14em / 16);
+    font-size: max(var(--chat-min-font-size, 0px), calc(14em / 16));
     font-weight: 600;
     line-height: 1.4;
     white-space: nowrap;
@@ -54,7 +54,7 @@ export const styles = css`
     flex-direction: row;
     align-items: center;
     gap: 4px;
-    font-size: calc(12em / 16);
+    font-size: max(var(--chat-min-font-size, 0px), calc(12em / 16));
     line-height: 1;
     font-weight: 600;
     padding: 4px 8px;
@@ -76,7 +76,7 @@ export const styles = css`
   .body {
     display: -webkit-box;
     color: var(--u-txt-color-weak);
-    font-size: calc(12em / 16);
+    font-size: max(var(--chat-min-font-size, 0px), calc(12em / 16));
     line-height: 1.5;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
@@ -98,7 +98,7 @@ export const styles = css`
   .preview-blocked {
     margin-top: 8px;
     color: var(--u-txt-color-weak);
-    font-size: calc(12em / 16);
+    font-size: max(var(--chat-min-font-size, 0px), calc(12em / 16));
     line-height: 1.5;
   }
 
@@ -110,7 +110,7 @@ export const styles = css`
   }
 
   .tag {
-    font-size: calc(10em / 16);
+    font-size: max(var(--chat-min-font-size, 0px), calc(10em / 16));
     line-height: 1.4;
     color: var(--u-txt-color-weak);
     background: var(--u-neutral-100);

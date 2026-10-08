@@ -24,7 +24,9 @@ export const styles = css`
      값은 16px 문맥에서 종전 리터럴과 같게 calc(<px>em / <부모 px>) 로 적는다.
      두 크기는 소비자가 바꿀 수 있다 — 셀은 --table-block-font-size, 툴바(검색 · 행 수 · 내려받기)는
      --table-block-meta-font-size. 비율이 상수면 최소 글자 크기를 둔 호스트가 툴바만 그 아래로 내려가는 것을
-     막을 길이 없다(섀도 안이라 바깥 CSS 는 상속만 닿는다). 값의 em 은 쓰이는 자리에서 풀린다 — max(12px, 0.75em) 처럼. */
+     막을 길이 없다(섀도 안이라 바깥 CSS 는 상속만 닿는다). 값의 em 은 쓰이는 자리에서 풀린다 — max(12px, 0.75em) 처럼.
+     패키지의 글자 하한 --chat-min-font-size(기본 없음)는 그 위에 걸린다 — 블록마다 글자를 담는 font-size 는
+     전부 max(var(--chat-min-font-size, 0px), …) 이다. 아이콘 크기(정렬 화살표 · 지우기 단추)는 글자가 아니라 걸지 않는다. */
   /*
      툴바는 줄바꿈한다 — 폭이 모자라면 내려받기 묶음이 다음 줄로 가고, 종전처럼 행 수 표기 위에 겹쳐 그려지지 않는다. */
   .toolbar {
@@ -52,11 +54,11 @@ export const styles = css`
     flex: 1 1 8em;
     min-width: 0;
     max-width: 200px;
-    font-size: var(--table-block-meta-font-size, calc(12em / 16));
+    font-size: max(var(--chat-min-font-size, 0px), var(--table-block-meta-font-size, calc(12em / 16)));
   }
 
   .toolbar-count {
-    font-size: var(--table-block-meta-font-size, calc(12em / 16));
+    font-size: max(var(--chat-min-font-size, 0px), var(--table-block-meta-font-size, calc(12em / 16)));
     white-space: nowrap;
     color: var(--u-txt-color-weak);
   }
@@ -70,7 +72,7 @@ export const styles = css`
   }
 
   .toolbar-right u-button {
-    font-size: var(--table-block-meta-font-size, calc(12em / 16));
+    font-size: max(var(--chat-min-font-size, 0px), var(--table-block-meta-font-size, calc(12em / 16)));
     padding: 0.25em 0.5em;
   }
 
@@ -94,7 +96,7 @@ export const styles = css`
     width: max-content;
     min-width: 100%;
     border-collapse: collapse;
-    font-size: var(--table-block-font-size, calc(14em / 16));
+    font-size: max(var(--chat-min-font-size, 0px), var(--table-block-font-size, calc(14em / 16)));
   }
 
   .cell {

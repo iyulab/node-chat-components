@@ -48,7 +48,7 @@ export const styles = css`
     box-sizing: border-box;
     border: 1px dashed var(--u-border-color, #E0E0E0);
     color: var(--u-txt-color-weak, #616161);
-    font-size: 0.8em;
+    font-size: max(var(--chat-min-font-size, 0px), 0.8em);
     text-align: center;
     cursor: default;
   }
@@ -60,7 +60,7 @@ export const styles = css`
     right: 0;
     padding: 20px 10px 8px;
     color: white;
-    font-size: 0.8em;
+    font-size: max(var(--chat-min-font-size, 0px), 0.8em);
     line-height: 1.3;
     background: linear-gradient(transparent, rgba(0, 0, 0, 0.55));
   }
@@ -90,7 +90,7 @@ export const styles = css`
 
   .lb-counter {
     color: rgba(255, 255, 255, 0.75);
-    font-size: 0.875em;
+    font-size: max(var(--chat-min-font-size, 0px), 0.875em);
     font-variant-numeric: tabular-nums;
     background: rgba(0, 0, 0, 0.35);
     padding: 3px 12px;

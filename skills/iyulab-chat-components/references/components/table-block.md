@@ -74,6 +74,9 @@ inheritance:
 .chat-panel { --table-block-meta-font-size: max(12px, 0.75em); }
 ```
 
+For a floor across every block, not just the table, set the package's `--chat-min-font-size` instead — it also
+bounds these two properties from below.
+
 Columns take their content width and the table scrolls sideways when it is wider than the host, so a long column
 off to the right does not squeeze into a narrow column and make every row several lines tall. A cell wraps only
 past `--table-block-cell-max-width` (default `32em`); `none` keeps every cell on one line. On a wide host the table

@@ -7,6 +7,8 @@ import '../../src/components/references/URefCard.js';
 import '../../src/components/references/URefTag.js';
 import '../../src/components/references/URefCardGroup.js';
 import '../../src/components-extra/UChartBlock.js';
+import '../../src/components-extra/UImagesBlock.js';
+import '../../src/components/blocks/URefBlock.js';
 import type { UTableBlock, TableCell } from '../../src/components/blocks/UTableBlock.js';
 
 /**
@@ -154,6 +156,49 @@ describe('글자 크기는 호스트를 따른다', () => {
     await table!.updateComplete;
     const td = table!.shadowRoot!.querySelector('td')!;
     expect(parseFloat(getComputedStyle(td).fontSize)).toBeCloseTo(13 * 14 / 16, 1);
+  });
+});
+
+/** 섀도 안에서 글자를 직접 담은 요소(공백 아닌 글 노드를 자식으로 가진 요소)의 계산된 글자 크기. */
+function textSizes(el: Element): Array<{ name: string; size: number }> {
+  const out: Array<{ name: string; size: number }> = [];
+  const label = (n: Element) => n.tagName.toLowerCase() + (n.classList.length ? '.' + [...n.classList].join('.') : '');
+  for (const node of el.shadowRoot!.querySelectorAll('*')) {
+    if (node.tagName === 'STYLE' || node.closest('u-tooltip')) continue;
+    const hasText = [...node.childNodes].some((c) => c.nodeType === Node.TEXT_NODE && c.textContent!.trim() !== '');
+    if (hasText) out.push({ name: label(node), size: parseFloat(getComputedStyle(node).fontSize) });
+  }
+  return out;
+}
+
+const PIXEL = 'data:image/gif;base64,R0lGODlhAQABAAAAACw=';
+const floorBlocks: Array<[string, Record<string, unknown>]> = [
+  ...blocks,
+  ['u-ref-block', { title: 'Sources', sources: [{ type: 'web', url: 'https://example.com/a', title: 'A', snippet: 'a' }] }],
+  ['u-images-block', { items: [{ src: PIXEL, alt: 'a', caption: 'Caption' }] }],
+];
+
+describe('글자 하한 --chat-min-font-size', () => {
+  for (const [tag, props] of floorBlocks) {
+    it(`${tag} — 14px 문맥에서 하한 12px 이면 섀도 안의 모든 글자가 12px 이상`, async () => {
+      wrap.style.setProperty('--chat-min-font-size', '12px');
+      const el = await mount(tag, props, '14px');
+      const sizes = textSizes(el);
+      expect(sizes.length).toBeGreaterThan(0);
+      expect(sizes.filter((s) => s.size < 12 - 0.01)).toEqual([]);
+    });
+  }
+
+  it('하한이 없으면 종전 크기 — 14px 문맥의 u-ref-tag 는 8.75px', async () => {
+    const el = await mount('u-ref-tag', { href: 'https://example.com' }, '14px');
+    expect(parseFloat(getComputedStyle(el).fontSize)).toBeCloseTo(14 * 10 / 16, 2);
+  });
+
+  it('하한은 표 속성 위에도 걸린다 — --table-block-meta-font-size 가 더 작아도 하한이 이긴다', async () => {
+    wrap.style.setProperty('--chat-min-font-size', '12px');
+    wrap.style.setProperty('--table-block-meta-font-size', '8px');
+    const el = await mount('u-table-block', tableData(2), '14px');
+    expect(getComputedStyle(el.shadowRoot!.querySelector('.toolbar-count')!).fontSize).toBe('12px');
   });
 });
 

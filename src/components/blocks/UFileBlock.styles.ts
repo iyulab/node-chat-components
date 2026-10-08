@@ -6,7 +6,7 @@ export const styles = css`
     display: block;
     min-width: 0;
     max-width: 200px;
-    font-size: calc(14em / 16);
+    font-size: max(var(--chat-min-font-size, 0px), calc(14em / 16));
   }
 
   .card {
@@ -82,7 +82,7 @@ export const styles = css`
 
   .name {
     display: block;
-    font-size: calc(13em / 14);
+    font-size: max(var(--chat-min-font-size, 0px), calc(13em / 14));
     font-weight: 500;
     color: var(--u-txt-color-strong);
     white-space: nowrap;
@@ -96,7 +96,7 @@ export const styles = css`
     align-items: center;
     gap: 6px;
     color: var(--u-txt-color-weak);
-    font-size: calc(10em / 14);
+    font-size: max(var(--chat-min-font-size, 0px), calc(10em / 14));
   }
 
   .type {
@@ -157,7 +157,7 @@ export const styles = css`
 
   .preview-name {
     color: rgba(255, 255, 255, 0.85);
-    font-size: 0.875em;
+    font-size: max(var(--chat-min-font-size, 0px), 0.875em);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

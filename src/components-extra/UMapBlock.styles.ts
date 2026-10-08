@@ -50,10 +50,10 @@ export const styles = css`
     background: rgba(0, 0, 0, 0.8);
   }
   .caption strong {
-    font-size: 0.8em;
+    font-size: max(var(--chat-min-font-size, 0px), 0.8em);
   }
   .caption span {
-    font-size: 0.7em;
+    font-size: max(var(--chat-min-font-size, 0px), 0.7em);
     opacity: 0.8;
   }
   /* 새 창 알림 — 화면에는 없고 접근성 이름에만 붙는다(KWCAG 7.2.1). */

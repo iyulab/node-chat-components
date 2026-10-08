@@ -90,3 +90,14 @@ Not part of the core entrypoint — see [./references/extra-system.md](./referen
 | `send` | `u-prompt` | `SendEventDetail` (`{ value, files? }`) | Send button clicked or Enter pressed. Non-bubbling |
 | `stop` | `u-prompt` | `StopEventDetail` (`{}`) | Stop button clicked while loading. Non-bubbling |
 | `remove` | `u-file-block` | `RemoveEventDetail` | Remove button clicked |
+
+## Type size
+
+Block text is sized in `em` and follows the surrounding text; secondary text (toolbars, headers, file metadata,
+citation badges, captions) is a smaller ratio of it. `--chat-min-font-size` (unset by default) is a floor for every
+block's text — set it on the host or any ancestor, it reaches blocks inside `u-marked-block` by inheritance. Icon
+sizes are not floored.
+
+```css
+.chat-panel { --chat-min-font-size: 12px; }
+```

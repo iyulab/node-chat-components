@@ -53,7 +53,7 @@ export const styles = css`
 
   .count {
     color: inherit;
-    font-size: 0.75em;
+    font-size: max(var(--chat-min-font-size, 0px), 0.75em);
     font-weight: 400;
     line-height: 2em;
   }
