@@ -117,6 +117,34 @@ describe('글자 크기는 호스트를 따른다', () => {
     expect(getComputedStyle(root.querySelector('.toolbar-count')!).fontSize).toBe('12px');
   });
 
+  it('표의 두 글자 크기는 커스텀 속성으로 바꾼다 — 셀 --table-block-font-size · 툴바 --table-block-meta-font-size', async () => {
+    // 최소 글자 크기를 둔 호스트: 툴바는 12px 아래로 내려가지 않고, 셀은 본문과 같다. em 은 쓰이는 자리에서 풀린다.
+    // 마운트 전에 조상에 둔다 — 붙인 뒤 바꾸면 u-button 의 전환이 중간값을 보여 준다.
+    wrap.style.setProperty('--table-block-meta-font-size', 'max(12px, 0.75em)');
+    wrap.style.setProperty('--table-block-font-size', '1em');
+    const el = await mount('u-table-block', tableData(2), '14px');
+    const root = el.shadowRoot!;
+    expect(getComputedStyle(root.querySelector('td')!).fontSize).toBe('14px');
+    for (const sel of ['.toolbar-count', '.toolbar-search', '.toolbar-right u-button']) {
+      expect([sel, getComputedStyle(root.querySelector(sel)!).fontSize]).toEqual([sel, '12px']);
+    }
+    // 정렬 아이콘은 셀 글자 크기를 따른다(14 → 12 비율 그대로).
+    expect(parseFloat(getComputedStyle(root.querySelector('.sort-icon')!).fontSize)).toBeCloseTo(14 * 12 / 14, 1);
+  });
+
+  it('커스텀 속성은 마크다운 블록 섀도 안의 표에도 닿는다 — 바깥에서 상속으로', async () => {
+    wrap.style.setProperty('--table-block-meta-font-size', '12px');
+    const md = await mount('u-marked-block', { value: ['| A | B |', '|---|---|', '| 1 | 2 |'].join('\n') });
+    md.style.fontSize = '13px';
+    await settle();
+    const table = md.shadowRoot!.querySelector('u-table-block') as UTableBlock | null;
+    expect(table).not.toBeNull();
+    await table!.updateComplete;
+    // 메타만 고정값으로, 셀은 그대로 호스트 비율(13px 의 14/16).
+    expect(getComputedStyle(table!.shadowRoot!.querySelector('.toolbar-count')!).fontSize).toBe('12px');
+    expect(parseFloat(getComputedStyle(table!.shadowRoot!.querySelector('td')!).fontSize)).toBeCloseTo(13 * 14 / 16, 1);
+  });
+
   it('마크다운 호스트에 준 글자 크기를 그 안의 표가 따른다', async () => {
     const md = await mount('u-marked-block', { value: ['| A | B |', '|---|---|', '| 1 | 2 |'].join('\n') });
     md.style.fontSize = '13px';

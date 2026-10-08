@@ -64,6 +64,16 @@ The block takes its type size from where it sits: text is sized in `em`, so a ch
 `font-size: 13px` on the surrounding `u-marked-block` (or any ancestor) gets a proportionally smaller table and
 toolbar. In a 16px context the sizes are 14px (cells) and 12px (toolbar).
 
+The two sizes are `--table-block-font-size` (cells, default `calc(14em / 16)`) and `--table-block-meta-font-size`
+(the search box, row count and download buttons, default `calc(12em / 16)`). An `em` in the value resolves where it
+is used, so a host with a minimum type size keeps the toolbar from going below it while the table still follows the
+surrounding text. Set the properties on the block or any ancestor — they reach a table inside `u-marked-block` by
+inheritance:
+
+```css
+.chat-panel { --table-block-meta-font-size: max(12px, 0.75em); }
+```
+
 Columns take their content width and the table scrolls sideways when it is wider than the host, so a long column
 off to the right does not squeeze into a narrow column and make every row several lines tall. A cell wraps only
 past `--table-block-cell-max-width` (default `32em`); `none` keeps every cell on one line. On a wide host the table
@@ -87,6 +97,8 @@ one line, the download buttons move to a second line.
 |----------|---------|-------------|
 | `--table-block-max-height` | `480px` | The table area's height cap; `none` turns it off. A host `max-height` still wins when smaller |
 | `--table-block-cell-max-width` | `32em` | The widest a body cell grows before its text wraps; `none` keeps cells on one line |
+| `--table-block-font-size` | `calc(14em / 16)` | The table's type size (header and body cells) |
+| `--table-block-meta-font-size` | `calc(12em / 16)` | The toolbar's type size — search box, row count and download buttons |
 
 ## CSS Parts
 

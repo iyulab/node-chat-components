@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.22.0] - 2026-10-08
+
+### Added
+
+- **`--table-block-font-size`** and **`--table-block-meta-font-size`** on `u-table-block` — the table's type size
+  (default `calc(14em / 16)`) and the toolbar's (search box, row count and download buttons, default
+  `calc(12em / 16)`). The sizes were fixed ratios of the surrounding text, so a host with a minimum type size could not
+  keep the toolbar above it without enlarging all of its text. An `em` in the value resolves where it is used —
+  `max(12px, 0.75em)` keeps the toolbar at 12px or more and still follows the host. Defaults are unchanged.
+
 ## [0.21.0] - 2026-10-08
 
 ### Fixed

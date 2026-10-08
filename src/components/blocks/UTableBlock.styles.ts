@@ -22,6 +22,10 @@ export const styles = css`
 
   /* 글자 크기는 전부 em 이다 — 블록은 놓인 자리(채팅 패널 13px · 페이지 16px)의 글자 크기를 따른다.
      값은 16px 문맥에서 종전 리터럴과 같게 calc(<px>em / <부모 px>) 로 적는다.
+     두 크기는 소비자가 바꿀 수 있다 — 셀은 --table-block-font-size, 툴바(검색 · 행 수 · 내려받기)는
+     --table-block-meta-font-size. 비율이 상수면 최소 글자 크기를 둔 호스트가 툴바만 그 아래로 내려가는 것을
+     막을 길이 없다(섀도 안이라 바깥 CSS 는 상속만 닿는다). 값의 em 은 쓰이는 자리에서 풀린다 — max(12px, 0.75em) 처럼. */
+  /*
      툴바는 줄바꿈한다 — 폭이 모자라면 내려받기 묶음이 다음 줄로 가고, 종전처럼 행 수 표기 위에 겹쳐 그려지지 않는다. */
   .toolbar {
     flex: none;
@@ -48,11 +52,11 @@ export const styles = css`
     flex: 1 1 8em;
     min-width: 0;
     max-width: 200px;
-    font-size: calc(12em / 16);
+    font-size: var(--table-block-meta-font-size, calc(12em / 16));
   }
 
   .toolbar-count {
-    font-size: calc(12em / 16);
+    font-size: var(--table-block-meta-font-size, calc(12em / 16));
     white-space: nowrap;
     color: var(--u-txt-color-weak);
   }
@@ -66,7 +70,7 @@ export const styles = css`
   }
 
   .toolbar-right u-button {
-    font-size: calc(12em / 16);
+    font-size: var(--table-block-meta-font-size, calc(12em / 16));
     padding: 0.25em 0.5em;
   }
 
@@ -90,7 +94,7 @@ export const styles = css`
     width: max-content;
     min-width: 100%;
     border-collapse: collapse;
-    font-size: calc(14em / 16);
+    font-size: var(--table-block-font-size, calc(14em / 16));
   }
 
   .cell {
