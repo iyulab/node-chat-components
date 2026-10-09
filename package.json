@@ -88,6 +88,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@iyulab/components": "^2.19.0",
     "@types/node": "^26.1.1",
     "@vitest/browser-playwright": "^5.0.0",
     "chart.js": "^4.5.1",
