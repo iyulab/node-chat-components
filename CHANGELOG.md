@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Comments inside the components' `css` styles are no longer shipped. A tagged template's body is a string, so a
+  consumer's bundler could not remove them; they were design notes, sent to every browser.
+
 ### Added
 
 - **`--chat-min-font-size`** — a floor for every block's text (unset by default). Secondary text is a fixed smaller
