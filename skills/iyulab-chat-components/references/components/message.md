@@ -10,17 +10,17 @@ Chat message wrapper component. Arranges content blocks via slots, shows a loadi
 
 ```html
 <!-- Default AI message -->
-<u-message>
+<u-message author="assistant">
   <u-marked-block .value=${"## Hello\nMarkdown here."}></u-marked-block>
 </u-message>
 
 <!-- User message (right-aligned, bubble style) -->
-<u-message position="right" variant="bubble">
+<u-message author="user" position="right" variant="bubble">
   <u-text-block .value=${"Hello!"}></u-text-block>
 </u-message>
 
 <!-- Loading state (streaming) -->
-<u-message loading>
+<u-message author="assistant" loading>
   <u-marked-block .value=${"Streaming..."}></u-marked-block>
 </u-message>
 
@@ -59,6 +59,16 @@ block overflows **visibly** rather than clipping. Constrain the stream, not the 
 | `loading` | `boolean` | `false` | ✓ | Loading state. Shows three-dot animation; hides `footer` slot |
 | `variant` | `'default'\|'bubble'` | `'default'` | ✓ | Visual style |
 | `position` | `'left'\|'right'` | `'left'` | ✓ | Message alignment |
+| `author` | `'user'\|'assistant'\|'system'` | — | ✓ | Who is speaking. Read to assistive technology before the content («AI assistant:», «You:»), not shown. Skipped when the `header` slot has content — that is the visible name |
+| `authorLabel` (`author-label`) | `string` | — | | Replaces the default name for `author` (e.g. the assistant's product name) |
+
+## Accessibility
+
+`position` is visual only, so set `author` on every message: a screen reader user hears who said each one.
+While `loading`, the body is `aria-busy="true"` and the three-dot loader is named «Generating a response»
+(the drawing itself is hidden). Names come from the locale registry (`authorUser` · `authorAssistant` ·
+`authorSystem` · `generating`). Put the conversation in a container with `role="log"` so new messages are
+announced — the container is yours, not this component's.
 
 ## CSS Parts
 

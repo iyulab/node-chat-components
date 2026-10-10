@@ -31,7 +31,9 @@ export type ChatMessageKey =
   | 'imageBlockedNamed'
   | 'opensInNewTab'
   | 'textBlock'
-  | 'references';
+  | 'references'
+  | 'authorUser' | 'authorAssistant' | 'authorSystem' | 'speakerPrefix'
+  | 'generating';
 
 export const messages = Locale.namespace<ChatMessageKey>('@iyulab/chat-components');
 
@@ -66,6 +68,13 @@ messages.register('en', {
   imageBlockedNamed: 'Image blocked: {name}',
   // 새 창으로 여는 링크의 접근성 이름 끝에 붙는다(화면에는 보이지 않는다).
   opensInNewTab: '(opens in a new tab)',
+  // 메시지 발화자 — 보조기기에 본문 앞에 읽힌다(화면에는 보이지 않는다). `speakerPrefix` 의 `{name}` 이 그 이름.
+  authorUser: 'You',
+  authorAssistant: 'AI assistant',
+  authorSystem: 'System',
+  speakerPrefix: '{name}:',
+  // 응답이 만들어지는 동안 로더의 이름.
+  generating: 'Generating a response',
 });
 
 messages.register('ko', {
@@ -94,4 +103,9 @@ messages.register('ko', {
   imageBlocked: '차단된 이미지',
   imageBlockedNamed: '차단된 이미지: {name}',
   opensInNewTab: '(새 창에서 열림)',
+  authorUser: '나',
+  authorAssistant: 'AI 어시스턴트',
+  authorSystem: '시스템',
+  speakerPrefix: '{name}:',
+  generating: '응답 생성 중',
 });

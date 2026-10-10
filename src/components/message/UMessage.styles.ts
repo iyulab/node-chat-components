@@ -17,6 +17,8 @@ export const styles = css`
   }
 
   .body {
+    /* 숨은 이름(.visually-hidden — 절대 위치)이 본문 안에 갇히게 — 바깥 넘침 클리핑을 벗어나지 않는다. */
+    position: relative;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -36,6 +38,19 @@ export const styles = css`
   }
   .body[variant="bubble"][position="right"] {
     border-bottom-right-radius: 4px;
+  }
+
+  /* 보조기기에만 — 절대 위치라 flex 간격(gap)을 만들지 않는다. */
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
   }
 
   .dot-loader {
