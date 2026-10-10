@@ -60,7 +60,7 @@ block overflows **visibly** rather than clipping. Constrain the stream, not the 
 | `variant` | `'default'\|'bubble'` | `'default'` | ✓ | Visual style |
 | `position` | `'left'\|'right'` | `'left'` | ✓ | Message alignment |
 | `author` | `'user'\|'assistant'\|'system'` | — | ✓ | Who is speaking. Read to assistive technology before the content («AI assistant:», «You:»), not shown. Skipped when the `header` slot has content — that is the visible name |
-| `authorLabel` (`author-label`) | `string` | — | | Replaces the default name for `author` (e.g. the assistant's product name) |
+| `authorLabel` | `string` | — | | Replaces the default name for `author` (e.g. the assistant's product name). Attribute: `author-label` |
 
 ## Accessibility
 
