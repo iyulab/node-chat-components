@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.24.0] - 2026-10-10
+
+### Added
+
+- `u-message` `author` (`'user'` | `'assistant'` | `'system'`) says who is speaking: a name is read to assistive
+  technology before the content («AI assistant:», «You:») and is not shown. `position` only showed it visually.
+  The name is skipped when the `header` slot has content — that is the visible name. `author-label` replaces the
+  default name, for example with the assistant's product name. Names come from the locale registry (`authorUser`,
+  `authorAssistant`, `authorSystem`).
+
+### Changed
+
+- While `loading`, the `u-message` body is `aria-busy="true"` and the loader is named «Generating a response»
+  (locale key `generating`); the three dots are hidden from assistive technology.
+
 ## [0.23.0] - 2026-10-09
 
 ### Changed
