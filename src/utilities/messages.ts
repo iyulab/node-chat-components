@@ -102,7 +102,7 @@ messages.register('ko', {
   previewFile: '{name} 미리보기',
   imageBlocked: '차단된 이미지',
   imageBlockedNamed: '차단된 이미지: {name}',
-  opensInNewTab: '(새 창에서 열림)',
+  opensInNewTab: ', 새 창에서 열림',
   authorUser: '나',
   authorAssistant: 'AI 어시스턴트',
   authorSystem: '시스템',

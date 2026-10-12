@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.25.1] - 2026-10-12
+
+### Fixed
+
+- **Blocks that render links are no longer announced as "clickable".** The `link-activate` delegation listened on the
+  host element, and Chromium exposes an element with a click listener as clickable — NVDA said «clickable» each time
+  focus entered a block, before the link itself. It now listens on the shadow root, which is not an element; activating
+  a link still raises `link-activate` as before.
+- The Korean hidden new-tab hint reads `, 새 창에서 열림` instead of `(새 창에서 열림)`. NVDA's Korean symbol table speaks
+  parentheses at the default punctuation level, so every new-tab link was announced as «… 여는 괄호 새 창에서 열림 닫는
+  괄호 …»; a comma is only a pause there.
+
 ## [0.25.0] - 2026-10-12
 
 ### Changed

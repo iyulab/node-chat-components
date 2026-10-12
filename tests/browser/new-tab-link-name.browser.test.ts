@@ -43,7 +43,7 @@ describe('chat-components 새 창 링크의 접근성 이름', () => {
     Locale.set('ko');
     document.body.innerHTML = '<u-ref-tag href="https://example.com/a">2</u-ref-tag>';
     await settle('u-ref-tag');
-    await expect.element(page.getByRole('link', { name: '2 (새 창에서 열림)' })).toBeInTheDocument();
+    await expect.element(page.getByRole('link', { name: /^2 ?, 새 창에서 열림$/ })).toBeInTheDocument();
   });
 
   it('알림은 화면에 보이지 않는다 — 1px 로 잘린다', async () => {
