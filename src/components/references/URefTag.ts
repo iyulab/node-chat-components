@@ -9,12 +9,18 @@ import '../../utilities/icons.js';
 import { styles } from './URefTag.styles.js';
 import { sanitizeHref } from '../../utilities/sanitizers.js';
 import { messages } from '../../utilities/messages.js';
+import { LinkActivationController } from '../../utilities/LinkActivation.js';
 
 /**
  * 인용 태그 컴포넌트입니다.
+ *
+ * @event link-activate - 사람이 렌더된 링크를 활성화했다(클릭 · 가운데 클릭 · Enter). 취소 가능 — 막으면 브라우저 이동도 막힌다. detail: `LinkActivateEventDetail`
  */
 @customElement('u-ref-tag')
 export class URefTag extends UElement {
+  /** 렌더된 링크를 누르면 `link-activate` 로 호스트에 묻는다(`LinkActivation`). */
+  protected readonly linkActivation = new LinkActivationController(this);
+
   static styles = [ super.styles, styles ];
 
   /** 인용 출처 소스 데이터 */

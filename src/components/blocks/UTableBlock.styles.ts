@@ -1,4 +1,5 @@
 import { css } from "lit";
+import { visuallyHidden } from "../../utilities/visuallyHidden.js";
 
 export const styles = css`
   /* 세로 flex 인 이유: 소비자가 호스트에 높이·max-height 를 주면 그 제약이 .table-wrapper 까지
@@ -183,7 +184,16 @@ export const styles = css`
   th[align="center"], td[align="center"] { 
     text-align: center; 
   }
-  th[align="right"], td[align="right"] { 
-    text-align: right; 
+  th[align="right"], td[align="right"] {
+    text-align: right;
+  }
+
+  /* 셀 서식(마크다운 렌더러 출력)의 새 탭 링크 — 숨김 알림의 포함 블록이 링크가 된다. */
+  a[target="_blank"] {
+    position: relative;
+  }
+  /* 새 창 알림 — 화면에는 없고 접근성 이름에만 붙는다(KWCAG 7.2.1). */
+  .new-tab-hint {
+    ${visuallyHidden}
   }
 `;

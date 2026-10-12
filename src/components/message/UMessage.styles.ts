@@ -1,4 +1,5 @@
 import { css } from "lit";
+import { visuallyHidden } from '../../utilities/visuallyHidden.js';
 
 export const styles = css`
   :host {
@@ -42,15 +43,7 @@ export const styles = css`
 
   /* 보조기기에만 — 절대 위치라 flex 간격(gap)을 만들지 않는다. */
   .visually-hidden {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    margin: -1px;
-    padding: 0;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-    border: 0;
+    ${visuallyHidden}
   }
 
   .dot-loader {

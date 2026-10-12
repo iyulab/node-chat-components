@@ -19,6 +19,7 @@ import { HtmlBuilder } from "../../utilities/HtmlBuilder.js";
 import type { ReferenceCitation } from "../../types/References.js";
 import { HtmlPlaceholder, stripRefPlaceholders, extractRefPlaceholders } from "../../utilities/HtmlPlaceholder.js";
 import { styles } from "./UMarkedBlock.styles.js";
+import { LinkActivationController } from "../../utilities/LinkActivation.js";
 
 /**
  * 마크다운 컨텐츠를 렌더링하는 컴포넌트입니다.
@@ -38,9 +39,14 @@ import { styles } from "./UMarkedBlock.styles.js";
  *   — `Parser.parseInline`을 옵션 없이 호출하면 기본(비-sanitize) 렌더러로 되돌아가므로
  *   반드시 `this.parser.defaults`를 함께 넘겨야 합니다.
  * - 인덱스 기반 삽입(ref.endIndex)이 깨지지 않도록 "normalize(제로폭 제거)"를 insertRefs 전에 1회 수행합니다.
+ *
+ * @event link-activate - 사람이 렌더된 링크를 활성화했다(클릭 · 가운데 클릭 · Enter). 취소 가능 — 막으면 브라우저 이동도 막힌다. detail: `LinkActivateEventDetail`
  */
 @customElement("u-marked-block")
 export class UMarkedBlock extends UElement {
+  /** 렌더된 링크를 누르면 `link-activate` 로 호스트에 묻는다(`LinkActivation`). */
+  protected readonly linkActivation = new LinkActivationController(this);
+
   static styles = [super.styles, styles];
 
   /** 마크다운 컨텐츠를 렌더링할 때 사용할 값입니다. */
@@ -179,7 +185,10 @@ export class UMarkedBlock extends UElement {
     // 비활성 문서로 파싱해 읽는다(스크립트·이벤트가 돌지 않는다).
     const cell = (c: Tokens.TableCell) => {
       const markup = this.placeholder.restore(c.tokens ? Parser.parseInline(c.tokens, this.parser.defaults) : c.text);
-      const text = new DOMParser().parseFromString(markup, 'text/html').body.textContent ?? '';
+      // 숨김 알림(새 탭 링크)은 접근성 이름의 몫이지 셀 값이 아니다 — 검색·정렬·내려받기 글자에서 뺀다.
+      const doc = new DOMParser().parseFromString(markup, 'text/html');
+      doc.querySelectorAll('.new-tab-hint').forEach((n) => n.remove());
+      const text = doc.body.textContent ?? '';
       return { text, html: markup, align: c.align };
     };
     const headers = token.header.map(cell);
@@ -206,9 +215,16 @@ export class UMarkedBlock extends UElement {
     // 주소·제목 안에 떨어진 인용은 링크 뒤로 옮긴다(속성 값 안에 태그가 복원되지 않게).
     const [href, inHref] = extractRefPlaceholders(token.href);
     const [title, inTitle] = extractRefPlaceholders(token.title ?? "");
-    let out = `<a href="${escapeHtmlHref(href)}"`;
+    const safeHref = escapeHtmlHref(href);
+    let out = `<a href="${safeHref}"`;
+    // 모델 출력의 링크가 호스트 페이지를 떠나게 하지 않는다 — 새 탭이 기본이고, 앱은 `link-activate` 로
+    // 가로챈다. 같은 문서 안 조각(`#…` — 막힌 프로토콜이 무력화된 `#` 포함)만 제자리에서 따라간다.
+    const newTab = !safeHref.startsWith("#");
+    if (newTab) out += ` target="_blank" rel="noopener noreferrer"`;
     if (title) out += ` title="${escapeHtmlAttr(title)}"`;
-    out += `>${text}</a>`;
+    // 새 탭으로 연다는 사실을 접근성 이름에 — 인용·지도 링크와 같은 알림(KWCAG 7.2.1).
+    const hint = newTab ? `<span class="new-tab-hint">${escapeHtmlText(messages.text('opensInNewTab'))}</span>` : "";
+    out += `>${text}${hint}</a>`;
     return out + inHref + inTitle;
   }
 

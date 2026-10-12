@@ -1,5 +1,23 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- Markdown links (table cells included) open in a new tab with `rel="noopener noreferrer"` instead of moving the
+  page that hosts the block. Model output can carry a link written by a third party, and one click on it navigated
+  the host away. Same-document fragments (`#…`) and links whose unsafe protocol was neutralized still follow in
+  place. The accessible name ends with «(opens in a new tab)», as for citations and map captions. `u-map-block`'s
+  caption link gains `noreferrer`.
+
+### Added
+
+- **`link-activate`** — every link a block renders (`u-marked-block`, `u-table-block`, `u-ref-tag`, `u-ref-card`,
+  `u-map-block`) asks the host before it is followed. A click, middle click or Enter fires a cancelable,
+  bubbling, composed `link-activate` with `detail: { href, originalEvent }`; `preventDefault()` cancels the
+  browser's navigation too, so an app can open the link in the system browser, route it in-app, or refuse it.
+  Nested blocks fire once per press. React wrappers take `onLinkActivate`.
+
 ## [0.24.0] - 2026-10-10
 
 ### Added

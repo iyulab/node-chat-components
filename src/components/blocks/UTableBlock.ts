@@ -13,6 +13,7 @@ import { UDataElement } from "../UDataElement.js";
 import "../../utilities/icons.js";
 import { styles } from "./UTableBlock.styles.js";
 import { messages } from "../../utilities/messages.js";
+import { LinkActivationController } from "../../utilities/LinkActivation.js";
 
 /**
  * 테이블 셀 데이터 타입.
@@ -64,9 +65,14 @@ export interface SortState {
  * 마크다운 테이블 데이터를 렌더링하는 컴포넌트입니다.
  * 컬럼 정렬, CSV 다운로드 기능을 지원합니다.
  * light DOM 내 `<script type="application/json">` 에서 데이터를 자동으로 읽어냅니다.
+ *
+ * @event link-activate - 사람이 렌더된 링크를 활성화했다(클릭 · 가운데 클릭 · Enter). 취소 가능 — 막으면 브라우저 이동도 막힌다. detail: `LinkActivateEventDetail`
  */
 @customElement("u-table-block")
 export class UTableBlock extends UDataElement {
+  /** 렌더된 링크를 누르면 `link-activate` 로 호스트에 묻는다(`LinkActivation`). */
+  protected readonly linkActivation = new LinkActivationController(this);
+
   static styles = [super.styles, styles];
 
   /** 테이블 헤더 목록. 각 헤더는 { text, align } 형식입니다. */

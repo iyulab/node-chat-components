@@ -21,4 +21,27 @@ request). Default: all allowed. Add CSP `img-src` as a second layer.
 `u-map-block` (OpenStreetMap iframe) and `u-video-block` (YouTube/Vimeo/direct) embed external content.
 `u-ref-card` requests no favicon by default.
 
+## Links
+
+A link in model output must not move the host page away (a desktop shell would load the target in its own window,
+next to its bridge). Markdown links open in a new tab with `rel="noopener noreferrer"`; only same-document fragments
+(`#…`) follow in place. The accessible name ends with «(opens in a new tab)», as for citations and map captions.
+
+Every link a block renders — markdown and table cells, `u-ref-tag`, `u-ref-card`, `u-map-block` — asks the host first.
+A click, middle click or Enter fires a cancelable `link-activate` (`bubbles`, `composed`) from the block, with
+`detail: { href, originalEvent }` (`href` is absolute). `preventDefault()` cancels the browser's navigation too, so
+the app decides — open in the system browser, route in-app, or refuse:
+
+```ts
+chat.addEventListener('link-activate', (e) => {
+  e.preventDefault();
+  const { href, originalEvent } = e.detail;
+  if (new URL(href).origin === location.origin && !originalEvent.ctrlKey && !originalEvent.metaKey) router.navigate(href);
+  else shell.openExternal(href);
+});
+```
+
+Nested blocks (a table inside markdown) fire once per press, from the innermost block. Links on the page around a
+block are not the block's and fire nothing. In React the wrappers take `onLinkActivate`.
+
 Do not insert model output with `innerHTML` yourself; route it through `u-marked-block`.

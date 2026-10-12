@@ -50,6 +50,12 @@ code follows that component's contract (no vertical cap; long lines scroll horiz
 | `value` | `string` | `undefined` | Markdown text to render |
 | `refs` | `ReferenceCitation[]` | `undefined` | Citation list. `u-ref-tag` elements are automatically inserted at `startIndex`/`endIndex` positions |
 
+## Events
+
+| Event | Detail | Description |
+|-------|--------|--------------|
+| `link-activate` | `LinkActivateEventDetail` | A person activated a link the block rendered (click, middle click, Enter). Cancelable — `preventDefault()` also cancels the navigation. See [Links](../security.md#links) |
+
 ## CSS Custom Properties
 
 Vendored from GitHub's markdown theme — light values shown, dark auto-applies via

@@ -1,4 +1,5 @@
 import { css } from "lit";
+import { visuallyHidden } from '../utilities/visuallyHidden.js';
 
 export const styles = css`
   /* 🔴호스트를 «세로 flex» 로 둔다 — display:block 이면 아래 iframe 의 300px 이
@@ -58,14 +59,6 @@ export const styles = css`
   }
   /* 새 창 알림 — 화면에는 없고 접근성 이름에만 붙는다(KWCAG 7.2.1). */
   .new-tab-hint {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    margin: -1px;
-    padding: 0;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-    border: 0;
+    ${visuallyHidden}
   }
 `;

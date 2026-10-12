@@ -116,7 +116,9 @@ describe('u-marked-block — 스트림 결함 주입', () => {
 
     const a = el.shadowRoot!.querySelector('a')!;
     expect(a.getAttribute('href')).toBe('https://example.com/guide');
-    expect(a.textContent).toBe('문서');
+    // 보이는 글자 — 새 탭 알림(숨김)은 링크 이름의 몫이라 뺀다.
+    const visible = [...a.childNodes].filter((n) => !(n instanceof Element && n.classList.contains('new-tab-hint')));
+    expect(visible.map((n) => n.textContent).join('')).toBe('문서');
     // 링크 주소 안에 인용 태그가 섞이지 않는다.
     expect(el.shadowRoot!.querySelector('a u-ref-tag')).toBeNull();
     // 인용은 잃지 않고 링크 바로 뒤로 온다.

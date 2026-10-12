@@ -38,3 +38,9 @@ Typically inserted automatically by `u-marked-block` when `refs` data is provide
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
 | `href` | `string` | `undefined` | External link URL. Click is suppressed if not set |
+
+## Events
+
+| Event | Detail | Description |
+|-------|--------|--------------|
+| `link-activate` | `LinkActivateEventDetail` | A person activated a link the block rendered (click, middle click, Enter). Cancelable — `preventDefault()` also cancels the navigation. See [Links](../security.md#links) |

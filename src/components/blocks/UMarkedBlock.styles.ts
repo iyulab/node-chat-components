@@ -1,4 +1,5 @@
 import { css } from "lit";
+import { visuallyHidden } from "../../utilities/visuallyHidden.js";
 
 export const styles = css`
   /* github-markdown styles */
@@ -116,6 +117,15 @@ export const styles = css`
   a:not([href]) {
     color: inherit;
     text-decoration: none;
+  }
+
+  /* 새 탭 링크 — 숨김 알림의 포함 블록이 링크가 된다(문서를 늘리지 않는다). */
+  a[target="_blank"] {
+    position: relative;
+  }
+  /* 새 창 알림 — 화면에는 없고 접근성 이름에만 붙는다(KWCAG 7.2.1). */
+  .new-tab-hint {
+    ${visuallyHidden}
   }
 
   b,

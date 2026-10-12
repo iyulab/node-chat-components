@@ -20,6 +20,7 @@ export type * from './types/References';
 // event types exports
 export type * from './events/SendEvent';
 export type * from './events/StopEvent';
+export type * from './events/LinkActivateEvent';
 
 // utilities exports
 export * from './utilities/HtmlBuilder.js';

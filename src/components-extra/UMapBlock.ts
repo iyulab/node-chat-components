@@ -6,15 +6,21 @@ import { styles } from "./UMapBlock.styles.js";
 import { registerElementBlock } from '../utilities/ElementRegistry.js';
 import schema from './UMapBlock.schema.js';
 import { messages } from '../utilities/messages.js';
+import { LinkActivationController } from '../utilities/LinkActivation.js';
 
 // 이 모듈을 import 하면 block-json 으로 렌더할 수 있다(스키마가 허용 목록이다).
 registerElementBlock(schema);
 
 /**
  * 지도 블록 컴포넌트 (OpenStreetMap embed)
+ *
+ * @event link-activate - 사람이 렌더된 링크를 활성화했다(클릭 · 가운데 클릭 · Enter). 취소 가능 — 막으면 브라우저 이동도 막힌다. detail: `LinkActivateEventDetail`
  */
 @customElement('u-map-block')
 export class UMapBlock extends UElement {
+  /** 렌더된 링크를 누르면 `link-activate` 로 호스트에 묻는다(`LinkActivation`). */
+  protected readonly linkActivation = new LinkActivationController(this);
+
   static styles = [super.styles, styles];
 
   /** 위도 (latitude) */
@@ -45,7 +51,7 @@ export class UMapBlock extends UElement {
         ?hidden=${!this.label && !this.description}
         href="${linkUrl}"
         target="_blank"
-        rel="noopener"
+        rel="noopener noreferrer"
       >
         <strong>${this.label}</strong>
         <span>${this.description}</span>

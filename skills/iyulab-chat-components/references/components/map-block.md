@@ -67,3 +67,9 @@ There is no size property or custom property for this — the host is the lever.
 | `description` | `string` | `undefined` | Description shown below the label |
 
 Renders nothing if either `lat` or `lng` is missing.
+
+## Events
+
+| Event | Detail | Description |
+|-------|--------|--------------|
+| `link-activate` | `LinkActivateEventDetail` | A person activated a link the block rendered (click, middle click, Enter). Cancelable — `preventDefault()` also cancels the navigation. See [Links](../security.md#links) |

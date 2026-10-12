@@ -94,6 +94,12 @@ one line, the download buttons move to a second line.
 | `headers` | `TableCell[]` | `[]` | Header cells, each with `text`, optional `html` and `align` |
 | `rows` | `TableCell[][]` | `[]` | Row data; each row is an array of `TableCell` |
 
+## Events
+
+| Event | Detail | Description |
+|-------|--------|--------------|
+| `link-activate` | `LinkActivateEventDetail` | A person activated a link the block rendered (click, middle click, Enter). Cancelable — `preventDefault()` also cancels the navigation. See [Links](../security.md#links) |
+
 ## CSS Custom Properties
 
 | Property | Default | Description |

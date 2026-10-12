@@ -1,4 +1,5 @@
 import { css } from 'lit';
+import { visuallyHidden } from '../../utilities/visuallyHidden.js';
 
 export const styles = css`
   :host {
@@ -51,14 +52,6 @@ export const styles = css`
   }
   /* 새 창 알림 — 화면에는 없고 접근성 이름에만 붙는다(KWCAG 7.2.1). */
   .new-tab-hint {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    margin: -1px;
-    padding: 0;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-    border: 0;
+    ${visuallyHidden}
   }
 `;

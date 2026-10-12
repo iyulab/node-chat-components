@@ -11,6 +11,7 @@ import { sanitizeHref } from '../../utilities/sanitizers.js';
 import { resolveImageSource } from '../../utilities/imageSources.js';
 import type { ReferenceImage } from '../../types/References.js';
 import { messages } from '../../utilities/messages.js';
+import { LinkActivationController } from '../../utilities/LinkActivation.js';
 
 /**
  * 웹 참조 카드의 파비콘 이미지 URL 을 정한다. `undefined` 를 돌려주면 파비콘 없이 그린다.
@@ -38,9 +39,14 @@ export const googleFaviconUrl: FaviconResolver = (url) => {
  *
  * @csspart preview - 출처의 미리보기 이미지(`image`)
  * @csspart preview-blocked - 출처 정책이 막은 미리보기 자리의 «차단된 이미지» 문구
+ *
+ * @event link-activate - 사람이 렌더된 링크를 활성화했다(클릭 · 가운데 클릭 · Enter). 취소 가능 — 막으면 브라우저 이동도 막힌다. detail: `LinkActivateEventDetail`
  */
 @customElement('u-ref-card')
 export class URefCard extends UDataElement {
+  /** 렌더된 링크를 누르면 `link-activate` 로 호스트에 묻는다(`LinkActivation`). */
+  protected readonly linkActivation = new LinkActivationController(this);
+
   static styles = [ super.styles, styles ];
 
   /**
