@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.25.0] - 2026-10-12
 
 ### Changed
 
@@ -16,7 +16,14 @@
   `u-map-block`) asks the host before it is followed. A click, middle click or Enter fires a cancelable,
   bubbling, composed `link-activate` with `detail: { href, originalEvent }`; `preventDefault()` cancels the
   browser's navigation too, so an app can open the link in the system browser, route it in-app, or refuse it.
-  Nested blocks fire once per press. React wrappers take `onLinkActivate`.
+  Nested blocks fire once per press. React wrappers take `onLinkActivate`
+  (`CustomEvent<LinkActivateEventDetail>`).
+
+### Fixed
+
+- The `UFileBlock` React wrapper's `onRemove` named `RemoveEventDetail` without importing it — the event was `any`
+  under `skipLibCheck` and a `TS2304` error otherwise. Wrappers are now generated with `@iyulab/components` 2.20.2,
+  whose generator imports every detail type.
 
 ## [0.24.0] - 2026-10-10
 
