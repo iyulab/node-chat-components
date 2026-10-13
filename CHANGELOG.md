@@ -4,6 +4,8 @@
 
 ### Fixed
 
+- `u-table-block` does not filter on a syllable still being composed with an IME (Korean, Japanese, Chinese). Typing
+  «서울» with a Korean IME emptied the table at «ㅅ»; it now filters when the composition ends.
 - `u-table-block` keeps its search box's `input` and `change` inside the block, as it already did `search`. With
   `@iyulab/components` 2.22, form controls re-dispatch these events so they bubble across shadow roots, and an
   ancestor watching for edits would read filtering the table as the user editing the page.

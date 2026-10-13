@@ -111,6 +111,7 @@ export class UTableBlock extends UDataElement {
             aria-label=${messages.text('searchLabel')}
             .value=${this.search}
             @input=${this.handleSearchInput}
+            @compositionend=${this.handleSearchInput}
             @change=${this.stopInnerEvent}
             @search=${this.stopInnerEvent}
           >
@@ -250,9 +251,13 @@ export class UTableBlock extends UDataElement {
     });
   }
 
-  /* 250ms 디바운스되어 검색어가 업데이트되는 핸들러. */
+  /**
+   * 250ms 디바운스되어 검색어가 업데이트되는 핸들러. IME 조합 중인 음절(«서울» 의 가는 길 «ㅅ» · «성»)로는 거르지 않는다 —
+   * 찾는 행을 숨긴다. 조합 중 `input` 은 건너뛰고, 조합이 끝나면(`compositionend`) 확정 글자로 거른다.
+   */
   private handleSearchInput(e: Event) {
     e.stopPropagation();
+    if ((e as InputEvent).isComposing) return;
     const input = e.target as UInput;
     this.searchCache = input.value || "";
 
