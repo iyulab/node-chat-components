@@ -11,6 +11,7 @@ Renders markdown text to HTML. Supports KaTeX math equations, code syntax highli
 **Special code fence:**
 - `` ```block-json `` → automatically rendered via [`u-element-block`](./element-block.md)
 - All other HTML inside markdown is escaped to prevent XSS
+- Strikethrough takes two tildes (`~~text~~`). A single tilde stays text, so ranges such as `10~20` or `~5 min` read as written — GFM's single-tilde strikethrough (`~text~`) is not recognised
 
 Tracks a `streaming` state internally (resets a 1500ms idle timer on every `value` update). A `block-json` extra's `loading` stays `true` until both its own fence is closed and the message has been idle for 1500ms.
 

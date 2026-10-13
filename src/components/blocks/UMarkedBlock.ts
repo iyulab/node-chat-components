@@ -2,7 +2,7 @@
 import { customElement, property, state } from "lit/decorators.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 
-import { Marked, Parser, type Tokens } from "marked";
+import { Marked, Parser, Tokenizer, type Tokens } from "marked";
 import { markedKatex } from "../../utilities/markedKatex.js";
 
 import "./UCodeBlock.js";
@@ -68,7 +68,21 @@ export class UMarkedBlock extends UElement {
       image: (token) => this.renderImage(token),
       codespan: (token) => this.renderCodespan(token),
     },
-  }).use(markedKatex({ output: "mathml" }));
+  })
+    .use({
+      tokenizer: {
+        // 물결 하나(`~a~`)는 취소선으로 읽지 않는다 — 물결 둘(`~~a~~`)만 취소선이다. GFM 은 물결 하나도
+        // 허용하지만 이 컴포넌트가 그리는 글에서 물결 하나는 거의 언제나 범위 표기다(«10~20명», «3~5일»,
+        // «~5 min»). 한 문단에 범위가 둘이면 그 사이가 통째로 지워진 글처럼 보였다(remark-gfm 의
+        // `singleTilde: false` 와 같은 규칙). 내장 규칙은 여는 물결 수만큼 닫는 물결을 요구하므로 그 결과에서
+        // 물결 하나짜리만 버린다 — `false` 는 내장 토크나이저로 되돌아가므로 `undefined` 를 돌려준다.
+        del(src, maskedSrc, prevChar) {
+          const token = Tokenizer.prototype.del.call(this, src, maskedSrc, prevChar);
+          return token && token.raw.startsWith("~~") ? token : undefined;
+        },
+      },
+    })
+    .use(markedKatex({ output: "mathml" }));
 
   // Marked 파싱 중 HTML을 임시 보관하는 플레이스홀더
   private placeholder = new HtmlPlaceholder();

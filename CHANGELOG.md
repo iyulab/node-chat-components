@@ -1,5 +1,14 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- **`u-marked-block`: a single tilde is text, not strikethrough.** GFM also strikes through `~text~`, so a paragraph
+  with two ranges — «10~20, 3~5», «Takes ~5 min, sometimes ~10 min» — lost both tildes and drew a line through
+  everything between them. Only `~~text~~` is strikethrough now, in paragraphs and table cells alike; a single tilde
+  stays as written. Content that used single-tilde strikethrough shows the tildes instead.
+
 ## [0.25.2] - 2026-10-13
 
 ### Fixed
