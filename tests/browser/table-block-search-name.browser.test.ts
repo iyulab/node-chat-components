@@ -32,4 +32,22 @@ describe('u-table-block search name', () => {
     await userEvent.keyboard('kim{Enter}');
     expect(leaked).toEqual([]);
   });
+
+  it('typing in the search box leaks no input or change out of the block, and still filters', async () => {
+    const el = document.createElement('u-table-block') as UTableBlock;
+    el.headers = [{ text: 'A' }] as UTableBlock['headers'];
+    el.rows = [[{ text: 'kim' }], [{ text: 'lee' }]] as UTableBlock['rows'];
+    document.body.appendChild(el);
+    await el.updateComplete;
+    const leaked: string[] = [];
+    for (const type of ['input', 'change']) document.body.addEventListener(type, (e) => leaked.push(e.type));
+    const box = page.getByRole('searchbox', { name: 'Search rows', exact: true });
+    await userEvent.click(box);
+    await userEvent.keyboard('kim');
+    await userEvent.tab();
+    await new Promise((r) => setTimeout(r, 350));
+    await el.updateComplete;
+    expect(leaked).toEqual([]);
+    expect(el.shadowRoot!.querySelectorAll('tbody tr').length).toBe(1);
+  });
 });

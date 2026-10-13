@@ -111,7 +111,8 @@ export class UTableBlock extends UDataElement {
             aria-label=${messages.text('searchLabel')}
             .value=${this.search}
             @input=${this.handleSearchInput}
-            @search=${this.stopSearch}
+            @change=${this.stopInnerEvent}
+            @search=${this.stopInnerEvent}
           >
             <u-icon slot="prefix" lib="internal" name="search"></u-icon>
           </u-input>
@@ -251,6 +252,7 @@ export class UTableBlock extends UDataElement {
 
   /* 250ms 디바운스되어 검색어가 업데이트되는 핸들러. */
   private handleSearchInput(e: Event) {
+    e.stopPropagation();
     const input = e.target as UInput;
     this.searchCache = input.value || "";
 
@@ -265,10 +267,11 @@ export class UTableBlock extends UDataElement {
   }
 
   /**
-   * 안쪽 검색 칸의 `search`(검색 확정)는 이 표의 일이다 — 섀도 밖으로 새면 이 요소가 내지 않는 공개 이벤트가 되고, 목록 소스를
-   * 듣는 조상(`bindSource` · `u-list-page`)이 표 안의 거르기를 자기 검색어로 오인한다.
+   * 안쪽 검색 칸의 이벤트(`input` · `change` · `search`)는 이 표의 일이다 — 섀도 밖으로 새면 이 요소가 내지 않는 공개 이벤트가
+   * 되고, 목록 소스를 듣는 조상(`bindSource` · `u-list-page`)이 표 안의 거르기를 자기 검색어로, 입력을 감시하는 조상이 표 안의
+   * 거르기를 사용자의 편집으로 오인한다.
    */
-  private stopSearch = (e: Event) => {
+  private stopInnerEvent = (e: Event) => {
     e.stopPropagation();
   };
 

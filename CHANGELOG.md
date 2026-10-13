@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.25.2] - 2026-10-13
+
+### Fixed
+
+- `u-table-block` keeps its search box's `input` and `change` inside the block, as it already did `search`. With
+  `@iyulab/components` 2.22, form controls re-dispatch these events so they bubble across shadow roots, and an
+  ancestor watching for edits would read filtering the table as the user editing the page.
+- `u-prompt` re-dispatches `remove` from a file chip with its `detail` and propagation intact (it used to reach only
+  listeners on the prompt itself) — this comes from the `@iyulab/components` 2.22 fix.
+
 ## [0.25.1] - 2026-10-12
 
 ### Fixed
