@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.27.0] - 2026-10-14
+
+### Changed
+
+- **Blocks read the type tokens.** `u-marked-block`, `u-text-block` (and the `u-prompt` input it draws) and
+  `u-code-block` take their font family, size and line height from `--u-font-base`, `--u-font-mono`,
+  `--u-text-body-size` and `--u-text-body-leading`. A theme that sets these now reaches chat text the way it already
+  reached chat colors. Without a token sheet nothing changes (16px, line height 1.5, the previous font stacks). **With
+  the `@iyulab/components` sheet loaded, message and input text follow its body step — 14px, line height 1.6, the
+  sheet's font stack — instead of 16px.** To keep a larger reading size in a chat panel, set `--u-text-body-size` on
+  the panel.
+- **`u-text-block` and the `u-prompt` input wrap.** Long text and placeholders wrap at the container width instead of
+  scrolling sideways (`white-space: pre-wrap`, `overflow-wrap: anywhere`); the auto-height measurement wraps the same
+  way. While editable on a coarse pointer the text keeps a 16px floor, so iOS Safari does not zoom in on focus.
+
+### Removed
+
+- Custom properties the blocks defined but never read: `--hljs-background-color` (`u-code-block` — its background is
+  `--u-neutral-100`), `--base-size-8`, `--base-size-40`, `--base-text-weight-normal`, `--base-text-weight-medium`
+  (`u-marked-block`). Setting them had no effect.
+
 ## [0.26.0] - 2026-10-14
 
 ### Changed
