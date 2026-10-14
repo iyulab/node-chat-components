@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.27.1] - 2026-10-14
+
+### Fixed
+
+- An empty `u-text-block` (and the `u-prompt` input) is as tall as its wrapped placeholder. Since 0.27.0 a long
+  placeholder wraps, but the box kept one line, so its second line was cut off behind a vertical scrollbar.
+
 ## [0.27.0] - 2026-10-14
 
 ### Changed
