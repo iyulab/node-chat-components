@@ -52,6 +52,13 @@ export const styles = css`
     scrollbar-width: thin;
     scrollbar-color: var(--u-scrollbar-color) transparent;
   }
+  /* 편집 중에는 높이를 재는 pre 와 늘 같은 폭에서 접는다 — 글이 한꺼번에 들어오면(붙여넣기 · 자동 채움) textarea 가
+     잠깐 넘쳐 스크롤바가 생기고, 그 폭만큼 좁게 접혀 pre 가 잰 것보다 한 줄 많아져 넘친 채로 남는다(#1284). 두 쪽이 같은
+     자리를 비워 둔다. 읽기 전용은 값이 두 쪽에 함께 들어가 그 순간이 없다 — 보낸 글 상자에 빈 띠를 두지 않는다. */
+  :host([editable]) textarea,
+  :host([editable]) pre {
+    scrollbar-gutter: stable;
+  }
   textarea[readonly] {
     cursor: default;
   }
