@@ -77,11 +77,11 @@ describe('글자 토큰 — 블록이 따라온다', () => {
     expect(family(code)).toMatch(/^"Courier New"/);
   });
 
-  it('NEGATIVE — 토큰 시트가 없으면 종전 모습(16px · 종전 글꼴 묶음)이다', async () => {
+  it('NEGATIVE — 토큰 시트가 없으면 폴백(시트 값의 복제 14px · 종전 글꼴 묶음)', async () => {
     const mb = await mount<UMarkedBlock>('<u-marked-block value="본문"></u-marked-block>', 'u-marked-block');
     await new Promise(r => setTimeout(r, 50));
     const p = mb.shadowRoot!.querySelector('p')!;
-    expect(size(p)).toBe('16px');
+    expect(size(p)).toBe('14px');
     expect(family(p)).toMatch(/^-apple-system/);
     const tb = await mount<UTextBlock>('<u-text-block value="t"></u-text-block>', 'u-text-block');
     expect(family(tb.shadowRoot!.querySelector('textarea')!)).toMatch(/^"Segoe UI"/);

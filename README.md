@@ -115,7 +115,7 @@ markedBlock.value = llmResponse;
 ## Type size
 
 Message text, the prompt input and code take their font from the type tokens — `--u-font-base`, `--u-font-mono`,
-`--u-text-body-size` and `--u-text-body-leading` (16px and line height 1.5 when no token sheet is loaded). A theme that
+`--u-text-body-size` and `--u-text-body-leading` (without a token sheet they fall back to the sheet's own values, 14px and line height 1.6). A theme that
 sets them reaches the chat as it reaches the rest of the app; to size one chat panel differently, set the token on it:
 
 ```css

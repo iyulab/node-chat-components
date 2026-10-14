@@ -49,10 +49,10 @@ export const styles = css`
     -ms-text-size-adjust: 100%;
     -webkit-text-size-adjust: 100%;
     margin: 0;
-    /* 본문 글자는 글자 토큰에서 읽는다(#1281) — 토큰 시트가 없으면 종전 모습(16px · 1.5)이다. */
+    /* 본문 글자는 글자 토큰에서 읽는다(#1281). 폴백은 시트 값의 복제다(tokens:sync) — 시트가 있든 없든 같은 모습. */
     font-family: var(--u-font-base, -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji");
-    font-size: var(--u-text-body-size, 16px);
-    line-height: var(--u-text-body-leading, 1.5);
+    font-size: var(--u-text-body-size, 14px);
+    line-height: var(--u-text-body-leading, 1.6);
     word-wrap: break-word;
   }
 

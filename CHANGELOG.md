@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- Without a token sheet, message and input text now use the sheet's body step (14px, line height 1.6) as
+  their fallback instead of 16px and 1.5, so a block looks the same with or without `@iyulab/components` loaded.
+
 ## [0.27.1] - 2026-10-14
 
 ### Fixed

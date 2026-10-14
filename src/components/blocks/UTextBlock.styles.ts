@@ -3,11 +3,11 @@ import { css } from "lit";
 export const styles = css`
   :host {
     display: block;
-    /* 글자는 글자 토큰에서 읽는다(#1281) — 토큰 시트가 없으면 종전 크기(16px · 1.5)다. */
+    /* 글자는 글자 토큰에서 읽는다(#1281). 폴백은 시트 값의 복제다(tokens:sync) — 시트가 있든 없든 같은 모습. */
     font-family: var(--u-font-base, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif);
-    font-size: var(--u-text-body-size, 16px);
+    font-size: var(--u-text-body-size, 14px);
     font-weight: 400;
-    line-height: var(--u-text-body-leading, 1.5);
+    line-height: var(--u-text-body-leading, 1.6);
     color: currentColor;
     background-color: transparent;
   }
@@ -15,7 +15,7 @@ export const styles = css`
   /* 터치 기기에서 편집 칸의 글자가 16px 아래면 iOS Safari 가 포커스 때 화면을 확대한다 — 편집 중에만 하한을 둔다. */
   @media (pointer: coarse) {
     :host([editable]) {
-      font-size: max(16px, var(--u-text-body-size, 16px));
+      font-size: max(16px, var(--u-text-body-size, 14px));
     }
   }
 
