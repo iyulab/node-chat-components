@@ -1,6 +1,14 @@
 # Changelog
 
-## [Unreleased]
+## [0.27.2] - 2026-10-15
+
+### Fixed
+
+- A sentence pasted or filled into the `u-prompt` input (an editable `u-text-block`) at once is shown whole. When its
+  last line break fell within a scrollbar's width of the edge, the box could stop one line short with the rest behind
+  an inner scrollbar: the textarea briefly overflowed, its scrollbar narrowed the text by that width, and the hidden
+  copy that sets the height still measured the full width. While editable, both now reserve the same scrollbar
+  space, so they wrap alike.
 
 ### Changed
 
