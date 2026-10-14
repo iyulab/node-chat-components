@@ -4,14 +4,11 @@ import { visuallyHidden } from "../../utilities/visuallyHidden.js";
 export const styles = css`
   /* github-markdown styles */
   :host {
-    --fontStack-monospace: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+    /* 고정폭은 하우스·소비자의 글자 토큰을 따른다(#1281) — 폴백은 종전 묶음. */
+    --fontStack-monospace: var(--u-font-mono, ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace);
     --base-size-4: 0.25rem;
-    --base-size-8: 0.5rem;
     --base-size-16: 1rem;
     --base-size-24: 1.5rem;
-    --base-size-40: 2.5rem;
-    --base-text-weight-normal: 400;
-    --base-text-weight-medium: 500;
     --base-text-weight-semibold: 600;
 
     --focus-outlineColor: #0969da;
@@ -52,9 +49,10 @@ export const styles = css`
     -ms-text-size-adjust: 100%;
     -webkit-text-size-adjust: 100%;
     margin: 0;
-    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
-    font-size: 16px;
-    line-height: 1.5;
+    /* 본문 글자는 글자 토큰에서 읽는다(#1281) — 토큰 시트가 없으면 종전 모습(16px · 1.5)이다. */
+    font-family: var(--u-font-base, -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji");
+    font-size: var(--u-text-body-size, 16px);
+    line-height: var(--u-text-body-leading, 1.5);
     word-wrap: break-word;
   }
 

@@ -3,7 +3,6 @@ import { css } from "lit";
 export const styles = css`
   :host {
     --hljs-text-color: #24292e;
-    --hljs-background-color: #ffffff;
     --hljs-keyword-color: #d73a49;
     --hljs-entity-color: #6f42c1;
     --hljs-constant-color: #005cc5;
@@ -37,7 +36,6 @@ export const styles = css`
   @supports (color: light-dark(#000, #fff)) {
     :host {
       --hljs-text-color: light-dark(#24292e, #c9d1d9);
-      --hljs-background-color: light-dark(#ffffff, #0d1117);
       --hljs-keyword-color: light-dark(#d73a49, #ff7b72);
       --hljs-entity-color: light-dark(#6f42c1, #d2a8ff);
       --hljs-constant-color: light-dark(#005cc5, #79c0ff);
@@ -79,7 +77,7 @@ export const styles = css`
     color: var(--u-txt-color-strong);
   }
   .header .lang {
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: var(--u-font-base, Arial, Helvetica, sans-serif);
     font-size: max(var(--chat-min-font-size, 0px), calc(12em / 16));
     font-weight: 300;
     color: var(--u-txt-color-strong);
@@ -95,7 +93,7 @@ export const styles = css`
     margin: 0;
     padding: 0;
     color: var(--hljs-text-color);
-    font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+    font-family: var(--u-font-mono, ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace);
     font-size: max(var(--chat-min-font-size, 0px), calc(14em / 16));
     line-height: 1.45;
     white-space: pre;
