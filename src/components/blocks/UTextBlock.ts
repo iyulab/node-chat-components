@@ -62,7 +62,7 @@ export class UTextBlock extends UElement {
           @input=${this.updateValueFrom}
         ></textarea>
         <pre
-          .textContent=${this.normalizeValue(this.value)}
+          .textContent=${this.normalizeValue(this.value || this.placeholder)}
         ></pre>
       </div>
     `;

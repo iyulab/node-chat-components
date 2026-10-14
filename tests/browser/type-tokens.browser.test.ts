@@ -96,7 +96,11 @@ describe('산문 줄바꿈 — 좁은 패널에서 가로로 넘치지 않는다
     const tb = prompt.shadowRoot!.querySelector('u-text-block') as UTextBlock;
     await tb.updateComplete;
     const ta = tb.shadowRoot!.querySelector('textarea')!;
+    await new Promise(r => requestAnimationFrame(() => r(null)));
     expect(ta.scrollWidth).toBeLessThanOrEqual(ta.clientWidth + 1);
+    // 비어 있을 때 칸 높이는 접힌 자리표시 글을 담는다 — 가로만 재면 둘째 줄이 세로로 잘린 것을 놓친다.
+    expect(ta.scrollHeight).toBeLessThanOrEqual(ta.clientHeight + 1);
+    expect(ta.clientHeight).toBeGreaterThan(parseFloat(getComputedStyle(ta).lineHeight) * 1.5);
 
     // 실제 입력으로 — 합성 `input` 은 InputEvent 의 API(`getTargetRanges`)를 갖지 않는다.
     await userEvent.fill(ta, long);
