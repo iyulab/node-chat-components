@@ -90,9 +90,11 @@ describe('글자 토큰 — 블록이 따라온다', () => {
 
 describe('산문 줄바꿈 — 좁은 패널에서 가로로 넘치지 않는다', () => {
   const long = '서식을 어떻게 바꿀지 말해 보세요 — 이 문장은 좁은 채팅 패널의 폭보다 훨씬 길어서 접혀야 한다 '.repeat(3);
+  // 자리표시 글은 상한(`maxRows` 10줄) 안에 드는 길이로 — 상한을 넘는 글은 설계대로 상한에서 멈추고 스크롤된다.
+  const hint = '서식을 어떻게 바꿀지 말해 보세요 — 이 자리표시 글은 패널보다 길어 두세 줄로 접힌다';
 
   it('u-prompt 입력과 자리표시 글이 접힌다(가로 넘침 없음 · 높이가 는다)', async () => {
-    const prompt = await mount<UPrompt>(`<div style="width: 240px"><u-prompt placeholder="${long}"></u-prompt></div>`, 'u-prompt');
+    const prompt = await mount<UPrompt>(`<div style="width: 240px"><u-prompt placeholder="${hint}"></u-prompt></div>`, 'u-prompt');
     const tb = prompt.shadowRoot!.querySelector('u-text-block') as UTextBlock;
     await tb.updateComplete;
     const ta = tb.shadowRoot!.querySelector('textarea')!;
