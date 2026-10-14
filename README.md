@@ -114,8 +114,15 @@ markedBlock.value = llmResponse;
 
 ## Type size
 
-Blocks size their text in `em`, so they follow the type size of the place they sit in (a chat panel at 13px gets
-proportionally smaller blocks). Secondary text — table toolbars, code-block headers, file metadata, citation badges,
+Message text, the prompt input and code take their font from the type tokens — `--u-font-base`, `--u-font-mono`,
+`--u-text-body-size` and `--u-text-body-leading` (16px and line height 1.5 when no token sheet is loaded). A theme that
+sets them reaches the chat as it reaches the rest of the app; to size one chat panel differently, set the token on it:
+
+```css
+.chat-panel { --u-text-body-size: 15px; }
+```
+
+Everything inside a block is sized in `em` from that text, so it scales with it. Secondary text — table toolbars, code-block headers, file metadata, citation badges,
 captions — is smaller than the surrounding text. A host with a minimum type size sets one property and no block
 text goes below it:
 
