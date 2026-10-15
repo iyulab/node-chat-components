@@ -45,7 +45,7 @@ export class UDataElement extends UElement {
   ): string {
     const tag = customElements.getName(this);
     if (!tag) {
-      console.error(`Custom element for ${this.name} is not defined.`);
+      console.error(`[@iyulab/chat-components] ${this.name} is not registered as a custom element — import its module before rendering it.`);
       return '';
     }
 
@@ -110,6 +110,6 @@ export class UDataElement extends UElement {
    * @param error - 발생한 오류 객체
    */
   protected async error(error: unknown): Promise<void> {
-    console.error(`failed to load data for [${this.localName}]`, error);
+    console.error(`[@iyulab/chat-components] failed to load data for [${this.localName}]`, error);
   }
 }

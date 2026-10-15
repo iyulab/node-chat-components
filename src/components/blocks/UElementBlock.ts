@@ -143,7 +143,7 @@ export class UElementBlock extends UDataElement {
    * "아직 준비 안 됨"에 가깝습니다.
    */
   private reportError(error: unknown): void {
-    console.error(`[u-element-block]`, error);
+    console.error(`[@iyulab/chat-components] u-element-block:`, error);
   }
 }
 
