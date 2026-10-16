@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- `u-prompt`: the send button icon sits in the middle of its circle. Only the button host was sized to 32px; the inner
+  button kept the `u-button` default padding, overflowed the circle (34×42) and pushed the icon down and right.
+
 ### Changed
 
 - Console diagnostics begin with `[@iyulab/chat-components]`, so a message in a console shared by several packages says which one wrote it (several also say what to do next).

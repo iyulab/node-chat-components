@@ -66,6 +66,9 @@ export const styles = css`
     width: 32px;
     height: 32px;
     padding: 0;
+    /* 안쪽 <button> 의 여백도 비운다 — 겉만 32px 로 줄이면 u-button 기본 여백으로 원 밖에 넘쳐 아이콘이 밀린다. */
+    --btn-padding-block: 0;
+    --btn-padding-inline: 0;
     font-size: 16px;
     border-radius: 50%;
   }
