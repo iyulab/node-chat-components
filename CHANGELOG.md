@@ -1,5 +1,16 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+
+- **`u-marked-block`: a streaming answer no longer rebuilds the blocks that are already finished.** Every update (about
+  every 80ms while text arrives) replaced the whole rendered HTML, so the text a reader had selected in an earlier
+  paragraph was lost, a focused copy button in an earlier code block dropped the focus, and code blocks and tables were
+  created again. The top-level blocks are now rendered one by one and an unchanged block keeps its DOM; only the growing
+  last block is drawn again. The markup is the same as before (the output of each block is joined exactly as the parser
+  joined it), and the parser and sanitizing rules are untouched.
+
 ## [0.27.3] - 2026-10-16
 
 ### Fixed

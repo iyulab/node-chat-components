@@ -1,5 +1,6 @@
 ﻿import { nothing, PropertyValues } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
+import type { DirectiveResult } from "lit/directive.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 
 import { Marked, Parser, Tokenizer, type Tokens } from "marked";
@@ -149,9 +150,39 @@ export class UMarkedBlock extends UElement {
       value = this.insertRefs(value, this.refs);
     }
 
+    // 최상위 블록마다 따로 그린다 — 스트림이 자라는 동안 앞 블록의 HTML 문자열은 그대로이고, Lit 의 `unsafeHTML` 은
+    // 같은 문자열을 받으면 DOM 을 건드리지 않는다. 한 문자열로 통째로 돌려주면 갱신마다 모든 블록이 새 노드로 바뀌어
+    // 앞 블록의 선택·복사 버튼 포커스가 풀리고 코드 블록·표가 다시 만들어졌다. 블록 렌더의 이음은 전체 렌더와 같다
+    // (marked 의 `Parser.parse` 가 토큰 렌더를 이어 붙인다 — `marked-block-incremental` 이 같은 입력으로 대조한다).
+    const blocks = this.renderBlocks(value);
+    if (blocks) return blocks;
+
     const html = this.parser.parse(value, { async: false }) as string;
     // html-sink: 파서 출력 — 원시 HTML 토큰은 글자로, 링크는 프로토콜 검사(모듈 주석 «렌더러 설정» 참조)
     return unsafeHTML(this.placeholder.restore(html));
+  }
+
+  /**
+   * 최상위 토큰마다 HTML 한 조각. 파서 오류는 전체 렌더(`parse` 의 `silent` 처리)로 되돌린다 — 그 경로가 오류 문장을 만든다.
+   * 플레이스홀더는 렌더 앞(`render` 의 `reset` · `insertRefs`)에서 채워져 조각들이 함께 쓴다 — 조각마다 비우면 인용 태그가 사라진다.
+   * 조각의 문자열은 복원까지 끝난 HTML 이라 번호가 아니라 내용으로 정해진다(앞 블록은 뒤 블록이 늘어도 같은 문자열이다).
+   */
+  private renderBlocks(value: string): DirectiveResult[] | null {
+    let tokens;
+    try {
+      tokens = this.parser.lexer(value);
+      const walk = this.parser.defaults.walkTokens;
+      if (walk) this.parser.walkTokens(tokens, walk);
+    } catch {
+      return null;
+    }
+    const out: DirectiveResult[] = [];
+    for (const token of tokens) {
+      const html = this.parser.parser([token]);
+      // html-sink: 파서 출력 — 원시 HTML 토큰은 글자로, 링크는 프로토콜 검사(모듈 주석 «렌더러 설정» 참조)
+      out.push(unsafeHTML(this.placeholder.restore(html)));
+    }
+    return out;
   }
 
   /** 
