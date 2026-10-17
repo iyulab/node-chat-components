@@ -230,6 +230,7 @@ export class UMarkedBlock extends UElement {
     const [href, inHref] = extractRefPlaceholders(token.href);
     const [title, inTitle] = extractRefPlaceholders(token.title ?? "");
     const safeHref = escapeHtmlHref(href);
+    // html-sink: attr url — href is protocol-checked and attribute-escaped by escapeHtmlHref
     let out = `<a href="${safeHref}"`;
     // 모델 출력의 링크가 호스트 페이지를 떠나게 하지 않는다 — 새 탭이 기본이고, 앱은 `link-activate` 로
     // 가로챈다. 같은 문서 안 조각(`#…` — 막힌 프로토콜이 무력화된 `#` 포함)만 제자리에서 따라간다.
@@ -261,6 +262,7 @@ export class UMarkedBlock extends UElement {
         : messages.text('imageBlocked');
       return `<span class="image-blocked" part="image-blocked">${escapeHtmlText(label)}</span>` + refs;
     }
+    // html-sink: attr — src and alt are attribute-escaped (quotes included)
     let out = `<img src="${escapeHtmlAttr(src)}" alt="${escapeHtmlAttr(alt)}"`;
     if (title) out += ` title="${escapeHtmlAttr(title)}"`;
     out += `>`;
