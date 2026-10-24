@@ -30,7 +30,7 @@ export class UCodeBlock extends UElement {
     const lang = hljs.getLanguage(this.lang) ? this.lang : 'plaintext';
     const value = this.value || '';
 
-    return html`
+    return html`<div class="base" part="base">
       <div class="header" ?hidden=${this.headless}>
         <span class="status">
           <u-icon lib="internal-chat" name="code"></u-icon>
@@ -51,7 +51,7 @@ export class UCodeBlock extends UElement {
       <div hidden aria-hidden="true">
         <slot @slotchange=${this.handleSlotChange}></slot>
       </div>
-    `;
+    </div>`;
   }
 
   /**

@@ -27,7 +27,7 @@ export class URefTag extends UElement {
   @property({ type: String }) href?: string;
 
   render() {
-    return html`
+    return html`<div class="base" part="base">
       <a href="${ifDefined(this.href ? sanitizeHref(this.href) : undefined)}" target="_blank" rel="noopener noreferrer"
         @click=${this.handleAnchorClick}>
         <slot></slot>
@@ -39,7 +39,7 @@ export class URefTag extends UElement {
       <u-tooltip interactive placement="bottom" offset="4">
         <slot name="tooltip"></slot>
       </u-tooltip>
-    `;
+    </div>`;
   }
 
   /** 링크 클릭 핸들러 */

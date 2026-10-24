@@ -58,7 +58,7 @@ export class UImagesBlock extends UElement {
     if (!this.items?.length) return nothing;
     const count = this.items.length;
 
-    return html`
+    return html`<div class="base" part="base">
       <u-carousel
         .loop=${false}
         .navigation=${false}
@@ -90,7 +90,7 @@ export class UImagesBlock extends UElement {
       </u-carousel>
 
       ${this.renderLightbox()}
-    `;
+    </div>`;
   }
 
   /** 출처 정책(`setAllowedImagePrefixes`)이 막은 이미지 자리의 문구. */

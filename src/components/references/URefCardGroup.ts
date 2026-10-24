@@ -22,7 +22,7 @@ export class URefCardGroup extends UElement {
   @state() currentIndex: number = 0;
 
   render() {
-    return html`
+    return html`<div class="base" part="base">
       <div class="header" ?hidden=${this.cards.length <= 1}>
         <button class="nav-button"
           aria-label=${messages.text('previousReference')}
@@ -46,7 +46,7 @@ export class URefCardGroup extends UElement {
           <slot @slotchange=${this.handleSlotChange}></slot>
         </div>
       </div>
-    `;
+    </div>`;
   }
 
   /**

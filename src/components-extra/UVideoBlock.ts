@@ -55,7 +55,7 @@ export class UVideoBlock extends UElement {
     if (this.isYouTube(this.src)) {
       const videoId = this.extractYouTubeId(this.src);
       if (videoId) {
-        return html`
+        return html`<div class="base" part="base">
           <div class="video-wrapper">
             <iframe
               src="https://www.youtube.com/embed/${videoId}"
@@ -64,7 +64,7 @@ export class UVideoBlock extends UElement {
               allowfullscreen
             ></iframe>
           </div>
-        `;
+        </div>`;
       }
     }
 
@@ -72,7 +72,7 @@ export class UVideoBlock extends UElement {
     if (this.isVimeo(this.src)) {
       const videoId = this.extractVimeoId(this.src);
       if (videoId) {
-        return html`
+        return html`<div class="base" part="base">
           <div class="video-wrapper">
             <iframe
               src="https://player.vimeo.com/video/${videoId}"
@@ -81,12 +81,12 @@ export class UVideoBlock extends UElement {
               allowfullscreen
             ></iframe>
           </div>
-        `;
+        </div>`;
       }
     }
 
     // 일반 비디오 파일
-    return html`
+    return html`<div class="base" part="base">
       <video
         src=${this.src}
         poster=${ifDefined(this.poster)}
@@ -101,7 +101,7 @@ export class UVideoBlock extends UElement {
           label=${ifDefined(t.label)}
           ?default=${t.default === true}
         />`)}</video>
-    `;
+    </div>`;
   }
 
   private isYouTube(url: string): boolean {

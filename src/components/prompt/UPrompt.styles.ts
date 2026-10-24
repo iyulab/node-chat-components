@@ -1,8 +1,15 @@
 import { css } from "lit";
 
 export const styles = css`
+  /* 상자(여백 · 테두리 · 면)는 섀도 안 .base 가 그린다 — 호스트에 두면 문서의 전역 리셋(Tailwind preflight 류)이 이긴다. */
   :host {
+    display: flex;
+    flex-direction: column;
+  }
+  .base {
     position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
     display: flex;
     flex-direction: column;
     padding: 12px;
@@ -10,12 +17,12 @@ export const styles = css`
     border-radius: 8px;
     background-color: var(--u-bg-color);
   }
-  :host(:focus-within) {
+  :host(:focus-within) .base {
     outline: none;
     border-color: var(--u-border-color-strong);
     box-shadow: 0 0 0 1px var(--u-border-color-weak);
   }
-  :host([loading])::before {
+  :host([loading]) .base::before {
     content: '';
     position: absolute;
     inset: -2px;
@@ -75,7 +82,7 @@ export const styles = css`
 
   /* 동작 줄이기 — 흐르는 테두리를 멈춘다. 색 띠는 그대로 남아 «응답 중» 은 계속 보인다(메시지의 점 로더와 같은 처리). */
   @media (prefers-reduced-motion: reduce) {
-    :host([loading])::before {
+    :host([loading]) .base::before {
       animation: none;
       background-position: 50% 0;
     }

@@ -98,6 +98,7 @@ Both `send` and `stop` are dispatched with `bubbles: false, composed: false` —
 
 | Part | Description |
 |------|-------------|
+| `base` | The prompt box (border, padding, background) — style the box here, not on the host |
 | `input` | Text input area (`u-text-block`) |
 | `files` | File attachment preview area |
 | `control` | Bottom control row (actions + send button) |

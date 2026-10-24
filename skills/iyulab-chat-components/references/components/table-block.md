@@ -113,6 +113,7 @@ one line, the download buttons move to a second line.
 
 | Part | Description |
 |------|-------------|
+| `base` | The block box (border, radius, spacing) — style the box here, not on the host |
 | `sort-button` | A column header's sort toggle |
 
 ## TableCell Type

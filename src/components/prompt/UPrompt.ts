@@ -45,7 +45,7 @@ export class UPrompt extends UElement {
   }
 
   render() {
-    return html`
+    return html`<div class="base" part="base">
       <slot name="header"></slot>
 
       <div class="files" part="files"
@@ -90,7 +90,7 @@ export class UPrompt extends UElement {
       </div>
       
       <slot name="footer"></slot>
-    `;
+    </div>`;
   }
 
   /**

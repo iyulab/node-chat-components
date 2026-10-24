@@ -4,6 +4,9 @@ export const styles = css`
   :host {
     display: block;
     width: 100%;
+  }
+  /* 상자(여백 · 테두리 · 면)는 섀도 안 .base 가 그린다 — 호스트에 두면 문서의 전역 리셋(Tailwind preflight 류)이 이긴다. */
+  .base {
     margin: 0.75em 0;
   }
 

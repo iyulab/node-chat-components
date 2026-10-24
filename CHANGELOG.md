@@ -1,5 +1,16 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+
+- **Block and card boxes survive a document-wide CSS reset.** In an app with Tailwind's preflight (or any
+  `* { margin: 0; padding: 0; border: 0 }` reset) `u-code-block`, `u-table-block`, `u-prompt`, `u-ref-card`,
+  `u-ref-card-group`, `u-ref-tag` and the extra blocks (`u-chart-block`, `u-images-block`, `u-map-block`,
+  `u-video-block`) lost their borders, padding and the space between blocks — a document rule beats the shadow
+  root's `:host` rule. The box is now drawn by a new `base` part inside the shadow root. Padding, a border or a margin
+  you set on the host now adds outside that box; style the box with `::part(base)`.
+
 ## [0.27.4] - 2026-10-17
 
 ### Fixed

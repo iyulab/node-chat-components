@@ -42,7 +42,7 @@ export class UMapBlock extends UElement {
     const embedUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${this.lat},${this.lng}`;
     const linkUrl = `https://www.openstreetmap.org/?mlat=${this.lat}&mlon=${this.lng}#map=${this.zoom}/${this.lat}/${this.lng}`;
 
-    return html`
+    return html`<div class="base" part="base">
       <iframe
         src="${embedUrl}"
         loading="lazy"
@@ -57,7 +57,7 @@ export class UMapBlock extends UElement {
         <span>${this.description}</span>
         <span class="new-tab-hint">${messages.text('opensInNewTab')}</span>
       </a>
-    `;
+    </div>`;
   }
 }
 

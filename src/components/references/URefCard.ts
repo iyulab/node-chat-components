@@ -37,6 +37,7 @@ export const googleFaviconUrl: FaviconResolver = (url) => {
  * 참조 소스를 카드 형태로 표시하는 공통 컴포넌트입니다.
  * Web과 Document 타입 모두 지원합니다.
  *
+ * @csspart base - 카드 상자(테두리 · 여백 · 면) — 호스트가 아니라 여기에 스타일을 준다
  * @csspart preview - 출처의 미리보기 이미지(`image`)
  * @csspart preview-blocked - 출처 정책이 막은 미리보기 자리의 «차단된 이미지» 문구
  *
@@ -71,7 +72,7 @@ export class URefCard extends UDataElement {
   @property({ type: Object }) image?: ReferenceImage;
 
   render() {
-    return html`
+    return html`<div class="base" part="base">
       <a href="${ifDefined(this.url ? sanitizeHref(this.url) : undefined)}" target="_blank" rel="noopener noreferrer"
         @click=${this.handleAnchorClick}>
         <div class="header">
@@ -102,7 +103,7 @@ export class URefCard extends UDataElement {
         </div>
         <span class="new-tab-hint">${messages.text('opensInNewTab')}</span>
       </a>
-    `;
+    </div>`;
   }
 
   /**

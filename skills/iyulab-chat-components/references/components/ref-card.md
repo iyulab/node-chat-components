@@ -59,6 +59,7 @@ Extends `UDataElement`, so data can also be injected via a `<script type="applic
 
 | Part | Description |
 |------|-------------|
+| `base` | The card box (border, padding, background) — style the box here, not on the host |
 | `preview` | The source's preview image (`image`) |
 | `preview-blocked` | The *Image blocked* line where the origin policy stopped the preview |
 

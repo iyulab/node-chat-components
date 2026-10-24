@@ -101,7 +101,7 @@ export class UTableBlock extends UDataElement {
   render() {
     const rows = this.getFilteredSortedRows();
 
-    return html`
+    return html`<div class="base" part="base">
       <div class="toolbar">
         <div class="toolbar-left">
           <u-input
@@ -181,7 +181,7 @@ export class UTableBlock extends UDataElement {
           </tbody>
         </table>
       </div>
-    `;
+    </div>`;
   }
 
   /** 셀 내용 — 서식 마크업(`html`)이 있으면 그것을, 없으면 글자(`text`)를 그린다. */

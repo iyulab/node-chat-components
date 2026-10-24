@@ -67,7 +67,7 @@ export class UChartBlock extends UElement {
   render() {
     if (!this.data) return nothing;
 
-    return html`
+    return html`<div class="base" part="base">
       <div class="toolbar">
         <div class="toolbar-left"></div>
         <div class="toolbar-right">
@@ -91,7 +91,7 @@ export class UChartBlock extends UElement {
           <span>${typeof this.error === 'function' ? this.error() : this.error}</span>
         </div>
       </div>
-    `;
+    </div>`;
   }
 
   /** Chart.js로 차트 생성 */
