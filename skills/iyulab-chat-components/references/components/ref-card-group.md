@@ -39,3 +39,9 @@ group.switch(-1); // wraps to last card
 | Method | Description |
 |--------|-------------|
 | `switch(index)` | Navigate to the card at `index`. Wraps around on out-of-bounds values |
+
+## CSS Parts
+
+| Part | Description |
+|------|-------------|
+| `base` | The group box (spacing between the cards) — drawn here rather than on the host, so a document-wide reset cannot strip it; style the box here |

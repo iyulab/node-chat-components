@@ -73,3 +73,9 @@ Renders nothing if either `lat` or `lng` is missing.
 | Event | Detail | Description |
 |-------|--------|--------------|
 | `link-activate` | `LinkActivateEventDetail` | A person activated a link the block rendered (click, middle click, Enter). Cancelable — `preventDefault()` also cancels the navigation. See [Links](../security.md#links) |
+
+## CSS Parts
+
+| Part | Description |
+|------|-------------|
+| `base` | The block box (spacing around the map) — drawn here rather than on the host, so a document-wide reset cannot strip it; style the box here |

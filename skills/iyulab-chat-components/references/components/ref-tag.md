@@ -44,3 +44,9 @@ Typically inserted automatically by `u-marked-block` when `refs` data is provide
 | Event | Detail | Description |
 |-------|--------|--------------|
 | `link-activate` | `LinkActivateEventDetail` | A person activated a link the block rendered (click, middle click, Enter). Cancelable — `preventDefault()` also cancels the navigation. See [Links](../security.md#links) |
+
+## CSS Parts
+
+| Part | Description |
+|------|-------------|
+| `base` | The tag box (border, padding, background) — drawn here rather than on the host, so a document-wide reset cannot strip it; style the box here |

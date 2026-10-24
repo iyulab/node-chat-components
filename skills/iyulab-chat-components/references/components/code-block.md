@@ -68,3 +68,9 @@ Highlight.js syntax theme — light values shown, dark auto-applies via `light-d
 | `--hljs-markup-list-color` | Markdown list bullets |
 | `--hljs-addition-color` / `--hljs-addition-bg-color` | Diff addition text / background |
 | `--hljs-deletion-color` / `--hljs-deletion-bg-color` | Diff deletion text / background |
+
+## CSS Parts
+
+| Part | Description |
+|------|-------------|
+| `base` | The block box (border, radius, spacing) — drawn here rather than on the host, so a document-wide reset cannot strip it; style the box here |

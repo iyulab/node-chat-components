@@ -64,3 +64,9 @@ reason as the image block: vertical squeezing would break the aspect ratio. The 
 | YouTube | `youtube.com`, `youtu.be` | `youtube.com/embed/{id}` iframe |
 | Vimeo | `vimeo.com` | `player.vimeo.com/video/{id}` iframe |
 | Other | any URL | Native `<video>` element |
+
+## CSS Parts
+
+| Part | Description |
+|------|-------------|
+| `base` | The block box (spacing around the video) — drawn here rather than on the host, so a document-wide reset cannot strip it; style the box here |

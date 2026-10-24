@@ -102,3 +102,9 @@ sheet the palette is empty and Chart.js defaults apply.
 ## Requires
 
 `chart.js` (optional peer dependency) must be installed to use this component. It's imported statically at module load, not lazily.
+
+## CSS Parts
+
+| Part | Description |
+|------|-------------|
+| `base` | The block box (spacing around the chart) — drawn here rather than on the host, so a document-wide reset cannot strip it; style the box here |

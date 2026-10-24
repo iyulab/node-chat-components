@@ -72,3 +72,9 @@ interface ImageSlide {
 | Lightbox | Full-screen modal on image click |
 | Keyboard | `←` `→` to navigate, `Esc` to close |
 | Image origin policy | `setAllowedImagePrefixes()` applies — a blocked item shows its alt text and is not requested (see [../security.md](../security.md)) |
+
+## CSS Parts
+
+| Part | Description |
+|------|-------------|
+| `base` | The block box (spacing around the images) — drawn here rather than on the host, so a document-wide reset cannot strip it; style the box here |
