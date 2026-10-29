@@ -122,11 +122,11 @@ export class UTableBlock extends UDataElement {
           </span>
         </div>
         <div class="toolbar-right">
-          <u-button @click=${this.handleDownloadXLS} title=${messages.text('excelDownload')}>
+          <u-button appearance="outlined" color="neutral" @click=${this.handleDownloadXLS} title=${messages.text('excelDownload')}>
             XLS
             <u-icon slot="suffix" lib="internal-chat" name="download"></u-icon>
           </u-button>
-          <u-button @click=${this.handleDownloadCSV} title=${messages.text('csvDownload')}>
+          <u-button appearance="outlined" color="neutral" @click=${this.handleDownloadCSV} title=${messages.text('csvDownload')}>
             CSV
             <u-icon slot="suffix" lib="internal-chat" name="download"></u-icon>
           </u-button>

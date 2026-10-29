@@ -79,9 +79,13 @@ export const styles = css`
     margin-inline-start: auto;
   }
 
+  /* 내려받기는 표의 보조 동작이다 — 테두리만 있는 무채색(마크업의 outlined · neutral)으로 데이터보다 낮은 위계에 두고,
+     여백은 검색 칸과 한 줄 높이가 되게 줄인다. 여백은 u-button 의 안쪽 상자가 읽는 --btn-padding-* 로 준다 —
+     호스트에 준 padding 은 버튼 상자 바깥에 더해질 뿐이었다. */
   .toolbar-right u-button {
     font-size: max(var(--chat-min-font-size, 0px), var(--table-block-meta-font-size, calc(12em / 16)));
-    padding: 0.25em 0.5em;
+    --btn-padding-block: 0.125em;
+    --btn-padding-inline: 0.5em;
   }
 
   .table-wrapper {

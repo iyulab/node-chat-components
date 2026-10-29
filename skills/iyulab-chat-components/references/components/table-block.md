@@ -81,7 +81,8 @@ Columns take their content width and the table scrolls sideways when it is wider
 off to the right does not squeeze into a narrow column and make every row several lines tall. A cell wraps only
 past `--table-block-cell-max-width` (default `32em`); `none` keeps every cell on one line. On a wide host the table
 still fills the width. The toolbar wraps: when the search, the row count and the download buttons do not fit on
-one line, the download buttons move to a second line.
+one line, the download buttons move to a second line. The download buttons are secondary actions — outlined and neutral, no
+fill — and as tall as the search box, so the toolbar reads as one line under the data.
 
 ```css
 .chat-panel u-table-block { --table-block-cell-max-width: 24em; }

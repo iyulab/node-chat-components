@@ -18,6 +18,11 @@
   off it now shows the fence's raw text as a `u-code-block` with `lang="block-json"`. While streaming it still shows
   the skeleton.
 
+- **`u-table-block`: the XLS and CSV buttons no longer outweigh the table.** They were filled with the primary colour
+  (the `u-button` default) and taller than the search box, so a secondary action drew the eye before the data.
+  They are now outlined and neutral, and as tall as the search box. The padding the
+  toolbar meant for them was set on the button host, outside its box; it is now the button's own `--btn-padding-*`.
+
 ## [0.27.4] - 2026-10-17
 
 ### Fixed
