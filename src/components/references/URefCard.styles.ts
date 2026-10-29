@@ -61,6 +61,7 @@ export const styles = css`
     font-size: max(var(--chat-min-font-size, 0px), calc(12em / 16));
     line-height: 1;
     font-weight: 600;
+    text-transform: uppercase;
     padding: 4px 8px;
     border-radius: 4px;
     white-space: nowrap;

@@ -3,9 +3,8 @@ import { Locale } from '@iyulab/components/dist/utilities/Locale.js';
 /**
  * `@iyulab/chat-components` 의 화면 문자열 — **영어 기본 + 로케일 레지스트리**.
  *
- * ⚠**지금 한 키뿐이다.** 그래도 리터럴을 영어로 바꾸는 대신 레지스트리를 두는 이유는,
- * 이 리포가 채택한 표준이 *"영어 기본 **+ 레지스트리**"* 이기 때문이다 — 영어 리터럴만으로는
- * 한국어 앱이 그 문구를 되돌릴 방법이 없다. 다음 문자열은 여기로 온다.
+ * 리터럴을 영어로만 두지 않고 레지스트리를 두는 이유는 이 리포가 채택한 표준이 *"영어 기본 **+ 레지스트리**"*
+ * 이기 때문이다 — 영어 리터럴만으로는 한국어 앱이 그 문구를 되돌릴 방법이 없다. 화면에 나가는 새 문자열은 여기로 온다.
  */
 export type ChatMessageKey =
   | 'canvasUnavailable'
@@ -31,6 +30,8 @@ export type ChatMessageKey =
   | 'imageBlockedNamed'
   | 'opensInNewTab'
   | 'textBlock'
+  | 'promptInput'
+  | 'refTypeWeb' | 'refTypeDocument'
   | 'references'
   | 'authorUser' | 'authorAssistant' | 'authorSystem' | 'speakerPrefix'
   | 'generating';
@@ -54,6 +55,11 @@ messages.register('en', {
   search: 'Search...',
   searchLabel: 'Search rows',
   textBlock: 'Text',
+  // `u-prompt` 입력창의 접근성 이름 — 호스트에 `aria-label` 이 없을 때.
+  promptInput: 'Message',
+  // `u-ref-card` 머리의 유형 배지(화면에서는 대문자로 그린다).
+  refTypeWeb: 'Web',
+  refTypeDocument: 'Document',
   references: 'References',
   // ⚠보간 키 — `text('rowCount', { shown, total })`. `{name}` 치환은 `Locale` 이 이미
   //   지원한다(`interpolate`), 그래서 함수형 등록 같은 새 표면이 필요 없다.
@@ -94,6 +100,9 @@ messages.register('ko', {
   search: '검색...',
   searchLabel: '행 검색',
   textBlock: '텍스트',
+  promptInput: '메시지 입력',
+  refTypeWeb: '웹',
+  refTypeDocument: '문서',
   references: '참조',
   rowCount: '{shown} / {total} 행',
   excelDownload: 'Excel 다운로드',

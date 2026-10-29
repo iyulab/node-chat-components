@@ -38,6 +38,11 @@ export class UPrompt extends UElement {
   @property({ type: String }) value?: string;
   /** 입력 첨부 파일 목록 */
   @property({ type: Array }) files?: FileBlockItem[];
+  /**
+   * 입력창의 접근성 이름 — 호스트의 `aria-label` 이 안쪽 입력으로 간다(입력은 두 겹 섀도 안이라
+   * 바깥의 이름이 닿지 않는다). 없으면 로케일의 «메시지 입력»(`promptInput`).
+   */
+  @property({ attribute: 'aria-label' }) private inputLabel?: string;
 
   connectedCallback(): void {
     super.connectedCallback();
@@ -63,6 +68,7 @@ export class UPrompt extends UElement {
       </div>
 
       <u-text-block class="input" part="input"
+        aria-label=${this.inputLabel ?? messages.text('promptInput')}
         .editable=${true}
         .minRows=${this.minRows}
         .maxRows=${this.maxRows}

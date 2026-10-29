@@ -41,7 +41,7 @@ Extends `UDataElement`, so data can also be injected via a `<script type="applic
 
 | Property | Type | Default | Reflect | Description |
 |----------|------|---------|---------|-------------|
-| `type` | `'web'\|'document'` | `'web'` | ✓ | Card type. Determines badge icon |
+| `type` | `'web'\|'document'` | `'web'` | ✓ | Card type. Determines the badge icon and its text — the locale's `refTypeWeb` / `refTypeDocument` ("Web" / "Document", drawn upper-case) |
 | `url` | `string` | `undefined` | — | External link URL. Click is suppressed if not set |
 | `title` | `string` | `''` | — | Card title (falls back to domain name for web type) |
 | `snippet` | `string` | `undefined` | — | Excerpt text |

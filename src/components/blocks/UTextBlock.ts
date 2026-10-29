@@ -26,6 +26,8 @@ export class UTextBlock extends UElement {
   @property({ type: Number }) maxRows?: number;
   /** 텍스트 블록의 내용 */
   @property({ type: String }) value?: string;
+  /** 호스트의 `aria-label` — 안쪽 입력의 접근성 이름. 바뀌면 다시 그린다. */
+  @property({ attribute: "aria-label" }) private inputLabel?: string;
 
   @query('textarea') textareaEl!: HTMLTextAreaElement;
   @query('pre') preEl!: HTMLPreElement;
@@ -54,7 +56,7 @@ export class UTextBlock extends UElement {
       <div class="container">
         <textarea
           name="message"
-          aria-label=${this.getAttribute('aria-label') ?? messages.text('textBlock')}
+          aria-label=${this.inputLabel ?? messages.text('textBlock')}
           placeholder=${this.placeholder || ''}
           spellcheck=${this.spellcheck}
           .readOnly=${!this.editable}

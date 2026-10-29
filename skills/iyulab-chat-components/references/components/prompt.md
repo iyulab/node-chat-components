@@ -75,6 +75,7 @@ to size this component.
 | `value` | `string` | `undefined` | — | Text input value |
 | `files` | `FileBlockItem[]` | `undefined` | — | Attached file list |
 | `placeholder` | `string` | `undefined` | — | Input placeholder text |
+| `aria-label` (attribute) | `string` | `undefined` | — | The input's accessible name — passed to the inner textarea, which sits inside two shadow roots. Without it the name is the locale's "Message" (`promptInput`) |
 | `minRows` | `number` | `1` | — | Minimum textarea rows |
 | `maxRows` | `number` | `10` | — | Maximum textarea rows (scrolls beyond) |
 

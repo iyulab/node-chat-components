@@ -88,7 +88,7 @@ export class URefCard extends UDataElement {
               lib="internal-chat"
               name=${this.type === 'web' ? 'world' : 'file'}
             ></u-icon>
-            ${this.type.toUpperCase()}
+            ${messages.text(this.type === 'web' ? 'refTypeWeb' : 'refTypeDocument')}
           </div>
         </div>
 

@@ -13,6 +13,13 @@
 
 ### Fixed
 
+- **`u-prompt`: the input has a name that says what it is, and a host can give its own.** The textarea sits inside two
+  shadow roots, so a name on the page never reached it and it was announced as "Text". `u-prompt` now passes its own
+  `aria-label` to the input; without one the name is the locale's "Message" (`promptInput`). `u-text-block` also
+  follows a later change of its `aria-label`.
+- **`u-ref-card`: the type badge is localized.** It wrote `WEB` / `DOCUMENT` from the type value in every locale; it
+  now writes the locale's `refTypeWeb` / `refTypeDocument` ("웹" / "문서" in Korean). English looks the same — the
+  badge is drawn upper-case.
 - **Block and card boxes survive a document-wide CSS reset.** In an app with Tailwind's preflight (or any
   `* { margin: 0; padding: 0; border: 0 }` reset) `u-code-block`, `u-table-block`, `u-prompt`, `u-ref-card`,
   `u-ref-card-group`, `u-ref-tag` and the extra blocks (`u-chart-block`, `u-images-block`, `u-map-block`,
