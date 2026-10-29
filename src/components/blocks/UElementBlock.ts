@@ -4,7 +4,7 @@ import { customElement, property, state } from "lit/decorators.js";
 import "@iyulab/components/dist/components/skeleton/USkeleton.js";
 import "./UCodeBlock.js";
 import { UDataElement } from "../UDataElement.js";
-import { getElementBlockProperties } from "../../utilities/ElementRegistry.js";
+import { getElementBlockProperties, getFenceBlock } from "../../utilities/ElementRegistry.js";
 
 import { styles } from "./UElementBlock.styles.js";
 
@@ -29,6 +29,11 @@ export class UElementBlock extends UDataElement {
   @property({ type: String }) tag?: string;
   /** 블록에 대입할 값입니다. 블록 스키마의 `properties` 에 적힌 이름만 대입됩니다. */
   @property({ type: Object }) properties?: Record<string, unknown>;
+  /**
+   * 펜스 언어입니다(`registerFenceBlock`). 주어지면 데이터 스크립트를 `{ tag, properties }` JSON 이 아니라
+   * 그 펜스의 본문으로 읽어, 등록된 블록의 속성 하나에 대입합니다.
+   */
+  @property({ type: String }) fence?: string;
 
   /** 실제 렌더링된 엘리먼트입니다. `tag` 프로퍼티가 변경될 때마다 업데이트됩니다. */
   @state() private element: HTMLElement | null = null;
@@ -67,7 +72,7 @@ export class UElementBlock extends UDataElement {
     }
     // 흐름이 끝났는데 블록을 만들지 못했다(깨진 JSON · 미등록 태그 · 미정의 요소) — 원문을 그린다.
     if (this.source !== undefined) {
-      return html`<u-code-block lang="block-json" .value=${this.source}></u-code-block>`;
+      return html`<u-code-block lang=${this.fence ?? "block-json"} .value=${this.source}></u-code-block>`;
     }
     return nothing;
   }
@@ -82,8 +87,37 @@ export class UElementBlock extends UDataElement {
         .replace(/\\u003e/g, '>')
         .replace(/--\\>/g, '-->')
         .replace(/\\u0026/g, '&');
+      if (this.fence) {
+        // 다시 붙을 때는 이미 읽은 값을 그대로 쓴다(스크립트는 읽은 뒤 지웠다).
+        if (!script) {
+          if (this.source === undefined) await this.error(new Error('Missing <script type="application/json">'));
+          return;
+        }
+        script.remove();
+        return this.loadFence(this.fence, this.source ?? '');
+      }
     }
     return super.load(data);
+  }
+
+  /** 펜스 본문을 등록된 블록의 속성 하나로 옮긴다 — 태그와 속성은 등록에서만 온다. */
+  private async loadFence(lang: string, text: string): Promise<void> {
+    const fence = getFenceBlock(lang);
+    if (!fence) {
+      this.reportError(new Error(`"${lang}" is not a registered fence block — register it with registerFenceBlock()`));
+      return;
+    }
+    let value: unknown = text;
+    if (fence.as === 'json') {
+      try {
+        value = JSON.parse(text);
+      } catch (error) {
+        await this.error(error);
+        return;
+      }
+    }
+    this.tag = fence.tag;
+    this.properties = { [fence.property]: value };
   }
 
   /**

@@ -46,6 +46,7 @@ This is converted to `<u-element-block tag="u-images-block" ...>` via `UElementB
 | `tag` | `string` | `undefined` | — | Block tag to render. Must be a registered block (`registerElementBlock` or `ElementPromptBuilder.add`) whose element is defined |
 | `properties` | `Record<string, unknown>` | `undefined` | — | Values to bind. Only names listed in the block schema's `properties` are assigned |
 | `loading` | `boolean` | `false` | ✓ | Shows a skeleton placeholder instead of the element |
+| `fence` | `string` | `undefined` | — | A fence language registered with `registerFenceBlock`. When set, the data script is read as that fence's body and assigned to the registered block's one property; a block it cannot build is shown in a code block in that language |
 
 ## Error Handling
 

@@ -195,6 +195,32 @@ import { registerElementBlock } from '@iyulab/chat-components';
 registerElementBlock(def);
 ```
 
+### Blocks whose content is one text — their own fence
+
+Some blocks take a single piece of text rather than several fields: a diagram language, a formula, a code-like spec.
+Through `block-json` the model would have to put that text inside a JSON string and escape every newline and quote.
+Register a fence language for such a block instead — the fence body goes into one property as it is:
+
+```ts
+import { ElementPromptBuilder, registerFenceBlock } from '@iyulab/chat-components';
+
+ElementPromptBuilder.instance.addFence({
+  lang: 'diagram',          // the fence language the model writes
+  tag: 'x-diagram-block',   // a defined custom element
+  property: 'spec',         // receives the fence body
+  as: 'text',               // 'text' (default) assigns the body as a string; 'json' parses it first
+  description: 'Draws a flow diagram from its declaration.',
+  example: 'kind = "flow"',
+});
+
+// or, when you write the prompt yourself:
+registerFenceBlock({ lang: 'diagram', tag: 'x-diagram-block', property: 'spec' });
+```
+
+Only registered languages become blocks — any other fence is still a code block — and only the registered property is
+assigned. While the message streams the block shows a skeleton; if it cannot be built once the stream has ended, the
+fence body is shown as a code block in that language. `block-json` itself cannot be registered as a fence language.
+
 ---
 
 ## Error Handling
@@ -209,7 +235,7 @@ Genuine data errors (invalid `properties`, assignment failures) are also console
 
 `block-json` is model output, so treat it as untrusted: a prompt-injected document, attachment, or tool result can put any JSON there. `u-element-block` therefore only renders what you have registered:
 
-- **Tags** — only blocks registered with `ElementPromptBuilder.add()` or `registerElementBlock()`. The four built-in extras register themselves when their module is imported. Any other element, even one defined on the page, is not created.
+- **Tags** — only blocks registered with `ElementPromptBuilder.add()` or `registerElementBlock()`, and fence languages registered with `addFence()` or `registerFenceBlock()`. The four built-in extras register themselves when their module is imported. Any other element, even one defined on the page, is not created.
 - **Properties** — only the names in that block's schema `properties`. Other keys (including `style`, `id`, or event-handler names) are not assigned and are logged to the console.
 
 A custom extra should accept data only. If one of its properties is rendered as HTML, sanitize it inside the element — the schema allows the name, not the content.
@@ -222,6 +248,7 @@ A custom extra should accept data only. If one of its properties is rendered as 
 |--------|-------------|
 | `ElementPromptBuilder.instance` | Singleton accessor |
 | `.add(definition: ElementSchema)` | Register a custom extra (throws on tag conflict). Also registers it as a renderable block |
+| `.addFence(fence: FenceBlockSchema)` | Map a fence language to one property of a block and describe it in the prompt (throws on language conflict) |
 | `.build(): string` | Generate system prompt instruction string |
 
-`registerElementBlock(schema)` registers a block without adding it to a prompt — use it when you write the prompt yourself. `getElementBlockProperties(tag)` returns the property names a registered block accepts, or `undefined`.
+`registerElementBlock(schema)` registers a block without adding it to a prompt — use it when you write the prompt yourself. `getElementBlockProperties(tag)` returns the property names a registered block accepts, or `undefined`. `registerFenceBlock(fence)` and `getFenceBlock(lang)` do the same for fence languages.

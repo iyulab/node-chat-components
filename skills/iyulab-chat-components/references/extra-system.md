@@ -78,13 +78,39 @@ ElementPromptBuilder.instance.add(def);
 
 The element just needs to accept standard property assignments. `add()` also registers the schema as a renderable block — `u-element-block` assigns only the names in the schema's `properties`. If you write your own prompt instead, call `registerElementBlock(def)` (exported from `@iyulab/chat-components`).
 
+## Blocks whose content is one text — their own fence
+
+Some blocks take a single piece of text rather than several fields: a diagram language, a formula, a code-like spec.
+Through `block-json` the model would have to put that text inside a JSON string and escape every newline and quote.
+Register a fence language for such a block instead — the fence body goes into one property as it is:
+
+```ts
+import { ElementPromptBuilder, registerFenceBlock } from '@iyulab/chat-components';
+
+ElementPromptBuilder.instance.addFence({
+  lang: 'diagram',          // the fence language the model writes
+  tag: 'x-diagram-block',   // a defined custom element
+  property: 'spec',         // receives the fence body
+  as: 'text',               // 'text' (default) assigns the body as a string; 'json' parses it first
+  description: 'Draws a flow diagram from its declaration.',
+  example: 'kind = "flow"',
+});
+
+// or, when you write the prompt yourself:
+registerFenceBlock({ lang: 'diagram', tag: 'x-diagram-block', property: 'spec' });
+```
+
+Only registered languages become blocks — any other fence is still a code block — and only the registered property is
+assigned. While the message streams the block shows a skeleton; if it cannot be built once the stream has ended, the
+fence body is shown as a code block in that language. `block-json` itself cannot be registered as a fence language.
+
 ## Error Handling
 
 If the LLM outputs a `tag` that isn't a registered block (e.g. missing `@iyulab/chat-components/extra` import, or a custom extra's schema was never registered or its element isn't defined yet), `u-element-block` does **not** show an error card — it logs to the console and, once streaming has ended, shows the fence's raw text as a `block-json` code block instead. Genuine data errors (invalid `properties`, assignment failures) are also console-only.
 
 ## Security
 
-`block-json` is model output and is treated as untrusted. `u-element-block` creates only registered blocks (`ElementPromptBuilder.add()` or `registerElementBlock()`; built-in extras register on import) and assigns only the property names in the block's schema `properties` — other keys, including `style`, are dropped and logged. Custom extras should accept data only; if a property is rendered as HTML, sanitize it inside the element.
+`block-json` is model output and is treated as untrusted. `u-element-block` creates only registered blocks (`ElementPromptBuilder.add()` or `registerElementBlock()`; built-in extras register on import; fence languages from `addFence()` or `registerFenceBlock()`) and assigns only the property names in the block's schema `properties` — other keys, including `style`, are dropped and logged. Custom extras should accept data only; if a property is rendered as HTML, sanitize it inside the element.
 
 ## `ElementPromptBuilder` API
 
@@ -92,4 +118,5 @@ If the LLM outputs a `tag` that isn't a registered block (e.g. missing `@iyulab/
 |--------|-------------|
 | `ElementPromptBuilder.instance` | Singleton accessor |
 | `.add(definition: ElementSchema)` | Register a custom extra (throws on tag conflict). Also registers it as a renderable block |
+| `.addFence(fence: FenceBlockSchema)` | Map a fence language to one property of a block and describe it in the prompt (throws on language conflict) |
 | `.build(): string` | Generate system prompt instruction string |

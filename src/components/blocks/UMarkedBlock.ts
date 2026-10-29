@@ -12,6 +12,7 @@ import "../references/URefCardGroup.js";
 import { URefCard } from "../references/URefCard.js";
 import { UTableBlock } from "./UTableBlock.js";
 import { UElementBlock } from "./UElementBlock.js";
+import { getFenceBlock } from "../../utilities/ElementRegistry.js";
 import { UElement } from "@iyulab/components/dist/components/UElement.js";
 import { escapeHtmlText, escapeHtmlAttr, escapeHtmlHref, stripZeroWidth } from "../../utilities/sanitizers.js";
 import { resolveImageSource } from "../../utilities/imageSources.js";
@@ -196,6 +197,11 @@ export class UMarkedBlock extends UElement {
     if (lang === 'block-json') {
       // JSON 페이로드 안에 인용 센티널이 남으면 전체 복원이 그 자리에 HTML 을 넣어 JSON 을 깨뜨린다.
       return UElementBlock.buildHTML(stripRefPlaceholders(token.text), { loading: this.streaming });
+    }
+    // 등록된 펜스 언어만 블록으로 — 그 밖의 언어는 아래의 코드 블록이다(허용 목록).
+    const fence = getFenceBlock(lang);
+    if (fence) {
+      return UElementBlock.buildHTML(stripRefPlaceholders(token.text), { fence: fence.lang, loading: this.streaming });
     }
 
     // 코드블록은 refs 태그 제거 + HTML escape

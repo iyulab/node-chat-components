@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+### Added
+
+- **Blocks whose content is one text can have a fence of their own.** `registerFenceBlock({ lang, tag, property, as })`
+  and `ElementPromptBuilder.addFence()` map a fence language to one property of a block: `u-marked-block` hands
+  that fence's body to the block as it is (`as: 'json'` parses it first). A diagram language or a formula no longer
+  has to be escaped into a JSON string inside `block-json`. Only registered languages become blocks and only the
+  registered property is assigned; the prompt built by `addFence()` tells the model which fence to use. The prompt's
+  first rule now reads "for a block with a JSON schema" so that it does not contradict a fence block.
+
 ### Fixed
 
 - **Block and card boxes survive a document-wide CSS reset.** In an app with Tailwind's preflight (or any
