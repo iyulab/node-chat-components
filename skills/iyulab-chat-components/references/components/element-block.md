@@ -49,7 +49,7 @@ This is converted to `<u-element-block tag="u-images-block" ...>` via `UElementB
 
 ## Error Handling
 
-If `tag` is missing or not a registered block, or `properties` is not an object or fails to assign, `u-element-block` does **not** show an error card — it renders nothing and logs to the console (`[u-element-block] ...`). While `loading` is `true`, JSON parse failures from the underlying `UDataElement` are silently ignored too, since incomplete streamed JSON is expected mid-stream.
+If `tag` is missing or not a registered block, or `properties` is not an object or fails to assign, `u-element-block` does **not** show an error card — it logs to the console (`[@iyulab/chat-components] u-element-block: ...`). While `loading` is `true` it shows a skeleton and ignores JSON parse failures (incomplete streamed JSON is expected mid-stream). Once `loading` is `false`, a block it could not create — broken JSON, a missing or unregistered `tag`, an element that is not defined — is shown as its raw text in a `u-code-block` with `lang="block-json"`, so the content is never silently dropped.
 
 ## Security
 

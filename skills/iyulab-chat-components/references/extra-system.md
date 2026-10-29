@@ -80,7 +80,7 @@ The element just needs to accept standard property assignments. `add()` also reg
 
 ## Error Handling
 
-If the LLM outputs a `tag` that isn't a registered block (e.g. missing `@iyulab/chat-components/extra` import, or a custom extra's schema was never registered or its element isn't defined yet), `u-element-block` does **not** show an error card — it renders nothing and logs to the console instead. Genuine data errors (invalid `properties`, assignment failures) are also console-only.
+If the LLM outputs a `tag` that isn't a registered block (e.g. missing `@iyulab/chat-components/extra` import, or a custom extra's schema was never registered or its element isn't defined yet), `u-element-block` does **not** show an error card — it logs to the console and, once streaming has ended, shows the fence's raw text as a `block-json` code block instead. Genuine data errors (invalid `properties`, assignment failures) are also console-only.
 
 ## Security
 

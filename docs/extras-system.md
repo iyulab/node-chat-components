@@ -199,7 +199,7 @@ registerElementBlock(def);
 
 ## Error Handling
 
-If the LLM outputs a `tag` that isn't a registered block (e.g. you forgot to import `@iyulab/chat-components/extra`, or a custom extra's schema was never registered or its element isn't defined yet), `u-element-block` does **not** show an error card — it renders nothing and logs a warning to the console instead. This avoids surprising error UI in the chat when an extra simply hasn't been wired up yet; check the console during development.
+If the LLM outputs a `tag` that isn't a registered block (e.g. you forgot to import `@iyulab/chat-components/extra`, or a custom extra's schema was never registered or its element isn't defined yet), `u-element-block` does **not** show an error card — it logs to the console, and once the message has finished streaming it shows the fence's raw text as a `block-json` code block, so that part of the answer is not silently lost. The same fallback covers JSON that is still broken when the stream ends. Check the console during development.
 
 Genuine data errors (invalid `properties`, assignment failures) are also console-only for the same reason.
 

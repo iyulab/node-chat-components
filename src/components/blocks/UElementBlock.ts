@@ -2,6 +2,7 @@ import { html, nothing, PropertyValues } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 
 import "@iyulab/components/dist/components/skeleton/USkeleton.js";
+import "./UCodeBlock.js";
 import { UDataElement } from "../UDataElement.js";
 import { getElementBlockProperties } from "../../utilities/ElementRegistry.js";
 
@@ -14,7 +15,9 @@ import { styles } from "./UElementBlock.styles.js";
  * `ElementPromptBuilder.add`), 대입하는 것은 **그 스키마의 `properties` 에 적힌 이름뿐**입니다.
  * `tag`·`properties` 는 LLM 출력에서 오므로 신뢰할 수 없는 입력으로 다룹니다 — 스키마 밖의
  * 이름은 대입하지 않고 콘솔에 기록합니다.
- * 대상 태그가 등록되어 있지 않거나 데이터가 유효하지 않은 경우, 에러 카드 없이 콘솔에만 기록하고 아무것도 렌더링하지 않습니다.
+ * 대상 태그가 등록되어 있지 않거나 데이터가 유효하지 않은 경우, 에러 카드 없이 콘솔에 기록하고
+ * 스트리밍이 끝난 뒤(`loading` 이 꺼진 뒤)에는 받은 원문을 `block-json` 코드 블록으로 그립니다 —
+ * 답변의 일부가 소리 없이 사라지지 않게 하기 위함입니다.
  */
 @customElement('u-element-block')
 export class UElementBlock extends UDataElement {
@@ -29,6 +32,8 @@ export class UElementBlock extends UDataElement {
 
   /** 실제 렌더링된 엘리먼트입니다. `tag` 프로퍼티가 변경될 때마다 업데이트됩니다. */
   @state() private element: HTMLElement | null = null;
+  /** 라이트 DOM 스크립트에서 읽은 원문 — 블록을 만들지 못했을 때 코드 블록으로 보여 준다. */
+  @state() private source?: string;
 
   protected willUpdate(changedProperties: PropertyValues): void {
     super.willUpdate(changedProperties);
@@ -60,7 +65,25 @@ export class UElementBlock extends UDataElement {
     if (this.element != null) {
       return this.element;
     }
+    // 흐름이 끝났는데 블록을 만들지 못했다(깨진 JSON · 미등록 태그 · 미정의 요소) — 원문을 그린다.
+    if (this.source !== undefined) {
+      return html`<u-code-block lang="block-json" .value=${this.source}></u-code-block>`;
+    }
     return nothing;
+  }
+
+  /** 파싱 전에 원문을 남긴다 — `UDataElement.load()` 는 읽은 스크립트를 지운다. */
+  protected override async load(data?: object): Promise<void> {
+    if (!data) {
+      const script = this.querySelector<HTMLScriptElement>('script[type="application/json"]');
+      // `buildHTML` 가 HTML 파서를 피하려 넣은 이스케이프를 되돌린다 — 깨진 JSON 은 파싱으로 풀 수 없다.
+      if (script) this.source = (script.textContent ?? '')
+        .replace(/\\u003c/g, '<')
+        .replace(/\\u003e/g, '>')
+        .replace(/--\\>/g, '-->')
+        .replace(/\\u0026/g, '&');
+    }
+    return super.load(data);
   }
 
   /**
@@ -138,7 +161,7 @@ export class UElementBlock extends UDataElement {
   }
 
   /**
-   * 에러 카드 없이 콘솔에만 기록합니다. 채팅 UI에 갑작스러운 에러 카드가 뜨는 것을 피하기 위함입니다 —
+   * 에러 카드 없이 콘솔에 기록합니다(화면에는 흐름이 끝난 뒤 원문 코드 블록이 남습니다). 채팅 UI에 갑작스러운 에러 카드가 뜨는 것을 피하기 위함입니다 —
    * addon 모듈을 import하지 않아 아직 등록되지 않은 태그일 수도 있으므로, 실제 에러라기보다
    * "아직 준비 안 됨"에 가깝습니다.
    */

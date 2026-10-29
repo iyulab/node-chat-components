@@ -11,6 +11,13 @@
   root's `:host` rule. The box is now drawn by a new `base` part inside the shadow root. Padding, a border or a margin
   you set on the host now adds outside that box; style the box with `::part(base)`.
 
+- **A `block-json` block that cannot be built no longer disappears when the stream ends.** When the JSON was still
+  broken at the end of a message (cut off by a token limit, or simply malformed), or named a `tag` that is not a
+  registered block or not a defined element, `u-element-block` logged to the console and rendered nothing — the
+  skeleton shown while streaming vanished and that part of the answer was lost without a trace. Once `loading` is
+  off it now shows the fence's raw text as a `u-code-block` with `lang="block-json"`. While streaming it still shows
+  the skeleton.
+
 ## [0.27.4] - 2026-10-17
 
 ### Fixed
