@@ -71,6 +71,19 @@ describe('u-element-block — 만들지 못한 블록은 원문으로 남는다'
     expect(el.shadowRoot!.textContent).toContain('뒤 문장.');
   });
 
+  it('깨진 원문의 문자 그대로인 \\u003c · --> 도 받은 그대로 보인다', async () => {
+    const broken = '{"tag":"x-fallback-probe","properties":{"text":"\\u003c is literal, a --> b';
+    const el = await stream(fence(broken));
+    const block = await settle(el);
+    expect(codeOf(block)?.value).toBe(broken);
+  });
+
+  it('완성된 JSON 의 --> 도 파싱된다 — HTML 파서 회피 이스케이프가 JSON 을 깨뜨리지 않는다', async () => {
+    const el = await stream(fence(JSON.stringify({ tag: 'x-fallback-probe', properties: { text: 'a --> b <i>' } })));
+    const block = await settle(el);
+    expect((block.shadowRoot!.querySelector('x-fallback-probe') as FallbackProbe | null)?.text).toBe('a --> b <i>');
+  });
+
   it('등록되지 않은 태그 · 정의되지 않은 요소도 원문으로 남는다', async () => {
     for (const tag of ['x-unregistered-tag', 'x-never-defined']) {
       document.body.innerHTML = '';

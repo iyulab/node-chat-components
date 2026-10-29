@@ -73,6 +73,12 @@ describe('펜스 블록 — 등록된 펜스 언어 → 블록 속성 하나', (
     expect(code?.value).toBe('{"a": [1,');
   });
 
+  it('본문의 글자는 HTML 파서 회피 이스케이프와 섞이지 않는다 — 문자 그대로의 \\u003c · --> 도 받은 그대로', async () => {
+    const spec = 'note = "literal \\u003c and \\u0026 stay"\nedge = "a --> b </script>"';
+    const el = await render('```diagram\n' + spec + '\n```');
+    expect(child<DiagramProbe>(el, 'x-diagram-probe')?.spec).toBe(spec);
+  });
+
   it('등록되지 않은 언어는 종전대로 코드 블록이다 — 블록이 되지 않는다', async () => {
     const el = await render('```mermaid\ngraph TD; A-->B\n```');
     expect(el.shadowRoot!.querySelector('u-element-block')).toBeNull();

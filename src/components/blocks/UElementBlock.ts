@@ -77,27 +77,40 @@ export class UElementBlock extends UDataElement {
     return nothing;
   }
 
-  /** 파싱 전에 원문을 남긴다 — `UDataElement.load()` 는 읽은 스크립트를 지운다. */
+  /**
+   * 데이터 스크립트를 읽어 원문을 남긴 뒤 블록을 만든다 — 원문은 블록을 만들지 못했을 때 그대로 보여 준다.
+   *
+   * 스크립트에는 두 모양이 온다. `u-marked-block` 은 펜스 본문을 **JSON 문자열 하나**로 싣는다
+   * (`JSON.stringify(본문)`) — 본문이 깨진 JSON 이어도 그 문자열은 늘 유효해 받은 글자가 정확히 되돌아온다.
+   * 직접 쓴 마크업은 `{ tag, properties }` 객체 JSON 을 그대로 싣는다.
+   */
   protected override async load(data?: object): Promise<void> {
-    if (!data) {
-      const script = this.querySelector<HTMLScriptElement>('script[type="application/json"]');
-      // `buildHTML` 가 HTML 파서를 피하려 넣은 이스케이프를 되돌린다 — 깨진 JSON 은 파싱으로 풀 수 없다.
-      if (script) this.source = (script.textContent ?? '')
-        .replace(/\\u003c/g, '<')
-        .replace(/\\u003e/g, '>')
-        .replace(/--\\>/g, '-->')
-        .replace(/\\u0026/g, '&');
-      if (this.fence) {
-        // 다시 붙을 때는 이미 읽은 값을 그대로 쓴다(스크립트는 읽은 뒤 지웠다).
-        if (!script) {
-          if (this.source === undefined) await this.error(new Error('Missing <script type="application/json">'));
-          return;
-        }
-        script.remove();
-        return this.loadFence(this.fence, this.source ?? '');
-      }
+    if (data) return super.load(data);
+
+    const script = this.querySelector<HTMLScriptElement>('script[type="application/json"]');
+    if (!script) {
+      // 다시 붙을 때는 이미 읽은 값을 그대로 쓴다(스크립트는 읽은 뒤 지웠다).
+      if (this.source !== undefined) return;
+      return super.load();
     }
-    return super.load(data);
+    const raw = readSource(script.textContent ?? '');
+    this.source = raw;
+    script.remove();
+
+    if (this.fence) return this.loadFence(this.fence, raw);
+
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(raw);
+    } catch (error) {
+      await this.error(error);
+      return;
+    }
+    if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
+      await this.error(new Error('Invalid JSON data: expected an object at the top level'));
+      return;
+    }
+    return super.load(parsed);
   }
 
   /** 펜스 본문을 등록된 블록의 속성 하나로 옮긴다 — 태그와 속성은 등록에서만 온다. */
@@ -202,6 +215,25 @@ export class UElementBlock extends UDataElement {
   private reportError(error: unknown): void {
     console.error(`[@iyulab/chat-components] u-element-block:`, error);
   }
+}
+
+/**
+ * 스크립트 내용에서 원문을 꺼낸다. JSON 문자열 하나면 그 값이 원문이다(정확히 되돌아온다).
+ * 그 밖(객체 JSON · 깨진 JSON)은 내용 자체가 원문이고, `buildHTML` 이 HTML 파서를 피하려 넣은
+ * 이스케이프만 되돌린다 — `--\>` 는 JSON 이 받지 않는 이스케이프라 되돌려야 파싱된다.
+ */
+function readSource(text: string): string {
+  try {
+    const value: unknown = JSON.parse(text);
+    if (typeof value === 'string') return value;
+  } catch {
+    // 깨진 JSON — 아래에서 내용 그대로
+  }
+  return text
+    .replace(/\\u003c/g, '<')
+    .replace(/\\u003e/g, '>')
+    .replace(/--\\>/g, '-->')
+    .replace(/\\u0026/g, '&');
 }
 
 declare global {

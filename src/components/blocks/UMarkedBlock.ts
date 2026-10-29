@@ -196,12 +196,13 @@ export class UMarkedBlock extends UElement {
     // 블록 자체가 닫혔더라도 메시지가 아직 스트리밍 중이면 loading을 유지합니다.
     if (lang === 'block-json') {
       // JSON 페이로드 안에 인용 센티널이 남으면 전체 복원이 그 자리에 HTML 을 넣어 JSON 을 깨뜨린다.
-      return UElementBlock.buildHTML(stripRefPlaceholders(token.text), { loading: this.streaming });
+      // 본문은 JSON 문자열 하나로 싣는다 — 깨진 본문이어도 받은 글자가 정확히 되돌아온다(u-element-block 의 원문 · 펜스 대입).
+      return UElementBlock.buildHTML(JSON.stringify(stripRefPlaceholders(token.text)), { loading: this.streaming });
     }
     // 등록된 펜스 언어만 블록으로 — 그 밖의 언어는 아래의 코드 블록이다(허용 목록).
     const fence = getFenceBlock(lang);
     if (fence) {
-      return UElementBlock.buildHTML(stripRefPlaceholders(token.text), { fence: fence.lang, loading: this.streaming });
+      return UElementBlock.buildHTML(JSON.stringify(stripRefPlaceholders(token.text)), { fence: fence.lang, loading: this.streaming });
     }
 
     // 코드블록은 refs 태그 제거 + HTML escape
