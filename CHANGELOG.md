@@ -9,6 +9,10 @@
   buttons were announced as «clickable»: each carried a click listener on the element. The handlers are now heard on
   the shadow root (`delegate` from `@iyulab/components`).
 
+### Changed
+
+- Requires `@iyulab/components` 2.39.0 or later (was `>=1.51.0` — components 1.x is no longer accepted): the click handlers above use its `delegate` directive.
+
 ## [0.28.0] - 2026-10-30
 
 ### Added
