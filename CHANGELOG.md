@@ -9,6 +9,7 @@
   buttons were announced as «clickable»: each carried a click listener on the element. The handlers are now heard on
   the shadow root (`delegate` from `@iyulab/components`).
 
+- **`u-table-block` search matches like the other tables.** It folds case and diacritics (`zurich` finds «Zürich»), lets a consonant-only Korean query match by initials, and — while a syllable is still being composed in an IME — reads the half-typed syllable as the start of its keystrokes, so the rows narrow as you type instead of staying unfiltered until the composition ends. It uses `Locale.matchesSearch` from `@iyulab/components`. The highlight of the found text still marks exact (case-insensitive) occurrences only.
 ### Changed
 
 - Requires `@iyulab/components` 2.39.0 or later (was `>=1.51.0` — components 1.x is no longer accepted): the click handlers above use its `delegate` directive.

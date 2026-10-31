@@ -15,6 +15,7 @@ import { styles } from "./UTableBlock.styles.js";
 import { messages } from "../../utilities/messages.js";
 import { LinkActivationController } from "../../utilities/LinkActivation.js";
 import { delegate } from '@iyulab/components/dist/utilities/listenInShadow.js';
+import { Locale } from '@iyulab/components/dist/utilities/Locale.js';
 
 /**
  * 테이블 셀 데이터 타입.
@@ -86,6 +87,9 @@ export class UTableBlock extends UDataElement {
   @state() private search: string = "";
   
   private searchCache?: string;
+  /** 검색 칸의 마지막 음절이 아직 IME 로 조합 중인가 — 검색 일치가 그 음절을 자모 앞부분으로 견준다. */
+  @state() private searchComposing = false;
+  private searchCacheComposing = false;
   private searchTimer: number | null = null;
   /** 이 표가 공유 하이라이트에 더한 범위 — 다시 그릴 때·떼어질 때 걷는다. */
   private searchRanges: Range[] = [];
@@ -232,8 +236,9 @@ export class UTableBlock extends UDataElement {
     // 검색어가 있으면 필터링 적용
     const q = this.search.trim();
     if (q) {
-      const qLower = q.toLowerCase();
-      rows = rows.filter(row => row.some(cell => cell.text.toLowerCase().includes(qLower)));
+      // components 의 검색 일치 — 대소문자 · 발음 구별 기호를 접고, 조합 중인 음절은 자모 앞부분으로 견준다(형제 표와 같은 규칙).
+      const options = { composing: this.searchComposing };
+      rows = rows.filter(row => row.some(cell => Locale.matchesSearch(cell.text, q, options)));
     }
 
     // 정렬 적용, 숫자면 숫자 비교, 아니면 문자 비교
@@ -253,20 +258,22 @@ export class UTableBlock extends UDataElement {
   }
 
   /**
-   * 250ms 디바운스되어 검색어가 업데이트되는 핸들러. IME 조합 중인 음절(«서울» 의 가는 길 «ㅅ» · «성»)로는 거르지 않는다 —
-   * 찾는 행을 숨긴다. 조합 중 `input` 은 건너뛰고, 조합이 끝나면(`compositionend`) 확정 글자로 거른다.
+   * 250ms 디바운스되어 검색어가 업데이트되는 핸들러. IME 조합 중인 음절(«서울» 의 가는 길 «ㅅ» · «성»)을 글자 그대로
+   * 견주면 찾는 행을 숨기고 빈 표를 보인다 — 검색 일치가 조합 중인 음절을 자모 앞부분으로 읽으므로(`composing`) 치는
+   * 도중에도 좁힌다.
    */
   private handleSearchInput(e: Event) {
     e.stopPropagation();
-    if ((e as InputEvent).isComposing) return;
     const input = e.target as UInput;
     this.searchCache = input.value || "";
+    this.searchCacheComposing = !!(e as InputEvent).isComposing;
 
     if (this.searchTimer !== null) window.clearTimeout(this.searchTimer);
     this.loading = true;
 
     this.searchTimer = window.setTimeout(() => {
       this.search = this.searchCache || "";
+      this.searchComposing = this.searchCacheComposing;
       this.loading = false;
       this.searchTimer = null;
     }, 250);

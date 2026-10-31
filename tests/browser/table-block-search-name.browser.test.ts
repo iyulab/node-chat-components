@@ -54,7 +54,7 @@ describe('u-table-block search name', () => {
 });
 
 describe('u-table-block search — IME composition', () => {
-  it('rows stay while a syllable is being composed and are filtered by the committed text', async () => {
+  it('narrows while a syllable is being composed — the half-typed syllable reads as the start of its keystrokes — and by the committed text', async () => {
     const el = document.createElement('u-table-block') as UTableBlock;
     el.headers = [{ text: 'City' }] as UTableBlock['headers'];
     el.rows = [[{ text: '서울' }], [{ text: '성남' }], [{ text: '부산' }]] as UTableBlock['rows'];
@@ -74,6 +74,36 @@ describe('u-table-block search — IME composition', () => {
     await new Promise((r) => setTimeout(r, 300));
     await el.updateComplete;
     seen.push(rows());
-    expect(seen).toEqual([3, 3, 3, 1]);
+    // «ㅅ» alone is a consonant-only query — it matches initials, and «부산» has an «ㅅ» too; «서» · «성» match «서울» and «성남» (their keystrokes
+    // start the same way) and never «부산»; «서» committed is a whole syllable
+    expect(seen).toEqual([3, 2, 2, 1]);
+  });
+});
+
+describe('u-table-block search — match rule', () => {
+  it('folds case and diacritics like the sibling tables', async () => {
+    const el = document.createElement('u-table-block') as UTableBlock;
+    el.headers = [{ text: 'City' }] as UTableBlock['headers'];
+    el.rows = [[{ text: 'Zürich' }], [{ text: 'Bern' }]] as UTableBlock['rows'];
+    document.body.appendChild(el);
+    await el.updateComplete;
+    await userEvent.click(page.getByRole('searchbox', { name: 'Search rows', exact: true }));
+    await userEvent.keyboard('zurich');
+    await new Promise((r) => setTimeout(r, 350));
+    await el.updateComplete;
+    expect(el.shadowRoot!.querySelectorAll('tbody tr').length).toBe(1);
+  });
+
+  it('a consonant-only query matches by initials', async () => {
+    const el = document.createElement('u-table-block') as UTableBlock;
+    el.headers = [{ text: 'City' }] as UTableBlock['headers'];
+    el.rows = [[{ text: '서울' }], [{ text: '부산' }]] as UTableBlock['rows'];
+    document.body.appendChild(el);
+    await el.updateComplete;
+    await userEvent.click(page.getByRole('searchbox', { name: 'Search rows', exact: true }));
+    await userEvent.keyboard('ㅅㅇ');
+    await new Promise((r) => setTimeout(r, 350));
+    await el.updateComplete;
+    expect(el.shadowRoot!.querySelectorAll('tbody tr').length).toBe(1);
   });
 });
