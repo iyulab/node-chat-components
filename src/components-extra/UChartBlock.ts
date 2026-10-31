@@ -10,6 +10,7 @@ import "../utilities/icons.js";
 import { styles } from "./UChartBlock.styles.js";
 import { registerElementBlock } from '../utilities/ElementRegistry.js';
 import schema from './UChartBlock.schema.js';
+import { delegate } from '@iyulab/components/dist/utilities/listenInShadow.js';
 
 // 이 모듈을 import 하면 block-json 으로 렌더할 수 있다(스키마가 허용 목록이다).
 registerElementBlock(schema);
@@ -71,15 +72,15 @@ export class UChartBlock extends UElement {
       <div class="toolbar">
         <div class="toolbar-left"></div>
         <div class="toolbar-right">
-          <u-button title=${messages.text('pngDownload')} @click=${this.handleDownloadPNG}>
+          <u-button title=${messages.text('pngDownload')} ${delegate('click', this.handleDownloadPNG)}>
             PNG
             <u-icon slot="suffix" lib="internal-chat" name="download"></u-icon>
           </u-button>
-          <u-button title=${messages.text('jsonDownload')} @click=${this.handleDownloadJSON}>
+          <u-button title=${messages.text('jsonDownload')} ${delegate('click', this.handleDownloadJSON)}>
             JSON
             <u-icon slot="suffix" lib="internal-chat" name="download"></u-icon>
           </u-button>
-          <u-button class="fullscreen-btn" title=${messages.text('fullScreen')} aria-label=${messages.text('fullScreen')} @click=${this.handleFullscreen}>
+          <u-button class="fullscreen-btn" title=${messages.text('fullScreen')} aria-label=${messages.text('fullScreen')} ${delegate('click', this.handleFullscreen)}>
             <u-icon lib="internal-chat" name="external-link"></u-icon>
           </u-button>
         </div>

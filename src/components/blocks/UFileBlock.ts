@@ -10,6 +10,7 @@ import { OverlayManager } from "@iyulab/components/dist/utilities/OverlayManager
 import "../../utilities/icons.js";
 import { messages } from "../../utilities/messages.js";
 import { styles } from "./UFileBlock.styles.js";
+import { delegate } from '@iyulab/components/dist/utilities/listenInShadow.js';
 
 /**
  * 단일 파일을 표시하는 블록 컴포넌트입니다.
@@ -75,20 +76,20 @@ export class UFileBlock extends UElement {
           ?hidden=${!this.removable}
           title=${messages.text('remove')}
           aria-label=${messages.text('remove')}
-          @click=${this.handleRemoveClick}>
+          ${delegate('click', this.handleRemoveClick)}>
           <u-icon lib="internal" name="x"></u-icon>
         </u-button>
       </div>
 
       ${this.previewOpen && this.previewable ? html`
-        <div class="preview-overlay" @click=${this.closePreview}>
+        <div class="preview-overlay" ${delegate('click', this.closePreview)}>
           <header class="preview-header">
             <span class="preview-name">${this.name}</span>
             <button class="preview-close" aria-label=${messages.text('closePreview')} @click=${this.closePreview}>
               <u-icon lib="internal" name="x"></u-icon>
             </button>
           </header>
-          <div class="preview-body" @click=${(e: Event) => e.stopPropagation()}>
+          <div class="preview-body" ${delegate('click', (e: Event) => e.stopPropagation())}>
             ${this.isImage
               ? html`<img src=${this.url!} alt=${this.name || ''} />`
               : html`<video src=${this.url!} controls autoplay></video>`}

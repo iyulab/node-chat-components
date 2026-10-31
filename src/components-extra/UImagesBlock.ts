@@ -12,6 +12,7 @@ import { messages } from "../utilities/messages.js";
 import { resolveImageSource } from "../utilities/imageSources.js";
 import { registerElementBlock } from '../utilities/ElementRegistry.js';
 import schema from './UImagesBlock.schema.js';
+import { delegate } from '@iyulab/components/dist/utilities/listenInShadow.js';
 
 // 이 모듈을 import 하면 block-json 으로 렌더할 수 있다(스키마가 허용 목록이다).
 registerElementBlock(schema);
@@ -148,7 +149,7 @@ export class UImagesBlock extends UElement {
           <button class="lb-nav prev"
             ?hidden=${idx <= 0}
             aria-label=${messages.text('previousImage')}
-            @click=${this.handlePrevClick}>
+            ${delegate('click', this.handlePrevClick)}>
             <u-icon lib="internal" name="chevron-left"></u-icon>
           </button>
 

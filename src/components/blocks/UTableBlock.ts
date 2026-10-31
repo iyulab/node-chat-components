@@ -14,6 +14,7 @@ import "../../utilities/icons.js";
 import { styles } from "./UTableBlock.styles.js";
 import { messages } from "../../utilities/messages.js";
 import { LinkActivationController } from "../../utilities/LinkActivation.js";
+import { delegate } from '@iyulab/components/dist/utilities/listenInShadow.js';
 
 /**
  * 테이블 셀 데이터 타입.
@@ -122,11 +123,11 @@ export class UTableBlock extends UDataElement {
           </span>
         </div>
         <div class="toolbar-right">
-          <u-button appearance="outlined" color="neutral" @click=${this.handleDownloadXLS} title=${messages.text('excelDownload')}>
+          <u-button appearance="outlined" color="neutral" ${delegate('click', this.handleDownloadXLS)} title=${messages.text('excelDownload')}>
             XLS
             <u-icon slot="suffix" lib="internal-chat" name="download"></u-icon>
           </u-button>
-          <u-button appearance="outlined" color="neutral" @click=${this.handleDownloadCSV} title=${messages.text('csvDownload')}>
+          <u-button appearance="outlined" color="neutral" ${delegate('click', this.handleDownloadCSV)} title=${messages.text('csvDownload')}>
             CSV
             <u-icon slot="suffix" lib="internal-chat" name="download"></u-icon>
           </u-button>

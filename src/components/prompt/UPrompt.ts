@@ -17,6 +17,7 @@ import "../../utilities/icons.js";
 import { messages } from "../../utilities/messages.js";
 import { styles } from "./UPrompt.styles.js";
 import { isImeComposing } from '@iyulab/components/dist/utilities/keyboard.js';
+import { delegate } from '@iyulab/components/dist/utilities/listenInShadow.js';
 
 /**
  * 채팅 입력 컴포넌트입니다.
@@ -87,7 +88,7 @@ export class UPrompt extends UElement {
           variant="ghost"
           ?disabled=${!this.loading && !this.value}
           aria-label=${this.loading ? messages.text('stopGenerating') : messages.text('sendMessage')}
-          @click=${this.handleSendButtonClick}>
+          ${delegate('click', this.handleSendButtonClick)}>
           <u-icon
             lib="internal-chat"
             name=${this.loading ? 'player-stop-fill' : 'send'}
