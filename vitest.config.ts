@@ -41,6 +41,22 @@ export default defineConfig({
           api: { host: '127.0.0.1', port: 41503 },
         },
       },
+      {
+        // WebKit 표본 — 키보드 축만. 게시 전 전체 검증에서 `npm run test:webkit` 으로 돈다. 전 파일 실측(2026-11)에서 제품 차이는 0 —
+        // 갈린 것은 CDP 시험 · WebKit 의 겹침 스크롤바(폭 0, macOS 처럼) · 계산된 글꼴 이름의 따옴표 표기뿐이었다.
+        test: {
+          name: 'webkit',
+          include: ['table-block-sort-keyboard', 'table-block-toolbar-buttons', 'new-tab-link-name'].map((name) => `tests/browser/${name}.browser.test.ts`),
+          browser: {
+            enabled: true,
+            provider: playwright(),
+            instances: [{ browser: 'webkit', headless: true }],
+          },
+          api: { host: '127.0.0.1', port: 41515 },
+          isolate: true,
+          fileParallelism: false,
+        },
+      },
     ],
   },
 });
