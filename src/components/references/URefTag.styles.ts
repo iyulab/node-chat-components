@@ -38,7 +38,7 @@ export const styles = css`
     color: inherit;
     line-height: 1.5;
     white-space: nowrap;
-    text-overflow: ellipsis;
+    text-overflow: ellipsis; /* ellipsis-ok: a short marker; hover or focus opens the source card */
     overflow: hidden;
   }
 

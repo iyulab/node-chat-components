@@ -49,7 +49,7 @@ export const styles = css`
     font-weight: 600;
     line-height: 1.4;
     white-space: nowrap;
-    text-overflow: ellipsis;
+    text-overflow: ellipsis; /* ellipsis-ok: the card links to the source, which carries the full title */
     overflow: hidden;
   }
 
@@ -86,7 +86,7 @@ export const styles = css`
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    text-overflow: ellipsis;
+    text-overflow: ellipsis; /* ellipsis-ok: the card links to the source, which carries the full text */
     margin-top: 8px;
   }
 
