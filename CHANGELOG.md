@@ -4,6 +4,10 @@
 
 ### Fixed
 
+- **`u-file-block` shows the whole file name.** The name (and the name in the full-screen preview) was one line ending
+  in «…» inside a card of at most 200px, so a long file name could not be read for anything but an image or a video.
+  It now wraps.
+
 - **Screen readers no longer announce «clickable» on the blocks' buttons and the file preview.** Measured with NVDA in
   browse mode, the file block's remove button and preview, the prompt's send button and the chart and image blocks'
   buttons were announced as «clickable»: each carried a click listener on the element. The handlers are now heard on

@@ -85,9 +85,8 @@ export const styles = css`
     font-size: max(var(--chat-min-font-size, 0px), calc(13em / 14));
     font-weight: 500;
     color: var(--u-txt-color-strong);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    min-width: 0;
+    overflow-wrap: anywhere;
   }
 
   .meta {
@@ -158,9 +157,8 @@ export const styles = css`
   .preview-name {
     color: rgba(255, 255, 255, 0.85);
     font-size: max(var(--chat-min-font-size, 0px), 0.875em);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    min-width: 0;
+    overflow-wrap: anywhere;
   }
 
   .preview-close {
