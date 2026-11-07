@@ -1,5 +1,5 @@
 import katex, { type KatexOptions } from "katex";
-import type { MarkedExtension, TokenizerAndRendererExtension } from "marked";
+import type { MarkedExtension, TokenizerAndRendererExtension, TokenizerThis, Tokens } from "marked";
 
 /**
  * `marked` 에 TeX 수식 렌더를 붙이는 확장.
@@ -25,6 +25,12 @@ import type { MarkedExtension, TokenizerAndRendererExtension } from "marked";
  * 경로는 통화 표기 둘(`from $5 to $10`)이고, 그것을 막는 것이 ⑴내용에서 개행을 배제하고
  * ⑵닫는 구분자 뒤 문맥을 요구하는 두 조건이다. 규칙을 느슨하게 하면 본문이 통째로 한
  * 수식으로 삼켜진다.
+ *
+ * 🔴**KaTeX 가 못 읽는 구간은 수식이 아니다.** 구분자 규칙은 «첫 `$` 에서 뒤가 공백·구두점인 다음 `$` 까지» 를 한 구간으로
+ * 잡으므로, 본문에 `$` 가 둘 있으면 그 사이의 문장이 통째로 후보가 된다(`(~$)` 같은 글자 하나로 충분하다). 그 구간을 KaTeX 가
+ * 읽지 못하면 토크나이저가 **토큰을 만들지 않는다** — 구분자는 글자로 남는다. 렌더 단계에서 던지면 `marked` 의 `silent` 가 답
+ * 전체를 오류 문장으로 바꾸고, 블록별 렌더는 `render()` 밖으로 예외를 던진다. 그래서 읽기는 토크나이저에서 한 번만 하고,
+ * 렌더러는 그 결과를 돌려주기만 한다(렌더러는 던질 일이 없다).
  */
 
 /** 여는 구분자 뒤에 `$` 가 오지 않고, 내용이 줄을 넘지 않으며, 닫는 뒤가 공백·구두점·끝. */
@@ -39,14 +45,35 @@ interface KatexToken {
   raw: string;
   text: string;
   displayMode: boolean;
+  /** 토크나이저가 읽은 결과 — 렌더러는 이것을 돌려줄 뿐이다. */
+  html: string;
 }
 
 /** `marked` 확장이 받는 옵션 — `displayMode` 는 구분자가 정하므로 소비자가 줄 수 없다. */
-export type MarkedKatexOptions = Omit<KatexOptions, "displayMode">;
+export type MarkedKatexOptions = Omit<KatexOptions, "displayMode" | "throwOnError">;
 
-function render(options: MarkedKatexOptions, token: KatexToken, newlineAfter: boolean): string {
-  const html = katex.renderToString(token.text, { ...options, displayMode: token.displayMode });
-  return newlineAfter ? `${html}\n` : html;
+/**
+ * 토큰을 만들 때 KaTeX 로 한 번 읽는다 — 읽히면 토큰(렌더 결과 포함), 못 읽으면 `undefined`(구분자는 글자로 남는다).
+ * `throwOnError: false` 는 답이 아니다 — 못 읽는 구간의 앞뒤 문장을 오류 모양의 수식으로 삼키기 때문이다.
+ */
+function readToken(
+  options: MarkedKatexOptions,
+  type: KatexToken["type"],
+  raw: string,
+  text: string,
+  displayMode: boolean,
+): KatexToken | undefined {
+  let html: string;
+  try {
+    html = katex.renderToString(text, { ...options, displayMode, throwOnError: true });
+  } catch {
+    return undefined;
+  }
+  return { type, raw, text, displayMode, html };
+}
+
+function render(token: KatexToken, newlineAfter: boolean): string {
+  return newlineAfter ? `${token.html}\n` : token.html;
 }
 
 function inlineKatex(options: MarkedKatexOptions): TokenizerAndRendererExtension {
@@ -80,20 +107,38 @@ function inlineKatex(options: MarkedKatexOptions): TokenizerAndRendererExtension
       }
       return;
     },
-    tokenizer(src: string) {
+    tokenizer(this: TokenizerThis, src: string) {
       const match = src.match(INLINE_RULE);
       if (!match) return undefined;
-      return {
-        type: "inlineKatex",
-        raw: match[0],
-        text: match[2].trim(),
-        displayMode: match[1].length === 2,
-      } as unknown as KatexToken;
+      if (reopensFailedSpan(this.lexer, src)) return undefined;
+      const token = readToken(options, "inlineKatex", match[0], match[2].trim(), match[1].length === 2);
+      if (!token) failedSpans.set(this.lexer, { src, length: match[0].length });
+      return token as unknown as Tokens.Generic | undefined;
     },
     renderer(token) {
-      return render(options, token as unknown as KatexToken, false);
+      return render(token as unknown as KatexToken, false);
     },
   };
+}
+
+/** KaTeX 가 못 읽은 구간 — 렉서(렌더 한 번) 하나당 마지막 하나. `src` 는 그때 남은 입력 전체다. */
+const failedSpans = new WeakMap<object, { src: string; length: number }>();
+
+/**
+ * 못 읽은 구간의 «안쪽»에서 `$` 가 다시 여는 구분자가 되려는가.
+ *
+ * `marked` 는 인라인 글자를 `~` 같은 특수 문자 앞에서 끊고 그 뒤 위치에서 토크나이저를 다시 부른다(`start()` 의 경계 규칙은
+ * 힌트일 뿐이라 걸러지지 않는다). 그래서 `(~$) … 5 USD$` 의 `$)` 가 «방금 못 읽은 구간의 뒷부분» 으로 다시 열려, 문장이 공백
+ * 없는 수식이 된다. 못 읽은 구간 안에서는 `start()` 가 받아들이는 자리(처음이거나 앞이 공백)에서만 다시 연다 — 그 밖의 `$`
+ * 는 글자다. 못 읽은 구간이 없는 곳(`a$x$ b`)에는 영향이 없다.
+ */
+function reopensFailedSpan(lexer: object, src: string): boolean {
+  const failed = failedSpans.get(lexer);
+  if (!failed || !failed.src.endsWith(src)) return false;
+  const offset = failed.src.length - src.length; // `src` 가 시작하는 자리(처음 입력 안의 위치)
+  if (offset <= 0 || offset >= failed.length) return false; // 구간 안쪽이 아니다
+  const before = failed.src.charAt(offset - 1);
+  return before !== " ";
 }
 
 function blockKatex(options: MarkedKatexOptions): TokenizerAndRendererExtension {
@@ -103,15 +148,12 @@ function blockKatex(options: MarkedKatexOptions): TokenizerAndRendererExtension 
     tokenizer(src: string) {
       const match = src.match(BLOCK_RULE);
       if (!match) return undefined;
-      return {
-        type: "blockKatex",
-        raw: match[0],
-        text: match[2].trim(),
-        displayMode: match[1].length === 2,
-      } as unknown as KatexToken;
+      return readToken(options, "blockKatex", match[0], match[2].trim(), match[1].length === 2) as unknown as
+        | Tokens.Generic
+        | undefined;
     },
     renderer(token) {
-      return render(options, token as unknown as KatexToken, true);
+      return render(token as unknown as KatexToken, true);
     },
   };
 }

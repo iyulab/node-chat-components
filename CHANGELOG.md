@@ -4,6 +4,14 @@
 
 ### Fixed
 
+- **A `$…$` span that KaTeX cannot read stays as text.** A reply with two `$` in prose (for example `(~$)` and a later `5 USD$`)
+  made the text between them a formula candidate; KaTeX threw on it, and either the whole reply was replaced by
+  «An error occurred: KaTeX parse error …» or the exception left `render()` while a streamed answer re-rendered. The span is now
+  read when the token is made; if it cannot be read there is no token and the `$` characters are ordinary text (a `$` inside such a
+  span does not open a new formula after a non-space). Math that reads is drawn as before. `MarkedKatexOptions` no longer accepts
+  `throwOnError` (the fallback is the behaviour; `throwOnError: false` would have turned the surrounding sentence into an
+  error-styled span).
+
 - **`u-file-block` shows the whole file name.** The name (and the name in the full-screen preview) was one line ending
   in «…» inside a card of at most 200px, so a long file name could not be read for anything but an image or a video.
   It now wraps.
