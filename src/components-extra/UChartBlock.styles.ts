@@ -87,7 +87,7 @@ export const styles = css`
   .error-overlay {
     position: absolute;
     bottom: 10px;
-    right: 10px;
+    inset-inline-end: 10px;
     display: flex;
     align-items: center;
     gap: 6px;

@@ -1,5 +1,16 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- **Table and file blocks and the corner tools of chart, image and map blocks mirror under `dir="rtl"`.** A table cell with no
+  alignment of its own was given `align="left"` and the header `text-align: left`; both now follow the reading direction
+  (`start`), as does the gap beside the sort icon. The remove button of a file block and the tools in the corner of a chart, an
+  image lightbox and a map sit at the end side (`inset-inline-end`) instead of the right. **Left-to-right rendering is unchanged.**
+  A column the author aligned (a Markdown column marker, `align="left" | "center" | "right"`) stays as written: that is a
+  physical choice. Not changed: the Markdown renderer (`u-marked-block`), which has its own right-to-left rules.
+
 ## [0.29.0] - 2026-11-07
 
 ### Fixed

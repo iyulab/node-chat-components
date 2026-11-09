@@ -103,7 +103,7 @@ export const styles = css`
 
   .lb-close {
     position: absolute;
-    right: 16px;
+    inset-inline-end: 16px;
     top: 50%;
     transform: translateY(-50%);
     /* 호스트 하한(--u-target-size)이 더 크면 그 값. */

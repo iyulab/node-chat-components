@@ -127,7 +127,7 @@ export const styles = css`
   th {
     padding: 0;
     font-weight: 600;
-    text-align: left;
+    text-align: start;
     border-bottom: 2px solid var(--u-border-color);
     white-space: nowrap;
     user-select: none;
@@ -167,7 +167,7 @@ export const styles = css`
 
   th .sort-icon {
     display: inline-flex;
-    margin-left: 4px;
+    margin-inline-start: 4px;
     font-size: calc(12em / 14);
     opacity: 0.3;
     transition: opacity var(--u-duration-fast, 140ms);

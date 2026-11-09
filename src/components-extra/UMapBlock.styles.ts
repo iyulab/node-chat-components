@@ -40,7 +40,7 @@ export const styles = css`
     max-width: 60%;
     position: absolute;
     top: 8px;
-    right: 8px;
+    inset-inline-end: 8px;
     display: flex;
     flex-direction: column;
     gap: 0.25em;

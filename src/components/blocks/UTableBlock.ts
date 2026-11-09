@@ -1,6 +1,7 @@
 ﻿import { html } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { repeat } from "lit/directives/repeat.js";
+import { ifDefined } from "lit/directives/if-defined.js";
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 
 import "@iyulab/components/dist/components/icon/UIcon.js";
@@ -146,7 +147,7 @@ export class UTableBlock extends UDataElement {
                 return html`
                   <th
                     ?active=${isActive}
-                    align=${h.align ?? "left"}
+                    align=${ifDefined(h.align ?? undefined)}
                     aria-sort=${isActive ? (this.sort.dir === "asc" ? "ascending" : "descending") : "none"}
                   >
                     <!-- 정렬은 머리 칸 전체를 채우는 버튼이다 — 클릭만 받는 th 는 키보드로 닿지 않았다. -->
@@ -176,7 +177,7 @@ export class UTableBlock extends UDataElement {
               : repeat(rows, (_, i) => i, row => html`
                 <tr>
                   ${repeat(row, (_, j) => j, cell => html`
-                    <td align=${cell.align ?? "left"}>
+                    <td align=${ifDefined(cell.align ?? undefined)}>
                       <!-- 칸 최대 폭은 안쪽 상자가 갖는다 — 표 칸의 max-width 는 CSS 상 정의되지 않는다. -->
                       <div class="cell">${this.cellContent(cell)}</div>
                     </td>

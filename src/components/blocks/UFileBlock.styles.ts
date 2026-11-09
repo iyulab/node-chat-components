@@ -115,7 +115,7 @@ export const styles = css`
     position: absolute;
     z-index: 10;
     top: -8px;
-    right: -8px;
+    inset-inline-end: -8px;
     border-radius: 50%;
     font-size: calc(10em / 14);
     background-color: var(--u-neutral-600);
