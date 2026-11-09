@@ -119,7 +119,8 @@ export class UImagesBlock extends UElement {
 
     // 트랙 위치: 현재 슬라이드(70vw)를 뷰포트 중앙에 배치
     // center = 50vw - 35vw = 15vw, 슬라이드 간격 = 70vw + 16px gap
-    const translateX = `calc(15vw - ${idx} * (70vw + 16px))`;
+    // 읽는 방향이 RTL 이면 트랙이 오른쪽에서 시작하므로 이동 부호가 뒤집힌다(`--_dir`).
+    const translateX = `calc((15vw - ${idx} * (70vw + 16px)) * var(--_dir, 1))`;
 
     return html`
       <div class="lb-overlay">
@@ -203,8 +204,10 @@ export class UImagesBlock extends UElement {
   private handleKeyDown = (e: KeyboardEvent) => {
     if (this.index === null) return;
     // Escape 는 층 스택이 다룬다(위 `updated`) — 여기는 넘기기 화살표만.
-    if (e.key === 'ArrowLeft') this.prev();
-    else if (e.key === 'ArrowRight') this.next();
+    // 화살표는 화면 방향이다 — 시작 쪽(RTL 은 오른쪽) 화살표가 이전, 끝 쪽이 다음(이전 단추가 시작 쪽에 있다).
+    const rtl = getComputedStyle(this).direction === 'rtl';
+    if (e.key === (rtl ? 'ArrowRight' : 'ArrowLeft')) this.prev();
+    else if (e.key === (rtl ? 'ArrowLeft' : 'ArrowRight')) this.next();
   };
 }
 

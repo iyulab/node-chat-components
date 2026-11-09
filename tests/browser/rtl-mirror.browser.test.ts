@@ -1,6 +1,7 @@
 import { describe, it, expect, afterEach } from 'vitest';
 import '../../src/components/blocks/UTableBlock.js';
 import '../../src/components/blocks/UFileBlock.js';
+import '../../src/components/blocks/UMarkedBlock.js';
 import type { UTableBlock, TableCell } from '../../src/components/blocks/UTableBlock.js';
 
 /**
@@ -19,6 +20,12 @@ const FIXTURES: Array<[string, () => HTMLElement]> = [
     el.id = 'h';
     el.headers = [cell('Name'), cell('Status')];
     el.rows = [[cell('Alpha'), cell('Open')], [cell('Beta'), cell('Done')]];
+    return el;
+  }],
+  ['u-marked-block (인용 · 목록)', () => {
+    const el = document.createElement('u-marked-block') as HTMLElement & { value: string };
+    el.id = 'h';
+    el.value = ['> Quoted text of the answer', '', '- first item', '- second item', '', '1. one', '2. two', ''].join('\n');
     return el;
   }],
   ['u-file-block (제거 가능)', () => {

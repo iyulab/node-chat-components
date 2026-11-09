@@ -9,7 +9,12 @@
   (`start`), as does the gap beside the sort icon. The remove button of a file block and the tools in the corner of a chart, an
   image lightbox and a map sit at the end side (`inset-inline-end`) instead of the right. **Left-to-right rendering is unchanged.**
   A column the author aligned (a Markdown column marker, `align="left" | "center" | "right"`) stays as written: that is a
-  physical choice. Not changed: the Markdown renderer (`u-marked-block`), which has its own right-to-left rules.
+  physical choice.
+  The Markdown renderer (`u-marked-block`) mirrors too: the quote bar and the indent of a list or a definition sit at the start side.
+  The image lightbox follows the reading direction as a whole: the previous button and its arrow are at the start edge (the right in a
+  right-to-left page) and the next button at the end edge, the slide track and the gradient behind each button run the same way, and the
+  arrow keys follow what they point at (in a right-to-left page the right arrow goes to the previous image). A message bubble keeps its
+  `position` as a screen side.
 
 ## [0.29.0] - 2026-11-07
 

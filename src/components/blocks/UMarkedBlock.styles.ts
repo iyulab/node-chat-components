@@ -212,7 +212,7 @@ export const styles = css`
     margin: 0;
     padding: 0 1em;
     color: var(--fgColor-muted);
-    border-left: .25em solid var(--borderColor-default);
+    border-inline-start: .25em solid var(--borderColor-default);
   }
 
   blockquote>:first-child {
@@ -227,7 +227,7 @@ export const styles = css`
   ol {
     margin-top: 0;
     margin-bottom: 0;
-    padding-left: 2em;
+    padding-inline-start: 2em;
   }
 
   ul ul,
@@ -300,7 +300,7 @@ export const styles = css`
   }
 
   dd {
-    margin-left: 0;
+    margin-inline-start: 0;
   }
 
   mark {

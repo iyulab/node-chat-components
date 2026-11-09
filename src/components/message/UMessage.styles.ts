@@ -34,6 +34,7 @@ export const styles = css`
     border-radius: 18px;
     background-color: var(--u-neutral-200, #EEEEEE);
   }
+  /* physical-ok: position names the screen side the message sits on; the tail corner faces that side */
   .body[variant="bubble"][position="left"] {
     border-bottom-left-radius: 4px;
   }

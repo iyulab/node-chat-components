@@ -189,6 +189,7 @@ export const styles = css`
     vertical-align: top;
   }
 
+  /* physical-ok: the markdown column marker (:--- / ---:) names a screen side, not a reading direction */
   th[align="left"], td[align="left"] {
     text-align: left; 
   }
