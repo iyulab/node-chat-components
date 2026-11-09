@@ -13,8 +13,9 @@
   The Markdown renderer (`u-marked-block`) mirrors too: the quote bar and the indent of a list or a definition sit at the start side.
   The image lightbox follows the reading direction as a whole: the previous button and its arrow are at the start edge (the right in a
   right-to-left page) and the next button at the end edge, the slide track and the gradient behind each button run the same way, and the
-  arrow keys follow what they point at (in a right-to-left page the right arrow goes to the previous image). A message bubble keeps its
-  `position` as a screen side.
+  arrow keys follow what they point at (in a right-to-left page the right arrow goes to the previous image). The reference card group
+  (`u-ref-card-group`) does the same: the first card sits at the start side, the track moves toward the end, and the previous/next
+  arrows point the right way. A message bubble keeps its `position` as a screen side.
 
 ## [0.29.0] - 2026-11-07
 

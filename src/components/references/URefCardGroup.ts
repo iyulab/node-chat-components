@@ -42,7 +42,8 @@ export class URefCardGroup extends UElement {
       </div>
       
       <div class="viewport">
-        <div class="track" style=${`transform: translateX(-${this.currentIndex * 100}%);`}>
+        <!-- 읽는 방향이 RTL 이면 첫 카드가 오른쪽에서 시작하므로 이동 부호가 뒤집힌다(--_dir). -->
+        <div class="track" style=${`transform: translateX(calc(-${this.currentIndex * 100}% * var(--_dir, 1)));`}>
           <slot @slotchange=${this.handleSlotChange}></slot>
         </div>
       </div>
