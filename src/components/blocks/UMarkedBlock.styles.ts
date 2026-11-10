@@ -579,15 +579,18 @@ export const styles = css`
   }
 
   .task-list-item-checkbox {
-    margin: 0 .2em .25em -1.4em;
+    margin-block: 0 .25em;
+    margin-inline: -1.4em .2em;
     vertical-align: middle;
   }
 
   ul:dir(rtl) .task-list-item-checkbox {
-    margin: 0 -1.6em .25em .2em;
+    margin-block: 0 .25em;
+    margin-inline: -1.6em .2em;
   }
 
   ol:dir(rtl) .task-list-item-checkbox {
-    margin: 0 -1.6em .25em .2em;
+    margin-block: 0 .25em;
+    margin-inline: -1.6em .2em;
   }
 `;
