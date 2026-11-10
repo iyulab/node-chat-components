@@ -6,7 +6,7 @@ export const styles = css`
     width: 100%;
   }
   /* 읽는 방향 부호 — 라이트박스의 트랙 이동 · 그라데이션 각도 · 화살표 모양이 쓴다. */
-  :host(:dir(rtl)) { --_dir: -1; }
+  :host(:dir(rtl)) { --_chat-dir: -1; }
   /* 상자(여백 · 테두리 · 면)는 섀도 안 .base 가 그린다 — 호스트에 두면 문서의 전역 리셋(Tailwind preflight 류)이 이긴다. */
   .base {
     margin: 0.75em 0;
@@ -201,22 +201,22 @@ export const styles = css`
   }
   .lb-nav.prev {
     inset-inline-start: 0;
-    background: linear-gradient(calc(90deg * var(--_dir, 1)), rgba(0, 0, 0, 0.28), transparent);
+    background: linear-gradient(calc(90deg * var(--_chat-dir, 1)), rgba(0, 0, 0, 0.28), transparent);
   }
   .lb-nav.next {
     inset-inline-end: 0;
-    background: linear-gradient(calc(-90deg * var(--_dir, 1)), rgba(0, 0, 0, 0.28), transparent);
+    background: linear-gradient(calc(-90deg * var(--_chat-dir, 1)), rgba(0, 0, 0, 0.28), transparent);
   }
   .lb-nav.prev:hover {
-    background: linear-gradient(calc(90deg * var(--_dir, 1)), rgba(0, 0, 0, 0.5), transparent);
+    background: linear-gradient(calc(90deg * var(--_chat-dir, 1)), rgba(0, 0, 0, 0.5), transparent);
   }
   .lb-nav.next:hover {
-    background: linear-gradient(calc(-90deg * var(--_dir, 1)), rgba(0, 0, 0, 0.5), transparent);
+    background: linear-gradient(calc(-90deg * var(--_chat-dir, 1)), rgba(0, 0, 0, 0.5), transparent);
   }
 
   .lb-nav u-icon {
     /* chevron-left · chevron-right 는 LTR 모양이다 — RTL 에서는 뒤집어 이전이 시작 쪽을 가리키게 한다. */
-    transform: scaleX(var(--_dir, 1));
+    transform: scaleX(var(--_chat-dir, 1));
     display: flex;
     align-items: center;
     justify-content: center;

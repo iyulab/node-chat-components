@@ -119,8 +119,8 @@ export class UImagesBlock extends UElement {
 
     // 트랙 위치: 현재 슬라이드(70vw)를 뷰포트 중앙에 배치
     // center = 50vw - 35vw = 15vw, 슬라이드 간격 = 70vw + 16px gap
-    // 읽는 방향이 RTL 이면 트랙이 오른쪽에서 시작하므로 이동 부호가 뒤집힌다(`--_dir`).
-    const translateX = `calc((15vw - ${idx} * (70vw + 16px)) * var(--_dir, 1))`;
+    // 읽는 방향이 RTL 이면 트랙이 오른쪽에서 시작하므로 이동 부호가 뒤집힌다(`--_chat-dir`).
+    const translateX = `calc((15vw - ${idx} * (70vw + 16px)) * var(--_chat-dir, 1))`;
 
     return html`
       <div class="lb-overlay">
