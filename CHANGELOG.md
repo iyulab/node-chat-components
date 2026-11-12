@@ -4,6 +4,12 @@
 
 ### Fixed
 
+- **Code keeps its left-to-right order in a right-to-left page.** A `u-code-block` and an inline code span in `u-marked-block`
+  took the page's direction as their paragraph direction, so the punctuation at the end of a code line (the `)` and `;` of
+  `foo(bar);`) moved to the wrong end of the line; next to right-to-left words the same happened to a span in running text.
+  Code is now isolated and laid out left to right whatever the page's direction is: its lines start at the left edge of the block.
+  The block itself stays where the page puts it, and a left-to-right page is drawn as before.
+
 - **A `u-ref-tag` source label keeps its own direction in a right-to-left page.** The text slotted into a citation tag is a
   name the app put there; in a right-to-left page a Latin name such as «Blue Harbor Co.» ended with its full stop at the wrong end.
   The label is now isolated (`<bdi>`), so it reads in its own order and stands where the tag puts it. A left-to-right page is

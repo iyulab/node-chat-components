@@ -100,6 +100,9 @@ export const styles = css`
     font-size: max(var(--chat-min-font-size, 0px), calc(14em / 16));
     line-height: 1.45;
     white-space: pre;
+    /* 코드는 읽는 방향이 페이지가 아니라 언어다 — RTL 페이지에서 문단 방향이 rtl 이면 괄호 · 세미콜론이 줄 끝에서 뒤집혀 코드가 깨진다. */
+    direction: ltr;
+    unicode-bidi: isolate;
     overflow: auto;
     scrollbar-width: thin;
     scrollbar-color: var(--u-scrollbar-color) transparent;

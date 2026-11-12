@@ -380,6 +380,16 @@ export const styles = css`
     text-decoration: inherit;
   }
 
+  /* 코드 조각은 방향 중립이 아니라 LTR 이다 — RTL 문장 속에서도 괄호 · 세미콜론이 줄 끝으로 뒤집히지 않게 격리한다. */
+  code,
+  kbd,
+  pre,
+  samp,
+  tt {
+    direction: ltr;
+    unicode-bidi: isolate;
+  }
+
   samp {
     font-size: 85%;
   }
