@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+### Added
+
+- **`custom-elements.json` — a Custom Elements Manifest for every element.** The package ships `dist/custom-elements.json`
+  (`@iyulab/chat-components/dist/custom-elements.json`, declared in the `customElements` field of `package.json`) so editors,
+  documentation tools and AI agents can read each element's attributes, properties, events, slots and CSS parts without
+  parsing the source. It is generated at build time (`npm run analyze`) and lists the events an element raises through
+  `this.fire()` or `dispatchEvent()` with the type of their `detail`. It adds about 21 kB to the compressed package.
+
 ### Fixed
 
 - **Code keeps its left-to-right order in a right-to-left page.** A `u-code-block` and an inline code span in `u-marked-block`
