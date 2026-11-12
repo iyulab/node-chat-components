@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- **`u-table-block` orders text columns with digit runs read as numbers, in the app locale.** Sorting a column of text compared with the browser's default string order: `A-10` stood before `A-2`, and whether Hangul came before or after Latin followed each user's browser language. It now uses `compareText` from `@iyulab/components` — `A-2` before `A-10`, case and accents compare as the same letter, and the locale is `Locale.get()` (`<html lang>`, then the browser language, then `en`; `Locale.set('ko')` puts Hangul before Latin). Cells that both read as numbers still sort by value. Needs `@iyulab/components` 3.1.0 or newer (the peer range moves with it).
+
 ## [0.29.1] - 2026-11-11
 
 ### Changed

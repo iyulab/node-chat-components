@@ -4,6 +4,7 @@ import { repeat } from "lit/directives/repeat.js";
 import { ifDefined } from "lit/directives/if-defined.js";
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 
+import { compareText } from "@iyulab/components/dist/utilities/collation.js";
 import "@iyulab/components/dist/components/icon/UIcon.js";
 import "@iyulab/components/dist/components/button/UButton.js";
 import "@iyulab/components/dist/components/skeleton/USkeleton.js";
@@ -242,7 +243,7 @@ export class UTableBlock extends UDataElement {
       rows = rows.filter(row => row.some(cell => Locale.matchesSearch(cell.text, q, options)));
     }
 
-    // 정렬 적용, 숫자면 숫자 비교, 아니면 문자 비교
+    // 정렬 적용, 숫자면 숫자 비교, 아니면 글자 비교 — 앱 로캘(`Locale.get()`)의 순서로, 숫자 구간은 수로(`A-2` < `A-10`, 형제 표와 같다)
     const { index, dir } = this.sort;
     if (index < 0) return rows;
 
@@ -253,7 +254,7 @@ export class UTableBlock extends UDataElement {
       const bn = Number(bv);
       const cmp = (!isNaN(an) && !isNaN(bn))
         ? an - bn
-        : av.localeCompare(bv, undefined, { sensitivity: "base" });
+        : compareText(av, bv);
       return dir === "asc" ? cmp : -cmp;
     });
   }
