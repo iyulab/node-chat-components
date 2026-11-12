@@ -30,7 +30,7 @@ export class URefTag extends UElement {
     return html`<div class="base" part="base">
       <a href="${ifDefined(this.href ? sanitizeHref(this.href) : undefined)}" target="_blank" rel="noopener noreferrer"
         @click=${this.handleAnchorClick}>
-        <slot></slot>
+        <bdi><slot></slot></bdi>
         <span class="new-tab-hint">${messages.text('opensInNewTab')}</span>
       </a>
 

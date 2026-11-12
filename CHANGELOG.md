@@ -4,6 +4,11 @@
 
 ### Fixed
 
+- **A `u-ref-tag` source label keeps its own direction in a right-to-left page.** The text slotted into a citation tag is a
+  name the app put there; in a right-to-left page a Latin name such as «Blue Harbor Co.» ended with its full stop at the wrong end.
+  The label is now isolated (`<bdi>`), so it reads in its own order and stands where the tag puts it. A left-to-right page is
+  drawn as before.
+
 - **A `u-table-block` cell keeps its own direction in a right-to-left page.** The text of a cell is data. A line of Latin
   letters in a right-to-left page (a company name, a part number) had the page as its paragraph direction, so its full stop and a
   leading sign jumped to the other end: «Blue Harbor Co.» read «.Blue Harbor Co». Each cell is now isolated (`<bdi>`): the value
