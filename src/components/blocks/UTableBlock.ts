@@ -180,7 +180,7 @@ export class UTableBlock extends UDataElement {
                   ${repeat(row, (_, j) => j, cell => html`
                     <td align=${ifDefined(cell.align ?? undefined)}>
                       <!-- 칸 최대 폭은 안쪽 상자가 갖는다 — 표 칸의 max-width 는 CSS 상 정의되지 않는다. -->
-                      <div class="cell">${this.cellContent(cell)}</div>
+                      <div class="cell"><bdi>${this.cellContent(cell)}</bdi></div>
                     </td>
                   `)}
                 </tr>

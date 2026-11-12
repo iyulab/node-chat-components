@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- **A `u-table-block` cell keeps its own direction in a right-to-left page.** The text of a cell is data. A line of Latin
+  letters in a right-to-left page (a company name, a part number) had the page as its paragraph direction, so its full stop and a
+  leading sign jumped to the other end: «Blue Harbor Co.» read «.Blue Harbor Co». Each cell is now isolated (`<bdi>`): the value
+  reads in its own direction and stands where the cell puts it. A left-to-right page is drawn as before.
+
 ### Changed
 
 - **`u-table-block` orders text columns with digit runs read as numbers, in the app locale.** Sorting a column of text compared with the browser's default string order: `A-10` stood before `A-2`, and whether Hangul came before or after Latin followed each user's browser language. It now uses `compareText` from `@iyulab/components` — `A-2` before `A-10`, case and accents compare as the same letter, and the locale is `Locale.get()` (`<html lang>`, then the browser language, then `en`; `Locale.set('ko')` puts Hangul before Latin). Cells that both read as numbers still sort by value. Needs `@iyulab/components` 3.1.0 or newer (the peer range moves with it).
