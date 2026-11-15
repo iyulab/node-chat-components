@@ -4,6 +4,11 @@
 
 ### Added
 
+- **Development-mode warning for an unknown value of an enumerated attribute** (`variant`, `position`, `author`, `type`, `ratio`). A template attribute string is not
+  type-checked, and a value outside the list matches no style rule, so the element silently rendered as if the attribute were
+  unset — nothing in the console. It now logs one `console.warn` per element, attribute and value in development builds,
+  naming the values that are accepted; rendering is unchanged and production builds do nothing. Built on `UElement.enumerated`
+  of `@iyulab/components`.
 - **`custom-elements.json` — a Custom Elements Manifest for every element.** The package ships `dist/custom-elements.json`
   (`@iyulab/chat-components/dist/custom-elements.json`, declared in the `customElements` field of `package.json`) so editors,
   documentation tools and AI agents can read each element's attributes, properties, events, slots and CSS parts without
@@ -30,6 +35,8 @@
 
 ### Changed
 
+- **Requires `@iyulab/components` ≥ 3.2.0** (the peer range was `>=3.1.0`). The enumerated-attribute lists above use
+  `enumeratedValues` from that release; with an older components the module fails to load.
 - **`u-table-block` orders text columns with digit runs read as numbers, in the app locale.** Sorting a column of text compared with the browser's default string order: `A-10` stood before `A-2`, and whether Hangul came before or after Latin followed each user's browser language. It now uses `compareText` from `@iyulab/components` — `A-2` before `A-10`, case and accents compare as the same letter, and the locale is `Locale.get()` (`<html lang>`, then the browser language, then `en`; `Locale.set('ko')` puts Hangul before Latin). Cells that both read as numbers still sort by value. Needs `@iyulab/components` 3.1.0 or newer (the peer range moves with it).
 - **Runtime dependency ranges follow the current releases** (`highlight.js` `^11.12.0`, `katex` `^0.19.1`, `marked` `^18.2.0`). No behaviour change.
 

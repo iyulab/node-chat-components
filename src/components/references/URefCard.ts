@@ -12,6 +12,7 @@ import { resolveImageSource } from '../../utilities/imageSources.js';
 import type { ReferenceImage } from '../../types/References.js';
 import { messages } from '../../utilities/messages.js';
 import { LinkActivationController } from '../../utilities/LinkActivation.js';
+import { enumeratedValues } from "@iyulab/components/dist/utilities/enumerated.js";
 
 /**
  * 웹 참조 카드의 파비콘 이미지 URL 을 정한다. `undefined` 를 돌려주면 파비콘 없이 그린다.
@@ -45,6 +46,12 @@ export const googleFaviconUrl: FaviconResolver = (url) => {
  */
 @customElement('u-ref-card')
 export class URefCard extends UDataElement {
+  /** 목록 밖의 값은 어떤 규칙에도 안 걸려 조용히 기본 모양이 된다 — 개발 모드에서 한 번 알린다(`UElement.enumerated`). */
+  static override enumerated = {
+    ...super.enumerated,
+    type: enumeratedValues<'web' | 'document'>()(['web', 'document']),
+  };
+
   /** 렌더된 링크를 누르면 `link-activate` 로 호스트에 묻는다(`LinkActivation`). */
   protected readonly linkActivation = new LinkActivationController(this);
 

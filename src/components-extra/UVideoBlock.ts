@@ -7,6 +7,7 @@ import { styles } from "./UVideoBlock.styles.js";
 import { registerElementBlock } from '../utilities/ElementRegistry.js';
 import schema from './UVideoBlock.schema.js';
 import { sanitizeHref } from '../utilities/sanitizers.js';
+import { enumeratedValues } from "@iyulab/components/dist/utilities/enumerated.js";
 
 // 이 모듈을 import 하면 block-json 으로 렌더할 수 있다(스키마가 허용 목록이다).
 registerElementBlock(schema);
@@ -26,6 +27,12 @@ export interface VideoTrack {
  */
 @customElement('u-video-block')
 export class UVideoBlock extends UElement {
+  /** 목록 밖의 값은 어떤 규칙에도 안 걸려 조용히 기본 모양이 된다 — 개발 모드에서 한 번 알린다(`UElement.enumerated`). */
+  static override enumerated = {
+    ...super.enumerated,
+    ratio: enumeratedValues<'16:9' | '4:3' | '1:1'>()(['16:9', '4:3', '1:1']),
+  };
+
   static styles = [super.styles, styles];
 
   /** 비디오 URL (YouTube, Vimeo, 직접 파일) */

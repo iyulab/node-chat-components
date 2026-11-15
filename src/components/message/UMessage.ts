@@ -4,6 +4,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { UElement } from '@iyulab/components/dist/components/UElement.js';
 import { styles } from './UMessage.styles.js';
 import { messages } from '../../utilities/messages.js';
+import { enumeratedValues } from "@iyulab/components/dist/utilities/enumerated.js";
 
 /** 메시지 variant 타입 */
 export type MessageVariant = 'default' | 'bubble';
@@ -23,6 +24,14 @@ export type MessageAuthor = 'user' | 'assistant' | 'system';
  */
 @customElement('u-message')
 export class UMessage extends UElement {
+  /** 목록 밖의 값은 어떤 규칙에도 안 걸려 조용히 기본 모양이 된다 — 개발 모드에서 한 번 알린다(`UElement.enumerated`). */
+  static override enumerated = {
+    ...super.enumerated,
+    variant: enumeratedValues<MessageVariant>()(['default', 'bubble']),
+    position: enumeratedValues<MessagePosition>()(['left', 'right']),
+    author: enumeratedValues<MessageAuthor>()(['user', 'assistant', 'system']),
+  };
+
   static styles = [ super.styles, styles ];
   
   @property({ type: Boolean, reflect: true }) loading: boolean = false;
