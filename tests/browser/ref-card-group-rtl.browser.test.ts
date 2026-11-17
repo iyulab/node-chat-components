@@ -19,9 +19,14 @@ type Group = HTMLElement & { switch(i: number): void; updateComplete: Promise<un
 
 async function render(dir: 'ltr' | 'rtl'): Promise<Group> {
   document.documentElement.dir = dir;
-  document.body.innerHTML = `<style>u-ref-card-group::part(base) * { transition: none !important; }</style>${GROUP}`;
+  document.body.innerHTML = GROUP;
   const g = document.getElementById('h') as Group;
   await g.updateComplete;
+  // 트랙 전환을 끈다 — 이 시험이 재는 것은 «전환이 끝난 자리» 다. 문서 쪽 `::part(base) *` 규칙은 섀도 안쪽 후손에 닿지 못해(::part 뒤에 후손 결합자를 쓸 수 없다)
+  // 효력이 없었고, 전환은 포커스 없는 창(macOS 헤드리스)에서 시작이 220ms 넘게 늦어 400ms 대기 안에 끝나지 않았다.
+  const noMotion = new CSSStyleSheet();
+  noMotion.replaceSync('.track { transition: none !important; }');
+  g.shadowRoot!.adoptedStyleSheets = [...g.shadowRoot!.adoptedStyleSheets, noMotion];
   await new Promise((r) => setTimeout(r, 200));
   return g;
 }
@@ -34,7 +39,7 @@ describe('RTL — u-ref-card-group', () => {
     for (const i of [0, 1, 2]) {
       g.switch(i);
       await g.updateComplete;
-      await new Promise((r) => setTimeout(r, 400));   // 트랙 전환 시간
+      await new Promise((r) => setTimeout(r, 100));
       const V = box(viewport(g));
       const C = box(document.getElementById(`c${i}`)!);
       expect(Math.abs(C.left - V.left), `${dir} 카드 ${i}: 뷰포트 왼쪽 ${V.left} · 카드 왼쪽 ${C.left}`).toBeLessThanOrEqual(2);
