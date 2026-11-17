@@ -386,6 +386,17 @@ const FIXTURES: Record<string, Fixture | Fixture[]> = {
       prepare: async (host) => {
         (host.shadowRoot!.querySelectorAll('.slide')[1] as HTMLElement).click();
         await (host as HTMLElement & { updateComplete: Promise<unknown> }).updateComplete;
+        // 🔴**열린 오버레이의 맨 아래 줄이 눌릴 때까지 기다린다** — 포커스 없는 창(macOS 헤드리스 실측)에서는 여는 뒤 ~0.5초 동안 아래 띠(y ≥ 880)의
+        //   hit-test 가 오버레이 대신 `html` 을 돌려줬다(중간 점은 처음부터 눌렸다). 단추가 아니라 **오버레이 자신**을 재므로 이전/다음이 가려진
+        //   결함은 이 대기가 가리지 않는다 — 그건 아래 본 판정이 그대로 잡는다.
+        const root = host.shadowRoot!;
+        const overlay = root.querySelector('.lb-overlay') as HTMLElement;
+        for (let i = 0; i < 60; i++) {
+          const b = overlay.getBoundingClientRect();
+          const hit = root.elementFromPoint(b.left + b.width / 2, b.bottom - 1);
+          if (hit && overlay.contains(hit)) break;
+          await new Promise((r) => setTimeout(r, 50));
+        }
       },
       // 닫기(우상단)와 이전/다음(양 끝)은 서로 멀다 — 간격 예외를 켜면 미탐만 한다(`u-ref-card-group` 참조).
       targets: () => inShadow(document.querySelector('u-images-block')!, '.lb-close, .lb-nav'),
