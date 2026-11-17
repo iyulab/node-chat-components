@@ -11,20 +11,34 @@ import '../../src/components/prompt/UPrompt.js';
  * stopped one line short behind an inner scroll.
  *
  * Needs real scrollbars — the browser project launches without `--hide-scrollbars` (vitest.config.ts).
+ *
+ * Platform limit: macOS draws overlay scrollbars (zero layout width) unless the system setting is "always" and a mouse
+ * is attached, and a headless run cannot change that — the defect cannot exist there, so on macOS an overlay-scrollbar
+ * probe skips these tests by name instead of failing. Anywhere else a zero-width scrollbar still fails loudly: the
+ * test would otherwise pass without being able to see anything.
  */
 type Block = HTMLElement & { editable: boolean; maxRows?: number; updateComplete: Promise<unknown> };
 
 const SENTENCE = '좁은 채팅 패널에서 긴 문장을 입력하면 자동 높이가 마지막 줄까지 보여야 하고 안쪽 스크롤이 생기면 안 됩니다';
+const IS_MAC = /Mac|iPhone|iPad/.test(navigator.platform);
 const frame = () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
 
 describe('u-text-block — the textarea and its height mirror wrap at the same width', () => {
   beforeEach(() => { document.body.innerHTML = ''; });
 
-  it('a sentence that arrives at once is shown whole at every width — no inner scroll below maxRows', async () => {
+  /** Scrollbar width the page really lays out; skips on a macOS overlay-scrollbar window, fails elsewhere (see the header). */
+  function requireScrollbars(skip: (note?: string) => never): void {
     const probe = document.createElement('div');
     probe.style.cssText = 'width:100px;height:50px;overflow:scroll';
     document.body.appendChild(probe);
-    expect(probe.offsetWidth - probe.clientWidth, 'scrollbars are hidden — the test cannot see the defect').toBeGreaterThan(0);
+    const width = probe.offsetWidth - probe.clientWidth;
+    probe.remove();
+    if (width === 0 && IS_MAC) skip('macOS overlay scrollbars have no layout width — the defect cannot show');
+    expect(width, 'scrollbars are hidden — the test cannot see the defect').toBeGreaterThan(0);
+  }
+
+  it('a sentence that arrives at once is shown whole at every width — no inner scroll below maxRows', async ({ skip }) => {
+    requireScrollbars(skip);
 
     const stuck: string[] = [];
     // The sweep crosses widths where one line break sits within a scrollbar's width of the edge (it did at 304–312px).
@@ -45,7 +59,8 @@ describe('u-text-block — the textarea and its height mirror wrap at the same w
     expect(stuck).toEqual([]);
   }, 120_000);
 
-  it('the same through u-prompt (the chat input composes the block)', async () => {
+  it('the same through u-prompt (the chat input composes the block)', async ({ skip }) => {
+    requireScrollbars(skip);
     const prompt = document.createElement('u-prompt') as HTMLElement & { updateComplete: Promise<unknown> };
     prompt.style.cssText = 'display:block;width:330px;font-size:13px;line-height:19.5px';
     document.body.appendChild(prompt);
